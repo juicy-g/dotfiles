@@ -125,8 +125,11 @@ if [ -f /usr/share/powerline/bindings/bash/powerline.sh ]; then
 fi
 
 # Tmux configuration
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+if command -v tmux &> /dev/null \
+	&& [ -n "$PS1" ] \
+	&& [[ ! "$TERM" =~ screen ]] \
+	&& [[ ! "$TERM" =~ tmux ]] \
+	&& [ -z "$TMUX" ] \
+	&& ! pstree -s $$ | grep -wq code; then
   exec tmux new-session -A -s main
 fi
-
-
