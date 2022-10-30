@@ -1,0 +1,17 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+add_newline = false
+
+[package]
+disabled = true
+
+[directory]
+truncation_length = 8
+truncation_symbol = "…/"
+
+[aws]
+disabled = true
+
+[ruby]
+disabled = true
+
