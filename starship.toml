@@ -15,3 +15,8 @@ disabled = true
 [ruby]
 disabled = true
 
+[cmd_duration]
+disabled = true
+
+[jobs]
+disabled = true
