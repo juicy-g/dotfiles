@@ -128,3 +128,6 @@ fi
 
 # Enable fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# Enable the Starship prompt
+eval "$(starship init bash)"
