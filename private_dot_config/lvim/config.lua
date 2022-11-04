@@ -43,10 +43,18 @@ lvim.builtin.treesitter.highlight.enable = true
 lvim.plugins = {
   {"navarasu/onedark.nvim"},
   {"edkolev/tmuxline.vim"},
-  {
-    "gelguy/wilder.nvim",
+  {"gelguy/wilder.nvim",
     config = function()
-    require("wilder").setup({modes = {':', '/', '?'}})
+    local wilder = require('wilder')
+    wilder.setup({modes = {':', '/', '?'}})
+    wilder.set_option('renderer', wilder.popupmenu_renderer(
+      wilder.popupmenu_border_theme({
+        highlights = {
+          border = 'rounded',
+        },
+        border = 'rounded',
+      })
+    ))
     end,
   },
 }
