@@ -14,12 +14,25 @@ lvim.keys.normal_mode["<C-q>"] = ":q<cr>"
 lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 
+-- trouble keymappings
+lvim.builtin.which_key.mappings["t"] = {
+  name = "Diagnostics",
+  t = { "<cmd>TroubleToggle<cr>", "trouble" },
+  w = { "<cmd>TroubleToggle workspace_diagnostics<cr>", "workspace" },
+  d = { "<cmd>TroubleToggle document_diagnostics<cr>", "document" },
+  q = { "<cmd>TroubleToggle quickfix<cr>", "quickfix" },
+  l = { "<cmd>TroubleToggle loclist<cr>", "loclist" },
+  r = { "<cmd>TroubleToggle lsp_references<cr>", "references" },
+}
+
 -- core plugins configs
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
+-- enable file preview in telescope 
+lvim.builtin.telescope.pickers.find_files.previewer = nil
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
@@ -43,5 +56,8 @@ lvim.builtin.treesitter.highlight.enable = true
 lvim.plugins = {
   {"navarasu/onedark.nvim"},
   {"edkolev/tmuxline.vim"},
+  {"folke/trouble.nvim",
+    cmd = "TroubleToggle",
+  },
 }
 
