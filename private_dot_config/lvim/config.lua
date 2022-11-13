@@ -31,8 +31,9 @@ lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
--- enable file preview in telescope
-lvim.builtin.telescope.pickers.find_files.previewer = nil
+
+-- enable telescope file preview in horizontal layout
+lvim.builtin.telescope.pickers = nil
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
@@ -95,6 +96,7 @@ lvim.plugins = {
           local utils = require("auto-save.utils.data")
 
           if fn.getbufvar(buf, "&modifiable") == 1 and
+              -- disable auto-save in lua files (mainly this one...)
               utils.not_in(fn.getbufvar(buf, "&filetype"), { "lua" }) then
             return true
           end
