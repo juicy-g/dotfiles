@@ -35,6 +35,28 @@ lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 -- enable telescope file preview in horizontal layout
 lvim.builtin.telescope.pickers = nil
 
+-- use eslint for lsp
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tsserver" })
+lvim.lsp.templates_dir = join_paths(get_runtime_dir(), "after", "ftplugin")
+require("lvim.lsp.manager").setup("eslint")
+
+local formatters = require "lvim.lsp.null-ls.formatters"
+formatters.setup {
+  { name = "eslint" },
+}
+
+local linters = require "lvim.lsp.null-ls.linters"
+linters.setup {
+  { name = "eslint" },
+}
+
+local code_actions = require "lvim.lsp.null-ls.code_actions"
+code_actions.setup {
+  {
+    name = "eslint"
+  },
+}
+
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
   "bash",
