@@ -34,27 +34,42 @@ lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 
 -- enable telescope file preview in horizontal layout
 lvim.builtin.telescope.pickers = nil
+lvim.builtin.telescope.defaults.file_ignore_patterns = {
+  ".git/",
+}
+local _, actions = pcall(require, "telescope.actions")
+lvim.builtin.telescope.defaults.mappings = {
+  -- for input mode
+  i = {
+    ["<C-j>"] = actions.move_selection_next,
+    ["<C-k>"] = actions.move_selection_previous,
+    ["<C-n>"] = actions.cycle_history_next,
+    ["<C-p>"] = actions.cycle_history_prev,
+  },
+  -- for normal mode
+  n = {
+    ["<C-j>"] = actions.move_selection_next,
+    ["<C-k>"] = actions.move_selection_previous,
+  },
+}
+lvim.builtin.which_key.mappings["f"] = {
+  "<cmd>Telescope find_files<cr>", "Find File"
+}
 
--- use eslint for lsp
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tsserver" })
-lvim.lsp.templates_dir = join_paths(get_runtime_dir(), "after", "ftplugin")
-require("lvim.lsp.manager").setup("eslint")
-
+-- use eslint for formatting and linting
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
-  { name = "eslint" },
+  { command = "eslint", filetypes = { "javascript", "javascriptreact" } },
 }
 
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
-  { name = "eslint" },
+  { command = "eslint", filetypes = { "javascript", "javascriptreact" } },
 }
 
 local code_actions = require "lvim.lsp.null-ls.code_actions"
 code_actions.setup {
-  {
-    name = "eslint"
-  },
+  { command = "eslint", filetypes = { "javascript", "javascriptreact" } },
 }
 
 -- if you don't want all the parsers change this to a table of the ones you want
@@ -79,9 +94,6 @@ lvim.builtin.treesitter.highlight.enable = true
 lvim.plugins = {
   { "navarasu/onedark.nvim" },
   { "edkolev/tmuxline.vim" },
-  { "folke/trouble.nvim",
-    cmd = "TroubleToggle",
-  },
   { "abecodes/tabout.nvim",
     config = function()
       require('tabout').setup({
@@ -108,8 +120,7 @@ lvim.plugins = {
     wants = { 'nvim-treesitter' },
     after = { 'nvim-cmp' }
   },
-  {
-    "Pocco81/auto-save.nvim",
+  { "Pocco81/auto-save.nvim",
     config = function()
       require("auto-save").setup({
         trigger_events = { "InsertLeave", "TextChanged" },
@@ -126,5 +137,15 @@ lvim.plugins = {
         end,
       })
     end,
+  },
+  { "tpope/vim-repeat" },
+  { "tpope/vim-surround",
+    -- make sure to change the value of `timeoutlen` if it's not triggering correctly, see https://github.com/tpope/vim-surround/issues/117
+    -- setup = function()
+    --  vim.o.timeoutlen = 500
+    -- end
+  },
+  { "folke/trouble.nvim",
+    cmd = "TroubleToggle",
   },
 }
