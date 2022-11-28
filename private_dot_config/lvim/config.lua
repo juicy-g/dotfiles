@@ -120,24 +120,6 @@ lvim.plugins = {
     wants = { 'nvim-treesitter' },
     after = { 'nvim-cmp' }
   },
-  { "Pocco81/auto-save.nvim",
-    config = function()
-      require("auto-save").setup({
-        trigger_events = { "InsertLeave", "TextChanged" },
-        condition = function(buf)
-          local fn = vim.fn
-          local utils = require("auto-save.utils.data")
-
-          if fn.getbufvar(buf, "&modifiable") == 1 and
-              -- disable auto-save in lua files (mainly this one...)
-              utils.not_in(fn.getbufvar(buf, "&filetype"), { "lua" }) then
-            return true
-          end
-          return false
-        end,
-      })
-    end,
-  },
   { "tpope/vim-repeat" },
   { "tpope/vim-surround",
     -- make sure to change the value of `timeoutlen` if it's not triggering correctly, see https://github.com/tpope/vim-surround/issues/117
@@ -148,4 +130,8 @@ lvim.plugins = {
   { "folke/trouble.nvim",
     cmd = "TroubleToggle",
   },
+  { "ggandor/leap.nvim" }
 }
+
+-- use default leap.nvim keybindings
+require('leap').add_default_mappings()
