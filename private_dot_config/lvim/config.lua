@@ -94,39 +94,8 @@ lvim.builtin.treesitter.highlight.enable = true
 lvim.plugins = {
   { "navarasu/onedark.nvim" },
   { "edkolev/tmuxline.vim" },
-  { "abecodes/tabout.nvim",
-    config = function()
-      require('tabout').setup({
-        tabkey = '<Tab>',
-        backwards_tabkey = '<S-Tab>',
-        act_as_tab = true,
-        act_as_shift_tab = false,
-        default_tab = '<C-t>',
-        default_shift_tab = '<C-d>',
-        enable_backwards = true,
-        completion = true,
-        tabouts = {
-          { open = "'", close = "'" },
-          { open = '"', close = '"' },
-          { open = '`', close = '`' },
-          { open = '(', close = ')' },
-          { open = '[', close = ']' },
-          { open = '{', close = '}' }
-        },
-        ignore_beginning = true,
-        exclude = {}
-      })
-    end,
-    wants = { 'nvim-treesitter' },
-    after = { 'nvim-cmp' }
-  },
   { "tpope/vim-repeat" },
-  { "tpope/vim-surround",
-    -- make sure to change the value of `timeoutlen` if it's not triggering correctly, see https://github.com/tpope/vim-surround/issues/117
-    -- setup = function()
-    --  vim.o.timeoutlen = 500
-    -- end
-  },
+  { "tpope/vim-surround" },
   { "folke/trouble.nvim",
     cmd = "TroubleToggle",
   },
