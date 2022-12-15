@@ -1,11 +1,14 @@
 -- general vim options
 vim.cmd("let g:tmuxline_powerline_separators = 0")
 vim.opt.wrap = true
+vim.opt.cursorline = false
+vim.opt.hlsearch = false
 
 -- general lvim options
 lvim.log.level = "warn"
 lvim.format_on_save = true
 lvim.colorscheme = "onedark"
+lvim.reload_config_on_save = true
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
@@ -31,12 +34,14 @@ lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
+lvim.builtin.indentlines.active = false
 
 -- enable telescope file preview in horizontal layout
 lvim.builtin.telescope.pickers = nil
 lvim.builtin.telescope.defaults.file_ignore_patterns = {
   ".git/",
 }
+
 local _, actions = pcall(require, "telescope.actions")
 lvim.builtin.telescope.defaults.mappings = {
   -- for input mode
@@ -52,6 +57,7 @@ lvim.builtin.telescope.defaults.mappings = {
     ["<C-k>"] = actions.move_selection_previous,
   },
 }
+-- change to use the find_files picker rather than git_files
 lvim.builtin.which_key.mappings["f"] = {
   "<cmd>Telescope find_files<cr>", "Find File"
 }
@@ -92,15 +98,79 @@ lvim.builtin.treesitter.highlight.enable = true
 
 -- extra plugins
 lvim.plugins = {
-  { "navarasu/onedark.nvim" },
+  { "navarasu/onedark.nvim",
+    config = function()
+      -- fix some border issues with telescope and LSP float windows
+      require('onedark').setup {
+        highlights = {
+          TelescopePromptBorder = { fg = '#848b98' },
+          TelescopeResultsBorder = { fg = '#848b98' },
+          TelescopePreviewBorder = { fg = '#848b98' },
+          FloatBorder = { bg = '#282c34' },
+          NormalFloat = { bg = '#282c34' }
+        }
+      }
+      require('onedark').load()
+    end
+  },
   { "edkolev/tmuxline.vim" },
   { "tpope/vim-repeat" },
   { "tpope/vim-surround" },
   { "folke/trouble.nvim",
     cmd = "TroubleToggle",
   },
-  { "ggandor/leap.nvim" }
+  { "ggandor/leap.nvim",
+    config = function()
+      -- use default leap.nvim keybindings
+      require('leap').add_default_mappings()
+    end
+  },
+  {
+    "ethanholz/nvim-lastplace",
+    event = "BufRead",
+    config = function()
+      require("nvim-lastplace").setup({
+        lastplace_ignore_buftype = { "quickfix", "nofile", "help" },
+        lastplace_ignore_filetype = {
+          "gitcommit", "gitrebase", "svn", "hgcommit",
+        },
+        lastplace_open_folds = true,
+      })
+    end,
+  },
+  {
+    "ray-x/lsp_signature.nvim",
+    event = "BufRead",
+    config = function() require("lsp_signature").setup({
+        bind = true,
+        hint_enable = false,
+        hi_parameter = "NONE"
+      })
+    end,
+  },
 }
 
--- use default leap.nvim keybindings
-require('leap').add_default_mappings()
+-- customization for vim-illuminate
+lvim.autocommands = {
+  {
+    "BufEnter",
+    {
+      pattern = { "*" },
+      command = "hi IlluminatedWordText gui=NONE guibg=#31353f",
+    }
+  },
+  {
+    "BufEnter",
+    {
+      pattern = { "*" },
+      command = "hi IlluminatedWordRead gui=NONE guibg=#31353f",
+    }
+  },
+  {
+    "BufEnter",
+    {
+      pattern = { "*" },
+      command = "hi IlluminatedWordWrite gui=NONE guibg=#31353f",
+    }
+  }
+}
