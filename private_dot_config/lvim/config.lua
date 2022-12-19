@@ -39,6 +39,24 @@ lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 lvim.builtin.indentlines.active = false
+lvim.builtin.cmp.cmdline.enable = true
+-- fix issue cmdline completion not showing
+lvim.builtin.cmp.cmdline.options = {
+  {
+    type = { ":" },
+    sources = {
+      { name = "path" },
+      { name = "cmdline" },
+    },
+  },
+  {
+    type = { "/", "?" },
+    sources = {
+      { name = "buffer" },
+    },
+  },
+}
+lvim.builtin.cmp.formatting.fields = { "abbr", "kind", "menu" }
 
 -- enable telescope file preview in horizontal layout
 lvim.builtin.telescope.pickers = nil
@@ -134,7 +152,7 @@ lvim.plugins = {
   { "navarasu/onedark.nvim",
     config = function()
       -- fix some border issues with telescope and LSP float windows
-      require('onedark').setup {
+      require('onedark').setup({
         highlights = {
           TelescopePromptBorder = { fg = '#848b98' },
           TelescopeResultsBorder = { fg = '#848b98' },
@@ -142,7 +160,7 @@ lvim.plugins = {
           FloatBorder = { bg = '#282c34' },
           NormalFloat = { bg = '#282c34' }
         }
-      }
+      })
       require('onedark').load()
     end
   },
@@ -181,23 +199,6 @@ lvim.plugins = {
     end,
   },
   {
-    "onsails/lspkind.nvim",
-    config = function()
-      lvim.builtin.cmp.formatting = {
-        format = require("lspkind").cmp_format({
-          mode = "symbol_text",
-          menu = ({
-            buffer = "[Buffer]",
-            nvim_lsp = "[LSP]",
-            luasnip = "[LuaSnip]",
-            nvim_lua = "[Lua]",
-            latex_symbols = "[Latex]",
-          })
-        })
-      }
-    end
-  },
-  {
     "folke/persistence.nvim",
     event = "BufReadPre",
     module = "persistence",
@@ -208,6 +209,7 @@ lvim.plugins = {
       }
     end,
   },
+  { "hrsh7th/cmp-cmdline" },
 }
 
 -- customization for vim-illuminate
