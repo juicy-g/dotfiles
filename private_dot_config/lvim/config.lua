@@ -1,21 +1,25 @@
--- general vim options
+-- general options
 vim.cmd("let g:tmuxline_powerline_separators = 0")
 vim.opt.wrap = true
 vim.opt.cursorline = false
 vim.opt.hlsearch = false
 
--- general lvim options
 lvim.log.level = "warn"
 lvim.format_on_save = true
 lvim.colorscheme = "onedark"
-lvim.reload_config_on_save = true
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["<C-q>"] = ":q<cr>"
+lvim.keys.normal_mode["<S-x>"] = ":BufferKill<CR>"
 lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
+lvim.keys.insert_mode["<C-c>"] = "<Esc>"
+
+-- centers cursor when moving 1/2 page down/up
+lvim.keys.normal_mode["<C-d>"] = "<C-d>zz"
+lvim.keys.normal_mode["<C-u>"] = "<C-u>zz"
 
 -- trouble keymappings
 lvim.builtin.which_key.mappings["t"] = {
@@ -62,6 +66,35 @@ lvim.builtin.which_key.mappings["f"] = {
   "<cmd>Telescope find_files<cr>", "Find File"
 }
 
+-- add sessions keymaps to which_key window
+lvim.builtin.which_key.mappings["S"] = {
+  name = "Session",
+  c = { "<cmd>lua require('persistence').load()<cr>", "Restore last session for current dir" },
+  l = { "<cmd>lua require('persistence').load({ last = true })<cr>", "Restore last session" },
+  Q = { "<cmd>lua require('persistence').stop()<cr>", "Quit without saving session" },
+}
+
+-- add restore session button to dashboard
+lvim.builtin.alpha.dashboard.section.buttons = {
+  opts = {
+    hl_shortcut = "Include",
+    spacing = 1,
+  },
+  entries = {
+    { "f", lvim.icons.ui.FindFile .. "  Find File", "<CMD>Telescope find_files<CR>" },
+    { "n", lvim.icons.ui.NewFile .. "  New File", "<CMD>ene!<CR>" },
+    { "p", lvim.icons.ui.Project .. "  Projects ", "<CMD>Telescope projects<CR>" },
+    { "r", lvim.icons.ui.History .. "  Recent files", ":Telescope oldfiles <CR>" },
+    { "s", lvim.icons.ui.BookMark .. "  Restore session",
+      "<cmd>lua require('persistence').load({ last = true })<cr>" },
+    { "t", lvim.icons.ui.FindText .. "  Find Text", "<CMD>Telescope live_grep<CR>" },
+    {
+      "c",
+      lvim.icons.ui.Gear .. "  Configuration",
+      "<CMD>edit " .. require("lvim.config"):get_user_config_path() .. " <CR>",
+    },
+  },
+}
 -- use eslint for formatting and linting
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
@@ -121,7 +154,6 @@ lvim.plugins = {
   },
   { "ggandor/leap.nvim",
     config = function()
-      -- use default leap.nvim keybindings
       require('leap').add_default_mappings()
     end
   },
@@ -146,6 +178,34 @@ lvim.plugins = {
         hint_enable = false,
         hi_parameter = "NONE"
       })
+    end,
+  },
+  {
+    "onsails/lspkind.nvim",
+    config = function()
+      lvim.builtin.cmp.formatting = {
+        format = require("lspkind").cmp_format({
+          mode = "symbol_text",
+          menu = ({
+            buffer = "[Buffer]",
+            nvim_lsp = "[LSP]",
+            luasnip = "[LuaSnip]",
+            nvim_lua = "[Lua]",
+            latex_symbols = "[Latex]",
+          })
+        })
+      }
+    end
+  },
+  {
+    "folke/persistence.nvim",
+    event = "BufReadPre",
+    module = "persistence",
+    config = function()
+      require("persistence").setup {
+        dir = vim.fn.expand(vim.fn.stdpath "config" .. "/session/"),
+        options = { "buffers", "curdir", "tabpages", "winsize" },
+      }
     end,
   },
 }
