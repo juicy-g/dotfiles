@@ -1,14 +1,14 @@
 -- general options
 vim.cmd("let g:tmuxline_powerline_separators = 0")
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
 vim.opt.wrap = true
 vim.opt.cursorline = false
 vim.opt.hlsearch = false
-
-lvim.log.level = "warn"
 lvim.format_on_save = true
 lvim.colorscheme = "onedark"
 
--- keymappings [view all the defaults by pressing <leader>Lk]
+-- custom keymappings
 lvim.leader = "space"
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["<C-q>"] = ":q<cr>"
@@ -20,6 +20,18 @@ lvim.keys.insert_mode["<C-c>"] = "<Esc>"
 -- centers cursor when moving 1/2 page down/up
 lvim.keys.normal_mode["<C-d>"] = "<C-d>zz"
 lvim.keys.normal_mode["<C-u>"] = "<C-u>zz"
+
+-- keep searched word in the middle of the screen
+lvim.keys.normal_mode["n"] = "nzzzv"
+lvim.keys.normal_mode["N"] = "Nzzzv"
+
+-- keep yanked work in the last register
+lvim.builtin.which_key.mappings['p'] = {}
+vim.keymap.set("x", "<leader>p", [["_dP]])
+
+-- delete to void register
+lvim.builtin.which_key.mappings['d'] = {}
+vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
 -- trouble keymappings
 lvim.builtin.which_key.mappings["t"] = {
@@ -57,6 +69,7 @@ lvim.builtin.cmp.cmdline.options = {
   },
 }
 lvim.builtin.cmp.formatting.fields = { "abbr", "kind", "menu" }
+lvim.builtin.cmp.confirm_opts.select = true
 
 -- enable telescope file preview in horizontal layout
 lvim.builtin.telescope.pickers = nil
@@ -106,27 +119,10 @@ lvim.builtin.alpha.dashboard.section.buttons = {
     { "s", lvim.icons.ui.BookMark .. "  Restore session",
       "<cmd>lua require('persistence').load({ last = true })<cr>" },
     { "t", lvim.icons.ui.FindText .. "  Find Text", "<CMD>Telescope live_grep<CR>" },
-    {
-      "c",
+    { "c",
       lvim.icons.ui.Gear .. "  Configuration",
-      "<CMD>edit " .. require("lvim.config"):get_user_config_path() .. " <CR>",
-    },
+      "<CMD>edit " .. require("lvim.config"):get_user_config_path() .. " <CR>", },
   },
-}
--- use eslint for formatting and linting
-local formatters = require "lvim.lsp.null-ls.formatters"
-formatters.setup {
-  { command = "eslint", filetypes = { "javascript", "javascriptreact" } },
-}
-
-local linters = require "lvim.lsp.null-ls.linters"
-linters.setup {
-  { command = "eslint", filetypes = { "javascript", "javascriptreact" } },
-}
-
-local code_actions = require "lvim.lsp.null-ls.code_actions"
-code_actions.setup {
-  { command = "eslint", filetypes = { "javascript", "javascriptreact" } },
 }
 
 -- if you don't want all the parsers change this to a table of the ones you want
@@ -137,11 +133,10 @@ lvim.builtin.treesitter.ensure_installed = {
   "json",
   "lua",
   "python",
+  "ruby",
   "typescript",
   "tsx",
   "css",
-  "rust",
-  "java",
   "yaml",
 }
 lvim.builtin.treesitter.ignore_install = { "haskell" }
@@ -162,7 +157,7 @@ lvim.plugins = {
         }
       })
       require('onedark').load()
-    end
+    end,
   },
   { "edkolev/tmuxline.vim" },
   { "tpope/vim-repeat" },
@@ -173,10 +168,9 @@ lvim.plugins = {
   { "ggandor/leap.nvim",
     config = function()
       require('leap').add_default_mappings()
-    end
+    end,
   },
-  {
-    "ethanholz/nvim-lastplace",
+  { "ethanholz/nvim-lastplace",
     event = "BufRead",
     config = function()
       require("nvim-lastplace").setup({
@@ -188,8 +182,7 @@ lvim.plugins = {
       })
     end,
   },
-  {
-    "ray-x/lsp_signature.nvim",
+  { "ray-x/lsp_signature.nvim",
     event = "BufRead",
     config = function() require("lsp_signature").setup({
         bind = true,
@@ -198,8 +191,7 @@ lvim.plugins = {
       })
     end,
   },
-  {
-    "folke/persistence.nvim",
+  { "folke/persistence.nvim",
     event = "BufReadPre",
     module = "persistence",
     config = function()
@@ -210,26 +202,41 @@ lvim.plugins = {
     end,
   },
   { "hrsh7th/cmp-cmdline" },
+  { "jayp0521/mason-null-ls.nvim",
+    config = function()
+      require("mason-null-ls").setup({
+        automatic_setup = true,
+      })
+      require("mason-null-ls").setup_handlers()
+    end,
+  },
+  { "tversteeg/registers.nvim",
+    config = function()
+      require("registers").setup({
+        window = {
+          border = "rounded",
+          transparency = 0
+        }
+      })
+    end,
+  },
 }
 
 -- customization for vim-illuminate
 lvim.autocommands = {
-  {
-    "BufEnter",
+  { "BufEnter",
     {
       pattern = { "*" },
       command = "hi IlluminatedWordText gui=NONE guibg=#31353f",
     }
   },
-  {
-    "BufEnter",
+  { "BufEnter",
     {
       pattern = { "*" },
       command = "hi IlluminatedWordRead gui=NONE guibg=#31353f",
     }
   },
-  {
-    "BufEnter",
+  { "BufEnter",
     {
       pattern = { "*" },
       command = "hi IlluminatedWordWrite gui=NONE guibg=#31353f",
