@@ -25,13 +25,11 @@ lvim.keys.normal_mode["<C-u>"] = "<C-u>zz"
 lvim.keys.normal_mode["n"] = "nzzzv"
 lvim.keys.normal_mode["N"] = "Nzzzv"
 
--- keep yanked work in the last register
-lvim.builtin.which_key.mappings['p'] = {}
-vim.keymap.set("x", "<leader>p", [["_dP]])
+-- keep yanked word in the last register when pasting
+vim.keymap.set("x", "pk", [["_dP]])
 
 -- delete to void register
-lvim.builtin.which_key.mappings['d'] = {}
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
+vim.keymap.set({ "n", "v" }, "dv", [["_d]])
 
 -- trouble keymappings
 lvim.builtin.which_key.mappings["t"] = {
@@ -85,11 +83,13 @@ lvim.builtin.telescope.defaults.mappings = {
     ["<C-k>"] = actions.move_selection_previous,
     ["<C-n>"] = actions.cycle_history_next,
     ["<C-p>"] = actions.cycle_history_prev,
+    ["<c-t>"] = require("trouble.providers.telescope").open_with_trouble
   },
   -- for normal mode
   n = {
     ["<C-j>"] = actions.move_selection_next,
     ["<C-k>"] = actions.move_selection_previous,
+    ["<c-t>"] = require("trouble.providers.telescope").open_with_trouble
   },
 }
 -- change to use the find_files picker rather than git_files
@@ -218,6 +218,11 @@ lvim.plugins = {
           transparency = 0
         }
       })
+    end,
+  },
+  { "windwp/nvim-ts-autotag",
+    config = function()
+      require("nvim-ts-autotag").setup()
     end,
   },
 }
