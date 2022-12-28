@@ -52,15 +52,13 @@ lvim.builtin.indentlines.active = false
 lvim.builtin.cmp.cmdline.enable = true
 -- fix issue cmdline completion not showing
 lvim.builtin.cmp.cmdline.options = {
-  {
-    type = { ":" },
+  { type = { ":" },
     sources = {
       { name = "path" },
       { name = "cmdline" },
     },
   },
-  {
-    type = { "/", "?" },
+  { type = { "/", "?" },
     sources = {
       { name = "buffer" },
     },
@@ -76,6 +74,7 @@ lvim.builtin.telescope.defaults.file_ignore_patterns = {
 }
 
 local _, actions = pcall(require, "telescope.actions")
+local _, trouble = pcall(require, "trouble.providers.telescope")
 lvim.builtin.telescope.defaults.mappings = {
   -- for input mode
   i = {
@@ -83,13 +82,13 @@ lvim.builtin.telescope.defaults.mappings = {
     ["<C-k>"] = actions.move_selection_previous,
     ["<C-n>"] = actions.cycle_history_next,
     ["<C-p>"] = actions.cycle_history_prev,
-    ["<c-t>"] = require("trouble.providers.telescope").open_with_trouble
+    ["<C-t>"] = trouble.open_with_trouble,
   },
   -- for normal mode
   n = {
     ["<C-j>"] = actions.move_selection_next,
     ["<C-k>"] = actions.move_selection_previous,
-    ["<c-t>"] = require("trouble.providers.telescope").open_with_trouble
+    ["<C-t>"] = trouble.open_with_trouble,
   },
 }
 -- change to use the find_files picker rather than git_files
