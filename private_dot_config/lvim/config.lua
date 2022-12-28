@@ -141,6 +141,9 @@ lvim.builtin.treesitter.ensure_installed = {
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enable = true
 
+require("lspconfig.ui.windows").default_options.border = "rounded"
+vim.api.nvim_set_hl(0, "LspInfoBorder", { fg = '#848b98', bg = '#282c34' })
+
 -- extra plugins
 lvim.plugins = {
   { "navarasu/onedark.nvim",
@@ -226,24 +229,18 @@ lvim.plugins = {
   },
 }
 
--- customization for vim-illuminate
+-- customization for vim-illuminate and lsp-config
 lvim.autocommands = {
   { "BufEnter",
-    {
-      pattern = { "*" },
-      command = "hi IlluminatedWordText gui=NONE guibg=#31353f",
-    }
+    { pattern = { "*" }, command = "hi IlluminatedWordText gui=NONE guibg=#31353f" }
   },
   { "BufEnter",
-    {
-      pattern = { "*" },
-      command = "hi IlluminatedWordRead gui=NONE guibg=#31353f",
-    }
+    { pattern = { "*" }, command = "hi IlluminatedWordRead gui=NONE guibg=#31353f" }
   },
   { "BufEnter",
-    {
-      pattern = { "*" },
-      command = "hi IlluminatedWordWrite gui=NONE guibg=#31353f",
-    }
-  }
+    { pattern = { "*" }, command = "hi IlluminatedWordWrite gui=NONE guibg=#31353f" }
+  },
+  { "VimEnter",
+    { pattern = { "*" }, command = "hi LspInfoBorder guifg=#848b98, guibg=#282c34" }
+  },
 }
