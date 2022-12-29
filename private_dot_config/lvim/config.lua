@@ -76,7 +76,6 @@ lvim.builtin.telescope.defaults.file_ignore_patterns = {
 local _, actions = pcall(require, "telescope.actions")
 local _, trouble = pcall(require, "trouble.providers.telescope")
 lvim.builtin.telescope.defaults.mappings = {
-  -- for input mode
   i = {
     ["<C-j>"] = actions.move_selection_next,
     ["<C-k>"] = actions.move_selection_previous,
@@ -84,7 +83,6 @@ lvim.builtin.telescope.defaults.mappings = {
     ["<C-p>"] = actions.cycle_history_prev,
     ["<C-t>"] = trouble.open_with_trouble,
   },
-  -- for normal mode
   n = {
     ["<C-j>"] = actions.move_selection_next,
     ["<C-k>"] = actions.move_selection_previous,
@@ -96,7 +94,17 @@ lvim.builtin.which_key.mappings["f"] = {
   "<cmd>Telescope find_files<cr>", "Find File"
 }
 
--- add sessions keymaps to which_key window
+-- additional picker for search menu
+lvim.builtin.which_key.mappings["s/"] = {
+  function()
+    require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+      previewer = false,
+    })
+  end,
+  "Fuzzily search in current buffer"
+}
+
+-- add sessions menu
 lvim.builtin.which_key.mappings["S"] = {
   name = "Session",
   c = { "<cmd>lua require('persistence').load()<cr>", "Restore last session for current dir" },
@@ -124,7 +132,6 @@ lvim.builtin.alpha.dashboard.section.buttons = {
   },
 }
 
--- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
   "bash",
   "c",
@@ -139,8 +146,28 @@ lvim.builtin.treesitter.ensure_installed = {
   "yaml",
 }
 lvim.builtin.treesitter.ignore_install = { "haskell" }
-lvim.builtin.treesitter.highlight.enable = true
 
+-- enhanced selections
+lvim.builtin.treesitter.textobjects = {
+  select = {
+    enable = true,
+    lookahead = true,
+    keymaps = {
+      ["af"] = "@function.outer",
+      ["if"] = "@function.inner",
+      ["ac"] = "@class.outer",
+      ["ic"] = "@class.inner",
+    },
+  },
+}
+
+-- smart selection in visual mode
+lvim.builtin.treesitter.textsubjects.enable = true
+lvim.builtin.treesitter.textsubjects.keymaps = {
+  ["<CR>"] = "textsubjects-smart"
+}
+
+-- fix lspinfo popup border
 require("lspconfig.ui.windows").default_options.border = "rounded"
 vim.api.nvim_set_hl(0, "LspInfoBorder", { fg = '#848b98', bg = '#282c34' })
 
@@ -159,7 +186,7 @@ lvim.plugins = {
         }
       })
       require('onedark').load()
-    end,
+    end
   },
   { "edkolev/tmuxline.vim" },
   { "tpope/vim-repeat" },
@@ -170,7 +197,7 @@ lvim.plugins = {
   { "ggandor/leap.nvim",
     config = function()
       require('leap').add_default_mappings()
-    end,
+    end
   },
   { "ethanholz/nvim-lastplace",
     event = "BufRead",
@@ -182,7 +209,7 @@ lvim.plugins = {
         },
         lastplace_open_folds = true,
       })
-    end,
+    end
   },
   { "ray-x/lsp_signature.nvim",
     event = "BufRead",
@@ -191,7 +218,7 @@ lvim.plugins = {
         hint_enable = false,
         hi_parameter = "NONE"
       })
-    end,
+    end
   },
   { "folke/persistence.nvim",
     event = "BufReadPre",
@@ -201,7 +228,7 @@ lvim.plugins = {
         dir = vim.fn.expand(vim.fn.stdpath "config" .. "/session/"),
         options = { "buffers", "curdir", "tabpages", "winsize" },
       }
-    end,
+    end
   },
   { "hrsh7th/cmp-cmdline" },
   { "jayp0521/mason-null-ls.nvim",
@@ -210,7 +237,7 @@ lvim.plugins = {
         automatic_setup = true,
       })
       require("mason-null-ls").setup_handlers()
-    end,
+    end
   },
   { "tversteeg/registers.nvim",
     config = function()
@@ -220,12 +247,17 @@ lvim.plugins = {
           transparency = 0
         }
       })
-    end,
+    end
   },
   { "windwp/nvim-ts-autotag",
     config = function()
       require("nvim-ts-autotag").setup()
-    end,
+    end
+  },
+  { "RRethy/nvim-treesitter-textsubjects" },
+  { "nvim-treesitter/nvim-treesitter-textobjects",
+    -- see pull #346
+    commit = "aba3ab3"
   },
 }
 
