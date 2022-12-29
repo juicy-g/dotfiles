@@ -48,6 +48,7 @@ lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
+-- i don't like indentlines
 lvim.builtin.indentlines.active = false
 lvim.builtin.cmp.cmdline.enable = true
 -- fix issue cmdline completion not showing
@@ -68,11 +69,14 @@ lvim.builtin.cmp.formatting.fields = { "abbr", "kind", "menu" }
 lvim.builtin.cmp.confirm_opts.select = true
 
 -- enable telescope file preview in horizontal layout
-lvim.builtin.telescope.pickers = nil
+lvim.builtin.telescope.pickers.find_files = {
+  layout_strategy = "horizontal",
+}
 lvim.builtin.telescope.defaults.file_ignore_patterns = {
   ".git/",
 }
 
+-- add additional mappings
 local _, actions = pcall(require, "telescope.actions")
 local _, trouble = pcall(require, "trouble.providers.telescope")
 lvim.builtin.telescope.defaults.mappings = {
@@ -89,19 +93,35 @@ lvim.builtin.telescope.defaults.mappings = {
     ["<C-t>"] = trouble.open_with_trouble,
   },
 }
+
+-- telescope extensions
+lvim.builtin.telescope.on_config_done = function(telescope)
+  pcall(telescope.load_extension, "undo")
+end
+
 -- change to use the find_files picker rather than git_files
 lvim.builtin.which_key.mappings["f"] = {
   "<cmd>Telescope find_files<cr>", "Find File"
 }
 
+lvim.builtin.which_key.mappings["su"] = {
+  "<cmd>Telescope undo<cr>", "Current buffer undo tree"
+}
+
 -- additional picker for search menu
 lvim.builtin.which_key.mappings["s/"] = {
   function()
-    require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-      previewer = false,
-    })
+    require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown())
   end,
   "Fuzzily search in current buffer"
+}
+
+-- additional picker for treesitter menu
+lvim.builtin.which_key.mappings["Ts"] = {
+  function()
+    require('telescope.builtin').treesitter()
+  end,
+  "Search Treesitter"
 }
 
 -- add sessions menu
@@ -153,6 +173,8 @@ lvim.builtin.treesitter.textobjects = {
     enable = true,
     lookahead = true,
     keymaps = {
+      ['aa'] = '@parameter.outer',
+      ['ia'] = '@parameter.inner',
       ["af"] = "@function.outer",
       ["if"] = "@function.inner",
       ["ac"] = "@class.outer",
@@ -259,6 +281,7 @@ lvim.plugins = {
     -- see pull #346
     commit = "aba3ab3"
   },
+  { "debugloop/telescope-undo.nvim" }
 }
 
 -- customization for vim-illuminate and lsp-config
@@ -275,4 +298,7 @@ lvim.autocommands = {
   { "VimEnter",
     { pattern = { "*" }, command = "hi LspInfoBorder guifg=#848b98, guibg=#282c34" }
   },
+  { "User",
+    { pattern = { "TelescopePreviewerLoaded" }, command = "setlocal number" }
+  }
 }
