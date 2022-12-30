@@ -94,7 +94,7 @@ lvim.builtin.telescope.defaults.mappings = {
   },
 }
 
--- telescope extensions
+-- load telescope extensions
 lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, "undo")
 end
@@ -165,7 +165,6 @@ lvim.builtin.treesitter.ensure_installed = {
   "css",
   "yaml",
 }
-lvim.builtin.treesitter.ignore_install = { "haskell" }
 
 -- enhanced selections
 lvim.builtin.treesitter.textobjects = {
@@ -281,7 +280,24 @@ lvim.plugins = {
     -- see pull #346
     commit = "aba3ab3"
   },
-  { "debugloop/telescope-undo.nvim" }
+  { "debugloop/telescope-undo.nvim" },
+  { "rmagatti/goto-preview",
+    config = function()
+      require('goto-preview').setup {
+        width = 120,
+        height = 25,
+        default_mappings = true,
+        debug = false,
+        opacity = nil,
+        post_open_hook = function()
+          vim.keymap.set("n", "<ESC>", ":lua require('goto-preview').close_all_win()<CR>",
+            { noremap = true, silent = true })
+          vim.keymap.set("n", "<C-c>", ":lua require('goto-preview').close_all_win()<CR>",
+            { noremap = true, silent = true })
+        end
+      }
+    end
+  },
 }
 
 -- customization for vim-illuminate and lsp-config
