@@ -192,6 +192,9 @@ lvim.builtin.treesitter.textsubjects.keymaps = {
 require("lspconfig.ui.windows").default_options.border = "rounded"
 vim.api.nvim_set_hl(0, "LspInfoBorder", { fg = '#848b98', bg = '#282c34' })
 
+-- setup additional LSP servers if require
+require("lvim.lsp.manager").setup("marksman")
+
 -- extra plugins
 lvim.plugins = {
   { "navarasu/onedark.nvim",
@@ -283,9 +286,10 @@ lvim.plugins = {
   { "debugloop/telescope-undo.nvim" },
   { "rmagatti/goto-preview",
     config = function()
-      require('goto-preview').setup {
+      require("goto-preview").setup {
         width = 120,
         height = 25,
+        border = "rounded",
         default_mappings = true,
         debug = false,
         opacity = nil,
@@ -297,6 +301,13 @@ lvim.plugins = {
         end
       }
     end
+  },
+  { "iamcco/markdown-preview.nvim",
+    run = "cd app && npm install",
+    ft = "markdown",
+    config = function()
+      vim.g.mkdp_auto_start = 1
+    end,
   },
 }
 
