@@ -4,12 +4,11 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.wrap = true
 vim.opt.cursorline = false
-vim.opt.hlsearch = false
 lvim.format_on_save = true
 lvim.colorscheme = "onedark"
+lvim.log.level = "warn"
 
 -- custom keymappings
-lvim.leader = "space"
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["<C-q>"] = ":q<cr>"
 lvim.keys.normal_mode["<S-x>"] = ":BufferKill<CR>"
@@ -17,19 +16,45 @@ lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 lvim.keys.insert_mode["<C-c>"] = "<Esc>"
 
--- centers cursor when moving 1/2 page down/up
-lvim.keys.normal_mode["<C-d>"] = "<C-d>zz"
-lvim.keys.normal_mode["<C-u>"] = "<C-u>zz"
-
 -- keep searched word in the middle of the screen
 lvim.keys.normal_mode["n"] = "nzzzv"
 lvim.keys.normal_mode["N"] = "Nzzzv"
 
 -- keep yanked word in the last register when pasting
-vim.keymap.set("x", "pk", [["_dP]])
+lvim.builtin.which_key.mappings["p"] = {}
+vim.keymap.set("x", "<leader>p", [["_dP]])
+-- remap p to P for the remap above to work
+lvim.builtin.which_key.mappings["P"] = {
+  name = "Packer",
+  c = { "<cmd>PackerCompile<cr>", "Compile" },
+  i = { "<cmd>PackerInstall<cr>", "Install" },
+  r = { "<cmd>lua require('lvim.plugin-loader').recompile()<cr>", "Re-compile" },
+  s = { "<cmd>PackerSync<cr>", "Sync" },
+  S = { "<cmd>PackerStatus<cr>", "Status" },
+  u = { "<cmd>PackerUpdate<cr>", "Update" },
+}
 
 -- delete to void register
-vim.keymap.set({ "n", "v" }, "dv", [["_d]])
+lvim.builtin.which_key.mappings["d"] = {}
+vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
+-- remap d to D for the remap above to work
+lvim.builtin.which_key.mappings["D"] = {
+  name = "Debug",
+  t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Toggle Breakpoint" },
+  b = { "<cmd>lua require'dap'.step_back()<cr>", "Step Back" },
+  c = { "<cmd>lua require'dap'.continue()<cr>", "Continue" },
+  C = { "<cmd>lua require'dap'.run_to_cursor()<cr>", "Run To Cursor" },
+  d = { "<cmd>lua require'dap'.disconnect()<cr>", "Disconnect" },
+  g = { "<cmd>lua require'dap'.session()<cr>", "Get Session" },
+  i = { "<cmd>lua require'dap'.step_into()<cr>", "Step Into" },
+  o = { "<cmd>lua require'dap'.step_over()<cr>", "Step Over" },
+  u = { "<cmd>lua require'dap'.step_out()<cr>", "Step Out" },
+  p = { "<cmd>lua require'dap'.pause()<cr>", "Pause" },
+  r = { "<cmd>lua require'dap'.repl.toggle()<cr>", "Toggle Repl" },
+  s = { "<cmd>lua require'dap'.continue()<cr>", "Start" },
+  q = { "<cmd>lua require'dap'.close()<cr>", "Quit" },
+  U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", "Toggle UI" },
+}
 
 -- trouble keymappings
 lvim.builtin.which_key.mappings["t"] = {
@@ -50,23 +75,11 @@ lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 -- i don't like indentlines
 lvim.builtin.indentlines.active = false
-lvim.builtin.cmp.cmdline.enable = true
--- fix issue cmdline completion not showing
-lvim.builtin.cmp.cmdline.options = {
-  { type = { ":" },
-    sources = {
-      { name = "path" },
-      { name = "cmdline" },
-    },
-  },
-  { type = { "/", "?" },
-    sources = {
-      { name = "buffer" },
-    },
-  },
-}
 lvim.builtin.cmp.formatting.fields = { "abbr", "kind", "menu" }
-lvim.builtin.cmp.confirm_opts.select = true
+-- preselect the first suggestion
+lvim.builtin.cmp.completion = {
+  completeopt = "menu,menuone,preview"
+}
 
 -- enable telescope file preview in horizontal layout
 lvim.builtin.telescope.pickers.find_files = {
@@ -104,16 +117,18 @@ lvim.builtin.which_key.mappings["f"] = {
   "<cmd>Telescope find_files<cr>", "Find File"
 }
 
-lvim.builtin.which_key.mappings["su"] = {
-  "<cmd>Telescope undo<cr>", "Current buffer undo tree"
-}
-
--- additional picker for search menu
+-- additional pickers for search menu
 lvim.builtin.which_key.mappings["s/"] = {
   function()
     require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown())
   end,
   "Fuzzily search in current buffer"
+}
+lvim.builtin.which_key.mappings["sl"] = {
+  "<cmd>Telescope resume<cr>", "Last search"
+}
+lvim.builtin.which_key.mappings["su"] = {
+  "<cmd>Telescope undo<cr>", "Current buffer undo tree"
 }
 
 -- additional picker for treesitter menu
@@ -190,9 +205,8 @@ lvim.builtin.treesitter.textsubjects.keymaps = {
 
 -- fix lspinfo popup border
 require("lspconfig.ui.windows").default_options.border = "rounded"
-vim.api.nvim_set_hl(0, "LspInfoBorder", { fg = '#848b98', bg = '#282c34' })
 
--- setup additional LSP servers if require
+-- setup additional LSP servers
 require("lvim.lsp.manager").setup("marksman")
 
 -- extra plugins
@@ -254,7 +268,27 @@ lvim.plugins = {
       }
     end
   },
-  { "hrsh7th/cmp-cmdline" },
+  { "hrsh7th/cmp-cmdline",
+    config = function()
+      local cmp = require("cmp")
+      cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline({
+          ['<CR>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { 'c' }),
+          ['<Down>'] = { c = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }) },
+          ['<Up>'] = { c = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }) },
+        }),
+        sources = cmp.config.sources({
+          { name = 'path' }
+        }, {
+          { name = 'cmdline',
+            option = {
+              ignore_cmds = { 'q', 'qall', 'quit', 'quitall', 'Man', '!' }
+            }
+          }
+        })
+      })
+    end
+  },
   { "jayp0521/mason-null-ls.nvim",
     config = function()
       require("mason-null-ls").setup({
@@ -307,24 +341,43 @@ lvim.plugins = {
     ft = "markdown",
     config = function()
       vim.g.mkdp_auto_start = 1
-    end,
+    end
+  },
+  { "karb94/neoscroll.nvim",
+    event = "WinScrolled",
+    config = function()
+      require('neoscroll').setup({
+        -- All these keys will be mapped to their corresponding default scrolling animation
+        mappings = { '<C-u>', '<C-d>', '<C-b>', '<C-f>',
+          '<C-y>', '<C-e>', 'zt', 'zz', 'zb' },
+        hide_cursor = true, -- Hide cursor while scrolling
+        stop_eof = true, -- Stop at <EOF> when scrolling downwards
+        use_local_scrolloff = false, -- Use the local scope of scrolloff instead of the global scope
+        respect_scrolloff = false, -- Stop scrolling when the cursor reaches the scrolloff margin of the file
+        cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
+        easing_function = nil, -- Default easing function
+        pre_hook = nil, -- Function to run before the scrolling animation starts
+        post_hook = nil, -- Function to run after the scrolling animation ends
+      })
+    end
   },
 }
 
--- customization for vim-illuminate and lsp-config
 lvim.autocommands = {
-  { "BufEnter",
-    { pattern = { "*" }, command = "hi IlluminatedWordText gui=NONE guibg=#31353f" }
+  { "ColorScheme",
+    { pattern = "*",
+      callback = function()
+        -- customization for vim-illuminate
+        vim.api.nvim_set_hl(0, "IlluminatedWordRead", { bg = "#31353f", underline = false, bold = true })
+        vim.api.nvim_set_hl(0, "IlluminatedWordText", { bg = "#31353f", underline = false, bold = true })
+        vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { bg = "#31353f", underline = false, bold = true })
+        -- fix lspinfo float window border
+        vim.api.nvim_set_hl(0, "LspInfoBorder", { fg = "#848b98", bg = "#282c34" })
+        vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { underline = false })
+      end,
+    }
   },
-  { "BufEnter",
-    { pattern = { "*" }, command = "hi IlluminatedWordRead gui=NONE guibg=#31353f" }
-  },
-  { "BufEnter",
-    { pattern = { "*" }, command = "hi IlluminatedWordWrite gui=NONE guibg=#31353f" }
-  },
-  { "VimEnter",
-    { pattern = { "*" }, command = "hi LspInfoBorder guifg=#848b98, guibg=#282c34" }
-  },
+  -- set line numbers in telescope preview window
   { "User",
     { pattern = { "TelescopePreviewerLoaded" }, command = "setlocal number" }
   }
