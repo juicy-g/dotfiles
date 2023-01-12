@@ -10,6 +10,7 @@ lvim.log.level = "warn"
 
 -- custom keymappings
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+lvim.keys.insert_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["<C-q>"] = ":q<cr>"
 lvim.keys.normal_mode["<S-x>"] = ":BufferKill<CR>"
 lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
@@ -22,7 +23,7 @@ lvim.keys.normal_mode["N"] = "Nzzzv"
 
 -- keep yanked word in the last register when pasting
 lvim.builtin.which_key.mappings["p"] = {}
-vim.keymap.set("x", "<leader>p", [["_dP]])
+vim.keymap.set("x", "<leader>p", "\"_dP")
 -- remap p to P for the remap above to work
 lvim.builtin.which_key.mappings["P"] = {
   name = "Packer",
@@ -36,7 +37,7 @@ lvim.builtin.which_key.mappings["P"] = {
 
 -- delete to void register
 lvim.builtin.which_key.mappings["d"] = {}
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
+vim.keymap.set({ "n", "v" }, "<leader>d", "\"_d")
 -- remap d to D for the remap above to work
 lvim.builtin.which_key.mappings["D"] = {
   name = "Debug",
@@ -68,6 +69,8 @@ lvim.builtin.which_key.mappings["t"] = {
 }
 
 -- core plugins configs
+lvim.builtin.bufferline.options.always_show_bufferline = true
+lvim.builtin.bufferline.options.numbers = "id"
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.terminal.active = true
@@ -110,6 +113,7 @@ lvim.builtin.telescope.defaults.mappings = {
 -- load telescope extensions
 lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, "undo")
+  pcall(telescope.load_extension, "neoclip")
 end
 
 -- change to use the find_files picker rather than git_files
@@ -129,6 +133,9 @@ lvim.builtin.which_key.mappings["sl"] = {
 }
 lvim.builtin.which_key.mappings["su"] = {
   "<cmd>Telescope undo<cr>", "Current buffer undo tree"
+}
+lvim.builtin.which_key.mappings["sy"] = {
+  "<cmd>Telescope neoclip<cr>", "Yanked items"
 }
 
 -- additional picker for treesitter menu
@@ -230,7 +237,7 @@ lvim.plugins = {
   { "tpope/vim-repeat" },
   { "tpope/vim-surround" },
   { "folke/trouble.nvim",
-    cmd = "TroubleToggle",
+    cmd = "TroubleToggle"
   },
   { "ggandor/leap.nvim",
     config = function()
@@ -250,8 +257,8 @@ lvim.plugins = {
     end
   },
   { "ray-x/lsp_signature.nvim",
-    event = "BufRead",
-    config = function() require("lsp_signature").setup({
+    config = function()
+      require("lsp_signature").setup({
         bind = true,
         hint_enable = false,
         hi_parameter = "NONE"
@@ -273,16 +280,16 @@ lvim.plugins = {
       local cmp = require("cmp")
       cmp.setup.cmdline(':', {
         mapping = cmp.mapping.preset.cmdline({
-          ['<CR>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { 'c' }),
-          ['<Down>'] = { c = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }) },
-          ['<Up>'] = { c = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }) },
+          ['<CR>'] = cmp.mapping(cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true }), { 'c' }),
+          ['<Down>'] = { c = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }) },
+          ['<Up>'] = { c = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }) },
         }),
         sources = cmp.config.sources({
           { name = 'path' }
         }, {
           { name = 'cmdline',
             option = {
-              ignore_cmds = { 'q', 'qall', 'quit', 'quitall', 'Man', '!' }
+              ignore_cmds = { 'Man', '!' }
             }
           }
         })
@@ -365,7 +372,14 @@ lvim.plugins = {
     config = function()
       require("auto-hlsearch").setup()
     end
-  }
+  },
+  { "sitiom/nvim-numbertoggle" },
+  { "max397574/better-escape.nvim",
+    config = function()
+      require("better_escape").setup()
+    end,
+  },
+  { "AckslD/nvim-neoclip.lua" }
 }
 
 lvim.autocommands = {
