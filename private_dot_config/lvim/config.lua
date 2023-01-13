@@ -21,69 +21,80 @@ lvim.keys.insert_mode["<C-c>"] = "<Esc>"
 lvim.keys.normal_mode["n"] = "nzzzv"
 lvim.keys.normal_mode["N"] = "Nzzzv"
 
+local wk = require("which-key")
+wk.register({
+  -- change to use the find_files picker rather than git_files
+  ["f"] = { "<cmd>Telescope find_files<cr>", "Find File" },
+  -- additional pickers for search menu
+  ["s/"] = { function()
+    require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown())
+  end, "Fuzzily search in current buffer" },
+  ["sl"] = { "<cmd>Telescope resume<cr>", "Last search" },
+  ["su"] = { "<cmd>Telescope undo<cr>", "Current buffer undo tree" },
+  ["sy"] = { "<cmd>Telescope neoclip<cr>", "Yanked history" },
+  -- additional picker for treesitter menu
+  ["Ts"] = { function()
+    require('telescope.builtin').treesitter()
+  end, "Search Treesitter" },
+  -- add sessions menu
+  ["S"] = { name = "Session",
+    c = { "<cmd>lua require('persistence').load()<cr>", "Restore last session for current dir" },
+    l = { "<cmd>lua require('persistence').load({ last = true })<cr>", "Restore last session" },
+    Q = { "<cmd>lua require('persistence').stop()<cr>", "Quit without saving session" }
+  },
+  ["p"] = {},
+  ["d"] = {},
+  ["P"] = { name = "Packer",
+    c = { "<cmd>PackerCompile<cr>", "Compile" },
+    i = { "<cmd>PackerInstall<cr>", "Install" },
+    r = { "<cmd>lua require('lvim.plugin-loader').recompile()<cr>", "Re-compile" },
+    s = { "<cmd>PackerSync<cr>", "Sync" },
+    S = { "<cmd>PackerStatus<cr>", "Status" },
+    u = { "<cmd>PackerUpdate<cr>", "Update" },
+  },
+  ["D"] = { name = "Debug",
+    t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Toggle Breakpoint" },
+    b = { "<cmd>lua require'dap'.step_back()<cr>", "Step Back" },
+    c = { "<cmd>lua require'dap'.continue()<cr>", "Continue" },
+    C = { "<cmd>lua require'dap'.run_to_cursor()<cr>", "Run To Cursor" },
+    d = { "<cmd>lua require'dap'.disconnect()<cr>", "Disconnect" },
+    g = { "<cmd>lua require'dap'.session()<cr>", "Get Session" },
+    i = { "<cmd>lua require'dap'.step_into()<cr>", "Step Into" },
+    o = { "<cmd>lua require'dap'.step_over()<cr>", "Step Over" },
+    u = { "<cmd>lua require'dap'.step_out()<cr>", "Step Out" },
+    p = { "<cmd>lua require'dap'.pause()<cr>", "Pause" },
+    r = { "<cmd>lua require'dap'.repl.toggle()<cr>", "Toggle Repl" },
+    s = { "<cmd>lua require'dap'.continue()<cr>", "Start" },
+    q = { "<cmd>lua require'dap'.close()<cr>", "Quit" },
+    U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", "Toggle UI" },
+  },
+  ["t"] = {
+    name = "Diagnostics",
+    t = { "<cmd>TroubleToggle<cr>", "trouble" },
+    w = { "<cmd>TroubleToggle workspace_diagnostics<cr>", "workspace" },
+    d = { "<cmd>TroubleToggle document_diagnostics<cr>", "document" },
+    q = { "<cmd>TroubleToggle quickfix<cr>", "quickfix" },
+    l = { "<cmd>TroubleToggle loclist<cr>", "loclist" },
+    r = { "<cmd>TroubleToggle lsp_references<cr>", "references" },
+  },
+})
+
 -- keep yanked word in the last register when pasting
-lvim.builtin.which_key.mappings["p"] = {}
 vim.keymap.set("x", "<leader>p", "\"_dP")
--- remap p to P for the remap above to work
-lvim.builtin.which_key.mappings["P"] = {
-  name = "Packer",
-  c = { "<cmd>PackerCompile<cr>", "Compile" },
-  i = { "<cmd>PackerInstall<cr>", "Install" },
-  r = { "<cmd>lua require('lvim.plugin-loader').recompile()<cr>", "Re-compile" },
-  s = { "<cmd>PackerSync<cr>", "Sync" },
-  S = { "<cmd>PackerStatus<cr>", "Status" },
-  u = { "<cmd>PackerUpdate<cr>", "Update" },
-}
-
 -- delete to void register
-lvim.builtin.which_key.mappings["d"] = {}
 vim.keymap.set({ "n", "v" }, "<leader>d", "\"_d")
--- remap d to D for the remap above to work
-lvim.builtin.which_key.mappings["D"] = {
-  name = "Debug",
-  t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Toggle Breakpoint" },
-  b = { "<cmd>lua require'dap'.step_back()<cr>", "Step Back" },
-  c = { "<cmd>lua require'dap'.continue()<cr>", "Continue" },
-  C = { "<cmd>lua require'dap'.run_to_cursor()<cr>", "Run To Cursor" },
-  d = { "<cmd>lua require'dap'.disconnect()<cr>", "Disconnect" },
-  g = { "<cmd>lua require'dap'.session()<cr>", "Get Session" },
-  i = { "<cmd>lua require'dap'.step_into()<cr>", "Step Into" },
-  o = { "<cmd>lua require'dap'.step_over()<cr>", "Step Over" },
-  u = { "<cmd>lua require'dap'.step_out()<cr>", "Step Out" },
-  p = { "<cmd>lua require'dap'.pause()<cr>", "Pause" },
-  r = { "<cmd>lua require'dap'.repl.toggle()<cr>", "Toggle Repl" },
-  s = { "<cmd>lua require'dap'.continue()<cr>", "Start" },
-  q = { "<cmd>lua require'dap'.close()<cr>", "Quit" },
-  U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", "Toggle UI" },
-}
-
--- trouble keymappings
-lvim.builtin.which_key.mappings["t"] = {
-  name = "Diagnostics",
-  t = { "<cmd>TroubleToggle<cr>", "trouble" },
-  w = { "<cmd>TroubleToggle workspace_diagnostics<cr>", "workspace" },
-  d = { "<cmd>TroubleToggle document_diagnostics<cr>", "document" },
-  q = { "<cmd>TroubleToggle quickfix<cr>", "quickfix" },
-  l = { "<cmd>TroubleToggle loclist<cr>", "loclist" },
-  r = { "<cmd>TroubleToggle lsp_references<cr>", "references" },
-}
 
 -- core plugins configs
 lvim.builtin.bufferline.options.always_show_bufferline = true
 lvim.builtin.bufferline.options.numbers = "id"
-lvim.builtin.alpha.active = true
-lvim.builtin.alpha.mode = "dashboard"
-lvim.builtin.terminal.active = true
-lvim.builtin.nvimtree.setup.view.side = "left"
-lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 -- i don't like indentlines
 lvim.builtin.indentlines.active = false
+-- change the order from the default
 lvim.builtin.cmp.formatting.fields = { "abbr", "kind", "menu" }
 -- preselect the first suggestion
 lvim.builtin.cmp.completion = {
   completeopt = "menu,menuone,preview"
 }
-
 -- enable telescope file preview in horizontal layout
 lvim.builtin.telescope.pickers.find_files = {
   layout_strategy = "horizontal",
@@ -91,8 +102,7 @@ lvim.builtin.telescope.pickers.find_files = {
 lvim.builtin.telescope.defaults.file_ignore_patterns = {
   ".git/",
 }
-
--- add additional mappings
+-- add additional telescope mappings
 local _, actions = pcall(require, "telescope.actions")
 local _, trouble = pcall(require, "trouble.providers.telescope")
 lvim.builtin.telescope.defaults.mappings = {
@@ -115,44 +125,6 @@ lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, "undo")
   pcall(telescope.load_extension, "neoclip")
 end
-
--- change to use the find_files picker rather than git_files
-lvim.builtin.which_key.mappings["f"] = {
-  "<cmd>Telescope find_files<cr>", "Find File"
-}
-
--- additional pickers for search menu
-lvim.builtin.which_key.mappings["s/"] = {
-  function()
-    require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown())
-  end,
-  "Fuzzily search in current buffer"
-}
-lvim.builtin.which_key.mappings["sl"] = {
-  "<cmd>Telescope resume<cr>", "Last search"
-}
-lvim.builtin.which_key.mappings["su"] = {
-  "<cmd>Telescope undo<cr>", "Current buffer undo tree"
-}
-lvim.builtin.which_key.mappings["sy"] = {
-  "<cmd>Telescope neoclip<cr>", "Yanked items"
-}
-
--- additional picker for treesitter menu
-lvim.builtin.which_key.mappings["Ts"] = {
-  function()
-    require('telescope.builtin').treesitter()
-  end,
-  "Search Treesitter"
-}
-
--- add sessions menu
-lvim.builtin.which_key.mappings["S"] = {
-  name = "Session",
-  c = { "<cmd>lua require('persistence').load()<cr>", "Restore last session for current dir" },
-  l = { "<cmd>lua require('persistence').load({ last = true })<cr>", "Restore last session" },
-  Q = { "<cmd>lua require('persistence').stop()<cr>", "Quit without saving session" },
-}
 
 -- add restore session button to dashboard
 lvim.builtin.alpha.dashboard.section.buttons = {
@@ -203,8 +175,6 @@ lvim.builtin.treesitter.textobjects = {
     },
   },
 }
-
--- smart selection in visual mode
 lvim.builtin.treesitter.textsubjects.enable = true
 lvim.builtin.treesitter.textsubjects.keymaps = {
   ["<CR>"] = "textsubjects-smart"
@@ -236,9 +206,7 @@ lvim.plugins = {
   { "edkolev/tmuxline.vim" },
   { "tpope/vim-repeat" },
   { "tpope/vim-surround" },
-  { "folke/trouble.nvim",
-    cmd = "TroubleToggle"
-  },
+  { "folke/trouble.nvim", cmd = "TroubleToggle" },
   { "ggandor/leap.nvim",
     config = function()
       require('leap').add_default_mappings()
@@ -280,7 +248,7 @@ lvim.plugins = {
       local cmp = require("cmp")
       cmp.setup.cmdline(':', {
         mapping = cmp.mapping.preset.cmdline({
-          ['<CR>'] = cmp.mapping(cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true }), { 'c' }),
+          ['<CR>'] = { c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true }) },
           ['<Down>'] = { c = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }) },
           ['<Up>'] = { c = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }) },
         }),
@@ -362,9 +330,6 @@ lvim.plugins = {
         use_local_scrolloff = false, -- Use the local scope of scrolloff instead of the global scope
         respect_scrolloff = false, -- Stop scrolling when the cursor reaches the scrolloff margin of the file
         cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
-        easing_function = nil, -- Default easing function
-        pre_hook = nil, -- Function to run before the scrolling animation starts
-        post_hook = nil, -- Function to run after the scrolling animation ends
       })
     end
   },
