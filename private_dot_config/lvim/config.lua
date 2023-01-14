@@ -21,63 +21,80 @@ lvim.keys.insert_mode["<C-c>"] = "<Esc>"
 lvim.keys.normal_mode["n"] = "nzzzv"
 lvim.keys.normal_mode["N"] = "Nzzzv"
 
-local wk = require("which-key")
-wk.register({
-  -- change to use the find_files picker rather than git_files
-  ["f"] = { "<cmd>Telescope find_files<cr>", "Find File" },
-  -- additional pickers for search menu
-  ["s/"] = { function()
+-- return cursor to previous location when leaving visual mode
+vim.keymap.set({ "n" }, "v", "mav", { noremap = true })
+vim.keymap.set("v", "<ESC>", "<ESC>`a", { noremap = true, silent = true })
+
+lvim.builtin.which_key.mappings["d"] = {}
+lvim.builtin.which_key.mappings["D"] = {
+  name = "Debug",
+  t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Toggle Breakpoint" },
+  b = { "<cmd>lua require'dap'.step_back()<cr>", "Step Back" },
+  c = { "<cmd>lua require'dap'.continue()<cr>", "Continue" },
+  C = { "<cmd>lua require'dap'.run_to_cursor()<cr>", "Run To Cursor" },
+  d = { "<cmd>lua require'dap'.disconnect()<cr>", "Disconnect" },
+  g = { "<cmd>lua require'dap'.session()<cr>", "Get Session" },
+  i = { "<cmd>lua require'dap'.step_into()<cr>", "Step Into" },
+  o = { "<cmd>lua require'dap'.step_over()<cr>", "Step Over" },
+  u = { "<cmd>lua require'dap'.step_out()<cr>", "Step Out" },
+  p = { "<cmd>lua require'dap'.pause()<cr>", "Pause" },
+  r = { "<cmd>lua require'dap'.repl.toggle()<cr>", "Toggle Repl" },
+  s = { "<cmd>lua require'dap'.continue()<cr>", "Start" },
+  q = { "<cmd>lua require'dap'.close()<cr>", "Quit" },
+  U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", "Toggle UI" },
+}
+
+-- trouble keymappings
+lvim.builtin.which_key.mappings["t"] = {
+  name = "Diagnostics",
+  t = { "<cmd>TroubleToggle<cr>", "trouble" },
+  w = { "<cmd>TroubleToggle workspace_diagnostics<cr>", "workspace" },
+  d = { "<cmd>TroubleToggle document_diagnostics<cr>", "document" },
+  q = { "<cmd>TroubleToggle quickfix<cr>", "quickfix" },
+  l = { "<cmd>TroubleToggle loclist<cr>", "loclist" },
+  r = { "<cmd>TroubleToggle lsp_references<cr>", "references" },
+}
+
+-- change to use the find_files picker rather than git_files
+lvim.builtin.which_key.mappings["f"] = {
+  "<cmd>Telescope find_files<cr>", "Find File"
+}
+lvim.builtin.which_key.mappings["F"] = {
+  "<cmd>Telescope file_browser<cr>", "File Browser"
+}
+
+-- additional pickers for search menu
+lvim.builtin.which_key.mappings["s/"] = {
+  function()
     require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown())
-  end, "Fuzzily search in current buffer" },
-  ["sl"] = { "<cmd>Telescope resume<cr>", "Last search" },
-  ["su"] = { "<cmd>Telescope undo<cr>", "Current buffer undo tree" },
-  ["sy"] = { "<cmd>Telescope neoclip<cr>", "Yanked history" },
-  -- additional picker for treesitter menu
-  ["Ts"] = { function()
+  end,
+  "Fuzzily search in current buffer"
+}
+lvim.builtin.which_key.mappings["sl"] = {
+  "<cmd>Telescope resume<cr>", "Last search"
+}
+lvim.builtin.which_key.mappings["su"] = {
+  "<cmd>Telescope undo<cr>", "Current buffer undo tree"
+}
+lvim.builtin.which_key.mappings["sy"] = {
+  "<cmd>Telescope neoclip<cr>", "Yanked items"
+}
+
+-- additional picker for treesitter menu
+lvim.builtin.which_key.mappings["Ts"] = {
+  function()
     require('telescope.builtin').treesitter()
-  end, "Search Treesitter" },
-  -- add sessions menu
-  ["S"] = { name = "Session",
-    c = { "<cmd>lua require('persistence').load()<cr>", "Restore last session for current dir" },
-    l = { "<cmd>lua require('persistence').load({ last = true })<cr>", "Restore last session" },
-    Q = { "<cmd>lua require('persistence').stop()<cr>", "Quit without saving session" }
-  },
-  ["p"] = {},
-  ["d"] = {},
-  ["P"] = { name = "Packer",
-    c = { "<cmd>PackerCompile<cr>", "Compile" },
-    i = { "<cmd>PackerInstall<cr>", "Install" },
-    r = { "<cmd>lua require('lvim.plugin-loader').recompile()<cr>", "Re-compile" },
-    s = { "<cmd>PackerSync<cr>", "Sync" },
-    S = { "<cmd>PackerStatus<cr>", "Status" },
-    u = { "<cmd>PackerUpdate<cr>", "Update" },
-  },
-  ["D"] = { name = "Debug",
-    t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Toggle Breakpoint" },
-    b = { "<cmd>lua require'dap'.step_back()<cr>", "Step Back" },
-    c = { "<cmd>lua require'dap'.continue()<cr>", "Continue" },
-    C = { "<cmd>lua require'dap'.run_to_cursor()<cr>", "Run To Cursor" },
-    d = { "<cmd>lua require'dap'.disconnect()<cr>", "Disconnect" },
-    g = { "<cmd>lua require'dap'.session()<cr>", "Get Session" },
-    i = { "<cmd>lua require'dap'.step_into()<cr>", "Step Into" },
-    o = { "<cmd>lua require'dap'.step_over()<cr>", "Step Over" },
-    u = { "<cmd>lua require'dap'.step_out()<cr>", "Step Out" },
-    p = { "<cmd>lua require'dap'.pause()<cr>", "Pause" },
-    r = { "<cmd>lua require'dap'.repl.toggle()<cr>", "Toggle Repl" },
-    s = { "<cmd>lua require'dap'.continue()<cr>", "Start" },
-    q = { "<cmd>lua require'dap'.close()<cr>", "Quit" },
-    U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", "Toggle UI" },
-  },
-  ["t"] = {
-    name = "Diagnostics",
-    t = { "<cmd>TroubleToggle<cr>", "trouble" },
-    w = { "<cmd>TroubleToggle workspace_diagnostics<cr>", "workspace" },
-    d = { "<cmd>TroubleToggle document_diagnostics<cr>", "document" },
-    q = { "<cmd>TroubleToggle quickfix<cr>", "quickfix" },
-    l = { "<cmd>TroubleToggle loclist<cr>", "loclist" },
-    r = { "<cmd>TroubleToggle lsp_references<cr>", "references" },
-  },
-})
+  end,
+  "Search Treesitter"
+}
+
+-- add sessions menu
+lvim.builtin.which_key.mappings["S"] = {
+  name = "Session",
+  c = { "<cmd>lua require('persistence').load()<cr>", "Restore last session for current dir" },
+  l = { "<cmd>lua require('persistence').load({ last = true })<cr>", "Restore last session" },
+  Q = { "<cmd>lua require('persistence').stop()<cr>", "Quit without saving session" },
+}
 
 -- keep yanked word in the last register when pasting
 vim.keymap.set("x", "<leader>p", "\"_dP")
@@ -124,6 +141,7 @@ lvim.builtin.telescope.defaults.mappings = {
 lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, "undo")
   pcall(telescope.load_extension, "neoclip")
+  pcall(telescope.load_extension, "file_browser")
 end
 
 -- add restore session button to dashboard
@@ -344,7 +362,8 @@ lvim.plugins = {
       require("better_escape").setup()
     end,
   },
-  { "AckslD/nvim-neoclip.lua" }
+  { "AckslD/nvim-neoclip.lua" },
+  { "nvim-telescope/telescope-file-browser.nvim" }
 }
 
 lvim.autocommands = {
