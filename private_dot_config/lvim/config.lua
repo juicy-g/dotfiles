@@ -4,7 +4,6 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.wrap = true
 vim.opt.cursorline = false
-lvim.format_on_save = true
 lvim.colorscheme = "onedark"
 lvim.log.level = "warn"
 
@@ -21,11 +20,15 @@ lvim.keys.insert_mode["<C-c>"] = "<Esc>"
 lvim.keys.normal_mode["n"] = "nzzzv"
 lvim.keys.normal_mode["N"] = "Nzzzv"
 
--- return cursor to previous location when leaving visual mode
+-- return cursor to previous location when cancelling from visual mode
 vim.keymap.set({ "n" }, "v", "mav", { noremap = true })
+vim.keymap.set({ "n" }, "V", "maV", { noremap = true })
 vim.keymap.set("v", "<ESC>", "<ESC>`a", { noremap = true, silent = true })
 
-lvim.builtin.which_key.mappings["d"] = {}
+-- which_key remappings
+lvim.builtin.which_key.mappings["<space>"] = {
+  "<cmd>Telescope buffers<cr>", "Buffers List"
+}
 lvim.builtin.which_key.mappings["D"] = {
   name = "Debug",
   t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Toggle Breakpoint" },
@@ -43,8 +46,6 @@ lvim.builtin.which_key.mappings["D"] = {
   q = { "<cmd>lua require'dap'.close()<cr>", "Quit" },
   U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", "Toggle UI" },
 }
-
--- trouble keymappings
 lvim.builtin.which_key.mappings["t"] = {
   name = "Diagnostics",
   t = { "<cmd>TroubleToggle<cr>", "trouble" },
@@ -54,7 +55,6 @@ lvim.builtin.which_key.mappings["t"] = {
   l = { "<cmd>TroubleToggle loclist<cr>", "loclist" },
   r = { "<cmd>TroubleToggle lsp_references<cr>", "references" },
 }
-
 -- change to use the find_files picker rather than git_files
 lvim.builtin.which_key.mappings["f"] = {
   "<cmd>Telescope find_files<cr>", "Find File"
@@ -62,7 +62,6 @@ lvim.builtin.which_key.mappings["f"] = {
 lvim.builtin.which_key.mappings["F"] = {
   "<cmd>Telescope file_browser<cr>", "File Browser"
 }
-
 -- additional pickers for search menu
 lvim.builtin.which_key.mappings["s/"] = {
   function()
@@ -79,7 +78,6 @@ lvim.builtin.which_key.mappings["su"] = {
 lvim.builtin.which_key.mappings["sy"] = {
   "<cmd>Telescope neoclip<cr>", "Yanked items"
 }
-
 -- additional picker for treesitter menu
 lvim.builtin.which_key.mappings["Ts"] = {
   function()
@@ -87,8 +85,7 @@ lvim.builtin.which_key.mappings["Ts"] = {
   end,
   "Search Treesitter"
 }
-
--- add sessions menu
+-- add a sessions menu
 lvim.builtin.which_key.mappings["S"] = {
   name = "Session",
   c = { "<cmd>lua require('persistence').load()<cr>", "Restore last session for current dir" },
@@ -112,6 +109,15 @@ lvim.builtin.cmp.formatting.fields = { "abbr", "kind", "menu" }
 lvim.builtin.cmp.completion = {
   completeopt = "menu,menuone,preview"
 }
+-- TODO: fix <M-2> terminal size when nvim-tree open
+lvim.builtin.terminal.direction = "vertical"
+lvim.builtin.terminal.size = function(term)
+    if term.direction == "horizontal" then
+      return 15
+    elseif term.direction == "vertical" then
+      return vim.o.columns * 0.3
+    end
+  end
 -- enable telescope file preview in horizontal layout
 lvim.builtin.telescope.pickers.find_files = {
   layout_strategy = "horizontal",
@@ -134,7 +140,7 @@ lvim.builtin.telescope.defaults.mappings = {
     ["<C-j>"] = actions.move_selection_next,
     ["<C-k>"] = actions.move_selection_previous,
     ["<C-t>"] = trouble.open_with_trouble,
-  },
+  }
 }
 
 -- load telescope extensions
@@ -160,8 +166,8 @@ lvim.builtin.alpha.dashboard.section.buttons = {
     { "t", lvim.icons.ui.FindText .. "  Find Text", "<CMD>Telescope live_grep<CR>" },
     { "c",
       lvim.icons.ui.Gear .. "  Configuration",
-      "<CMD>edit " .. require("lvim.config"):get_user_config_path() .. " <CR>", },
-  },
+      "<CMD>edit " .. require("lvim.config"):get_user_config_path() .. " <CR>", }
+  }
 }
 
 lvim.builtin.treesitter.ensure_installed = {
@@ -175,7 +181,7 @@ lvim.builtin.treesitter.ensure_installed = {
   "typescript",
   "tsx",
   "css",
-  "yaml",
+  "yaml"
 }
 
 -- enhanced selections
@@ -190,8 +196,8 @@ lvim.builtin.treesitter.textobjects = {
       ["if"] = "@function.inner",
       ["ac"] = "@class.outer",
       ["ic"] = "@class.inner",
-    },
-  },
+    }
+  }
 }
 lvim.builtin.treesitter.textsubjects.enable = true
 lvim.builtin.treesitter.textsubjects.keymaps = {
@@ -219,8 +225,7 @@ lvim.plugins = {
         }
       })
       require('onedark').load()
-    end
-  },
+    end },
   { "edkolev/tmuxline.vim" },
   { "tpope/vim-repeat" },
   { "tpope/vim-surround" },
@@ -228,8 +233,7 @@ lvim.plugins = {
   { "ggandor/leap.nvim",
     config = function()
       require('leap').add_default_mappings()
-    end
-  },
+    end },
   { "ethanholz/nvim-lastplace",
     event = "BufRead",
     config = function()
@@ -240,8 +244,7 @@ lvim.plugins = {
         },
         lastplace_open_folds = true,
       })
-    end
-  },
+    end },
   { "ray-x/lsp_signature.nvim",
     config = function()
       require("lsp_signature").setup({
@@ -249,18 +252,16 @@ lvim.plugins = {
         hint_enable = false,
         hi_parameter = "NONE"
       })
-    end
-  },
+    end },
   { "folke/persistence.nvim",
     event = "BufReadPre",
     module = "persistence",
     config = function()
-      require("persistence").setup {
+      require("persistence").setup({
         dir = vim.fn.expand(vim.fn.stdpath "config" .. "/session/"),
         options = { "buffers", "curdir", "tabpages", "winsize" },
-      }
-    end
-  },
+      })
+    end },
   { "hrsh7th/cmp-cmdline",
     config = function()
       local cmp = require("cmp")
@@ -275,21 +276,19 @@ lvim.plugins = {
         }, {
           { name = 'cmdline',
             option = {
-              ignore_cmds = { 'Man', '!' }
+              ignore_cmds = { 'q', 'Man', '!' }
             }
           }
         })
       })
-    end
-  },
+    end },
   { "jayp0521/mason-null-ls.nvim",
     config = function()
       require("mason-null-ls").setup({
         automatic_setup = true,
       })
       require("mason-null-ls").setup_handlers()
-    end
-  },
+    end },
   { "tversteeg/registers.nvim",
     config = function()
       require("registers").setup({
@@ -298,13 +297,11 @@ lvim.plugins = {
           transparency = 0
         }
       })
-    end
-  },
+    end },
   { "windwp/nvim-ts-autotag",
     config = function()
       require("nvim-ts-autotag").setup()
-    end
-  },
+    end },
   { "RRethy/nvim-treesitter-textsubjects" },
   { "nvim-treesitter/nvim-treesitter-textobjects",
     -- see pull #346
@@ -313,7 +310,7 @@ lvim.plugins = {
   { "debugloop/telescope-undo.nvim" },
   { "rmagatti/goto-preview",
     config = function()
-      require("goto-preview").setup {
+      require("goto-preview").setup({
         width = 120,
         height = 25,
         border = "rounded",
@@ -326,42 +323,36 @@ lvim.plugins = {
           vim.keymap.set("n", "<C-c>", ":lua require('goto-preview').close_all_win()<CR>",
             { noremap = true, silent = true })
         end
-      }
-    end
-  },
+      })
+    end },
   { "iamcco/markdown-preview.nvim",
     run = "cd app && npm install",
     ft = "markdown",
     config = function()
       vim.g.mkdp_auto_start = 1
-    end
-  },
+    end },
   { "karb94/neoscroll.nvim",
     event = "WinScrolled",
     config = function()
       require('neoscroll').setup({
-        -- All these keys will be mapped to their corresponding default scrolling animation
         mappings = { '<C-u>', '<C-d>', '<C-b>', '<C-f>',
           '<C-y>', '<C-e>', 'zt', 'zz', 'zb' },
-        hide_cursor = true, -- Hide cursor while scrolling
-        stop_eof = true, -- Stop at <EOF> when scrolling downwards
-        use_local_scrolloff = false, -- Use the local scope of scrolloff instead of the global scope
-        respect_scrolloff = false, -- Stop scrolling when the cursor reaches the scrolloff margin of the file
-        cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
+        hide_cursor = false,
+        stop_eof = true,
+        use_local_scrolloff = false,
+        respect_scrolloff = false,
+        cursor_scrolls_alone = true,
       })
-    end
-  },
+    end },
   { "asiryk/auto-hlsearch.nvim",
     config = function()
       require("auto-hlsearch").setup()
-    end
-  },
+    end },
   { "sitiom/nvim-numbertoggle" },
   { "max397574/better-escape.nvim",
     config = function()
       require("better_escape").setup()
-    end,
-  },
+    end, },
   { "AckslD/nvim-neoclip.lua" },
   { "nvim-telescope/telescope-file-browser.nvim" }
 }
@@ -381,7 +372,5 @@ lvim.autocommands = {
     }
   },
   -- set line numbers in telescope preview window
-  { "User",
-    { pattern = { "TelescopePreviewerLoaded" }, command = "setlocal number" }
-  }
+  { "User", { pattern = { "TelescopePreviewerLoaded" }, command = "setlocal number" } }
 }
