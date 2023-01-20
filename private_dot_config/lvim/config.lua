@@ -25,6 +25,20 @@ vim.keymap.set({ "n" }, "v", "mav", { noremap = true })
 vim.keymap.set({ "n" }, "V", "maV", { noremap = true })
 vim.keymap.set("v", "<ESC>", "<ESC>`a", { noremap = true, silent = true })
 
+-- keymaps for yanky.nvim
+vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
+vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
+vim.keymap.set({"n","x"}, "gp", "<Plug>(YankyGPutAfter)")
+vim.keymap.set({"n","x"}, "gP", "<Plug>(YankyGPutBefore)")
+vim.keymap.set({"n","x"}, "y", "<Plug>(YankyYank)")
+
+-- keep yanked word in the last register when pasting
+lvim.builtin.which_key.mappings["p"] = {}
+vim.keymap.set("x", "<leader>p", "\"_dgP")
+-- delete to void register
+lvim.builtin.which_key.mappings["d"] = {}
+vim.keymap.set({ "n", "v" }, "<leader>d", "\"_d")
+
 -- which_key remappings
 lvim.builtin.which_key.mappings["<space>"] = {
   "<cmd>Telescope buffers<cr>", "Buffers List"
@@ -76,7 +90,7 @@ lvim.builtin.which_key.mappings["su"] = {
   "<cmd>Telescope undo<cr>", "Current buffer undo tree"
 }
 lvim.builtin.which_key.mappings["sy"] = {
-  "<cmd>Telescope neoclip<cr>", "Yanked items"
+  "<cmd>Telescope yank_history<cr>", "Yank history"
 }
 -- additional picker for treesitter menu
 lvim.builtin.which_key.mappings["Ts"] = {
@@ -92,11 +106,15 @@ lvim.builtin.which_key.mappings["S"] = {
   l = { "<cmd>lua require('persistence').load({ last = true })<cr>", "Restore last session" },
   Q = { "<cmd>lua require('persistence').stop()<cr>", "Quit without saving session" },
 }
-
--- keep yanked word in the last register when pasting
-vim.keymap.set("x", "<leader>p", "\"_dP")
--- delete to void register
-vim.keymap.set({ "n", "v" }, "<leader>d", "\"_d")
+lvim.builtin.which_key.mappings["P"] = {
+  name = "Packer",
+  c = { "<cmd>PackerCompile<cr>", "Compile" },
+  i = { "<cmd>PackerInstall<cr>", "Install" },
+  r = { "<cmd>lua require('lvim.plugin-loader').recompile()<cr>", "Re-compile" },
+  s = { "<cmd>PackerSync<cr>", "Sync" },
+  S = { "<cmd>PackerStatus<cr>", "Status" },
+  u = { "<cmd>PackerUpdate<cr>", "Update" },
+}
 
 -- core plugins configs
 lvim.builtin.bufferline.options.always_show_bufferline = true
@@ -146,8 +164,8 @@ lvim.builtin.telescope.defaults.mappings = {
 -- load telescope extensions
 lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, "undo")
-  pcall(telescope.load_extension, "neoclip")
   pcall(telescope.load_extension, "file_browser")
+  pcall(telescope.load_extension, "yank_history")
 end
 
 -- add restore session button to dashboard
@@ -352,9 +370,12 @@ lvim.plugins = {
   { "max397574/better-escape.nvim",
     config = function()
       require("better_escape").setup()
-    end, },
-  { "AckslD/nvim-neoclip.lua" },
-  { "nvim-telescope/telescope-file-browser.nvim" }
+    end },
+  { "nvim-telescope/telescope-file-browser.nvim" },
+  { "gbprod/yanky.nvim",
+    config = function()
+      require("yanky").setup()
+    end },
 }
 
 lvim.autocommands = {
