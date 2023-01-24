@@ -123,6 +123,13 @@ lvim.builtin.bufferline.options.numbers = "id"
 lvim.builtin.indentlines.active = false
 -- change the order from the default
 lvim.builtin.cmp.formatting.fields = { "abbr", "kind", "menu" }
+-- remove duplicates between lsp and buffer words
+lvim.builtin.cmp.formatting.duplicates = {
+  buffer = 0,
+  path = 1,
+  nvim_lsp = 0,
+  luasnip = 1,
+}
 -- preselect the first suggestion
 lvim.builtin.cmp.completion = {
   completeopt = "menu,menuone,preview"
@@ -285,7 +292,7 @@ lvim.plugins = {
       local cmp = require("cmp")
       cmp.setup.cmdline(':', {
         mapping = cmp.mapping.preset.cmdline({
-          ['<CR>'] = { c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true }) },
+          ['<CR>'] = { c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = false }) },
           ['<Down>'] = { c = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }) },
           ['<Up>'] = { c = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }) },
         }),
@@ -376,6 +383,23 @@ lvim.plugins = {
     config = function()
       require("yanky").setup()
     end },
+  { "dense-analysis/neural",
+    config = function()
+      require('neural').setup({
+        open_ai = {
+          mappings = {
+            swift = "<C-n>",
+            prompt = "<C-p>"
+          },
+          api_key = "{{ (bitwarden "item" "OpenAI API Key").notes }}"
+        }
+      })
+    end,
+    requires = {
+      "MunifTanjim/nui.nvim",
+      "ElPiloto/significant.nvim"
+    }
+  },
 }
 
 lvim.autocommands = {
