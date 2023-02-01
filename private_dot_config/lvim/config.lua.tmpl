@@ -1,128 +1,129 @@
 -- general options
-vim.cmd("let g:tmuxline_powerline_separators = 0")
+vim.cmd('let g:tmuxline_powerline_separators = 0')
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.wrap = true
 vim.opt.cursorline = false
-lvim.colorscheme = "onedark"
-lvim.log.level = "warn"
+lvim.colorscheme = 'onedark'
+lvim.log.level = 'warn'
+lvim.format_on_save = true
 
 -- custom keymappings
-lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
-lvim.keys.insert_mode["<C-s>"] = ":w<cr>"
-lvim.keys.normal_mode["<C-q>"] = ":q<cr>"
-lvim.keys.normal_mode["<S-x>"] = ":BufferKill<CR>"
-lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
-lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
-lvim.keys.insert_mode["<C-c>"] = "<Esc>"
+lvim.keys.normal_mode['<C-s>'] = ':w<cr>'
+lvim.keys.insert_mode['<C-s>'] = ':w<cr>'
+lvim.keys.normal_mode['<C-q>'] = ':q<cr>'
+lvim.keys.normal_mode['<S-x>'] = ':BufferKill<CR>'
+lvim.keys.normal_mode['<S-l>'] = ':BufferLineCycleNext<CR>'
+lvim.keys.normal_mode['<S-h>'] = ':BufferLineCyclePrev<CR>'
+lvim.keys.insert_mode['<C-c>'] = '<Esc>'
 
 -- keep searched word in the middle of the screen
-lvim.keys.normal_mode["n"] = "nzzzv"
-lvim.keys.normal_mode["N"] = "Nzzzv"
+lvim.keys.normal_mode['n'] = 'nzzzv'
+lvim.keys.normal_mode['N'] = 'Nzzzv'
 
 -- return cursor to previous location when cancelling from visual mode
-vim.keymap.set({ "n" }, "v", "mav", { noremap = true })
-vim.keymap.set({ "n" }, "V", "maV", { noremap = true })
-vim.keymap.set("v", "<ESC>", "<ESC>`a", { noremap = true, silent = true })
+vim.keymap.set({ 'n' }, 'v', 'mav', { noremap = true })
+vim.keymap.set({ 'n' }, 'V', 'maV', { noremap = true })
+vim.keymap.set('v', '<ESC>', '<ESC>`a', { noremap = true, silent = true })
 
 -- keymaps for yanky.nvim
-vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
-vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
-vim.keymap.set({"n","x"}, "gp", "<Plug>(YankyGPutAfter)")
-vim.keymap.set({"n","x"}, "gP", "<Plug>(YankyGPutBefore)")
-vim.keymap.set({"n","x"}, "y", "<Plug>(YankyYank)")
+vim.keymap.set({ 'n', 'x' }, 'p', '<Plug>(YankyPutAfter)')
+vim.keymap.set({ 'n', 'x' }, 'P', '<Plug>(YankyPutBefore)')
+vim.keymap.set({ 'n', 'x' }, 'gp', '<Plug>(YankyGPutAfter)')
+vim.keymap.set({ 'n', 'x' }, 'gP', '<Plug>(YankyGPutBefore)')
+vim.keymap.set({ 'n', 'x' }, 'y', '<Plug>(YankyYank)')
 
 -- keep yanked word in the last register when pasting
-lvim.builtin.which_key.mappings["p"] = {}
-vim.keymap.set("x", "<leader>p", "\"_dgP")
+lvim.builtin.which_key.mappings['p'] = {}
+vim.keymap.set('x', '<leader>p', '\"_dgP')
 -- delete to void register
-lvim.builtin.which_key.mappings["d"] = {}
-vim.keymap.set({ "n", "v" }, "<leader>d", "\"_d")
+lvim.builtin.which_key.mappings['d'] = {}
+vim.keymap.set({ 'n', 'v' }, '<leader>d', '\"_d')
 
 -- which_key remappings
-lvim.builtin.which_key.mappings["<space>"] = {
-  "<cmd>Telescope buffers<cr>", "Buffers List"
+lvim.builtin.which_key.mappings['<space>'] = {
+  '<cmd>Telescope buffers<cr>', 'Buffers List'
 }
-lvim.builtin.which_key.mappings["D"] = {
-  name = "Debug",
-  t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Toggle Breakpoint" },
-  b = { "<cmd>lua require'dap'.step_back()<cr>", "Step Back" },
-  c = { "<cmd>lua require'dap'.continue()<cr>", "Continue" },
-  C = { "<cmd>lua require'dap'.run_to_cursor()<cr>", "Run To Cursor" },
-  d = { "<cmd>lua require'dap'.disconnect()<cr>", "Disconnect" },
-  g = { "<cmd>lua require'dap'.session()<cr>", "Get Session" },
-  i = { "<cmd>lua require'dap'.step_into()<cr>", "Step Into" },
-  o = { "<cmd>lua require'dap'.step_over()<cr>", "Step Over" },
-  u = { "<cmd>lua require'dap'.step_out()<cr>", "Step Out" },
-  p = { "<cmd>lua require'dap'.pause()<cr>", "Pause" },
-  r = { "<cmd>lua require'dap'.repl.toggle()<cr>", "Toggle Repl" },
-  s = { "<cmd>lua require'dap'.continue()<cr>", "Start" },
-  q = { "<cmd>lua require'dap'.close()<cr>", "Quit" },
-  U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", "Toggle UI" },
+lvim.builtin.which_key.mappings['D'] = {
+  name = 'Debug',
+  t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", 'Toggle Breakpoint' },
+  b = { "<cmd>lua require'dap'.step_back()<cr>", 'Step Back' },
+  c = { "<cmd>lua require'dap'.continue()<cr>", 'Continue' },
+  C = { "<cmd>lua require'dap'.run_to_cursor()<cr>", 'Run To Cursor' },
+  d = { "<cmd>lua require'dap'.disconnect()<cr>", 'Disconnect' },
+  g = { "<cmd>lua require'dap'.session()<cr>", 'Get Session' },
+  i = { "<cmd>lua require'dap'.step_into()<cr>", 'Step Into' },
+  o = { "<cmd>lua require'dap'.step_over()<cr>", 'Step Over' },
+  u = { "<cmd>lua require'dap'.step_out()<cr>", 'Step Out' },
+  p = { "<cmd>lua require'dap'.pause()<cr>", 'Pause' },
+  r = { "<cmd>lua require'dap'.repl.toggle()<cr>", 'Toggle Repl' },
+  s = { "<cmd>lua require'dap'.continue()<cr>", 'Start' },
+  q = { "<cmd>lua require'dap'.close()<cr>", 'Quit' },
+  U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", 'Toggle UI' },
 }
-lvim.builtin.which_key.mappings["t"] = {
-  name = "Diagnostics",
-  t = { "<cmd>TroubleToggle<cr>", "trouble" },
-  w = { "<cmd>TroubleToggle workspace_diagnostics<cr>", "workspace" },
-  d = { "<cmd>TroubleToggle document_diagnostics<cr>", "document" },
-  q = { "<cmd>TroubleToggle quickfix<cr>", "quickfix" },
-  l = { "<cmd>TroubleToggle loclist<cr>", "loclist" },
-  r = { "<cmd>TroubleToggle lsp_references<cr>", "references" },
+lvim.builtin.which_key.mappings['t'] = {
+  name = 'Diagnostics',
+  t = { '<cmd>TroubleToggle<cr>', 'trouble' },
+  w = { '<cmd>TroubleToggle workspace_diagnostics<cr>', 'workspace' },
+  d = { '<cmd>TroubleToggle document_diagnostics<cr>', 'document' },
+  q = { '<cmd>TroubleToggle quickfix<cr>', 'quickfix' },
+  l = { '<cmd>TroubleToggle loclist<cr>', 'loclist' },
+  r = { '<cmd>TroubleToggle lsp_references<cr>', 'references' },
 }
 -- change to use the find_files picker rather than git_files
-lvim.builtin.which_key.mappings["f"] = {
-  "<cmd>Telescope find_files<cr>", "Find File"
+lvim.builtin.which_key.mappings['f'] = {
+  '<cmd>Telescope find_files<cr>', 'Find File'
 }
-lvim.builtin.which_key.mappings["F"] = {
-  "<cmd>Telescope file_browser<cr>", "File Browser"
+lvim.builtin.which_key.mappings['F'] = {
+  '<cmd>Telescope file_browser<cr>', 'File Browser'
 }
 -- additional pickers for search menu
-lvim.builtin.which_key.mappings["s/"] = {
+lvim.builtin.which_key.mappings['s/'] = {
   function()
     require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown())
   end,
-  "Fuzzily search in current buffer"
+  'Fuzzily search in current buffer'
 }
-lvim.builtin.which_key.mappings["sl"] = {
-  "<cmd>Telescope resume<cr>", "Last search"
+lvim.builtin.which_key.mappings['sl'] = {
+  '<cmd>Telescope resume<cr>', 'Last search'
 }
-lvim.builtin.which_key.mappings["su"] = {
-  "<cmd>Telescope undo<cr>", "Current buffer undo tree"
+lvim.builtin.which_key.mappings['su'] = {
+  '<cmd>Telescope undo<cr>', 'Current buffer undo tree'
 }
-lvim.builtin.which_key.mappings["sy"] = {
-  "<cmd>Telescope yank_history<cr>", "Yank history"
+lvim.builtin.which_key.mappings['sy'] = {
+  '<cmd>Telescope yank_history<cr>', 'Yank history'
 }
 -- additional picker for treesitter menu
-lvim.builtin.which_key.mappings["Ts"] = {
+lvim.builtin.which_key.mappings['Ts'] = {
   function()
     require('telescope.builtin').treesitter()
   end,
-  "Search Treesitter"
+  'Search Treesitter'
 }
 -- add a sessions menu
-lvim.builtin.which_key.mappings["S"] = {
-  name = "Session",
-  c = { "<cmd>lua require('persistence').load()<cr>", "Restore last session for current dir" },
-  l = { "<cmd>lua require('persistence').load({ last = true })<cr>", "Restore last session" },
-  Q = { "<cmd>lua require('persistence').stop()<cr>", "Quit without saving session" },
+lvim.builtin.which_key.mappings['S'] = {
+  name = 'Session',
+  c = { "<cmd>lua require('persistence').load()<cr>", 'Restore last session for current dir' },
+  l = { "<cmd>lua require('persistence').load({ last = true })<cr>", 'Restore last session' },
+  Q = { "<cmd>lua require('persistence').stop()<cr>", 'Quit without saving session' },
 }
-lvim.builtin.which_key.mappings["P"] = {
-  name = "Packer",
-  c = { "<cmd>PackerCompile<cr>", "Compile" },
-  i = { "<cmd>PackerInstall<cr>", "Install" },
-  r = { "<cmd>lua require('lvim.plugin-loader').recompile()<cr>", "Re-compile" },
-  s = { "<cmd>PackerSync<cr>", "Sync" },
-  S = { "<cmd>PackerStatus<cr>", "Status" },
-  u = { "<cmd>PackerUpdate<cr>", "Update" },
+lvim.builtin.which_key.mappings['P'] = {
+  name = 'Packer',
+  c = { '<cmd>PackerCompile<cr>', 'Compile' },
+  i = { '<cmd>PackerInstall<cr>', 'Install' },
+  r = { "<cmd>lua require('lvim.plugin-loader').recompile()<cr>", 'Re-compile' },
+  s = { '<cmd>PackerSync<cr>', 'Sync' },
+  S = { '<cmd>PackerStatus<cr>', 'Status' },
+  u = { '<cmd>PackerUpdate<cr>', 'Update' },
 }
 
 -- core plugins configs
 lvim.builtin.bufferline.options.always_show_bufferline = true
-lvim.builtin.bufferline.options.numbers = "id"
+lvim.builtin.bufferline.options.numbers = 'id'
 -- i don't like indentlines
 lvim.builtin.indentlines.active = false
 -- change the order from the default
-lvim.builtin.cmp.formatting.fields = { "abbr", "kind", "menu" }
+lvim.builtin.cmp.formatting.fields = { 'abbr', 'kind', 'menu' }
 -- remove duplicates between lsp and buffer words
 lvim.builtin.cmp.formatting.duplicates = {
   buffer = 0,
@@ -132,81 +133,81 @@ lvim.builtin.cmp.formatting.duplicates = {
 }
 -- preselect the first suggestion
 lvim.builtin.cmp.completion = {
-  completeopt = "menu,menuone,preview"
+  completeopt = 'menu,menuone,preview'
 }
 -- TODO: fix <M-2> terminal size when nvim-tree open
-lvim.builtin.terminal.direction = "vertical"
+lvim.builtin.terminal.direction = 'vertical'
 lvim.builtin.terminal.size = function(term)
-    if term.direction == "horizontal" then
-      return 15
-    elseif term.direction == "vertical" then
-      return vim.o.columns * 0.3
-    end
+  if term.direction == 'horizontal' then
+    return 15
+  elseif term.direction == 'vertical' then
+    return vim.o.columns * 0.3
   end
+end
 -- enable telescope file preview in horizontal layout
 lvim.builtin.telescope.pickers.find_files = {
-  layout_strategy = "horizontal",
+  layout_strategy = 'horizontal',
 }
 lvim.builtin.telescope.defaults.file_ignore_patterns = {
-  ".git/",
+  '.git/',
 }
 -- add additional telescope mappings
-local _, actions = pcall(require, "telescope.actions")
-local _, trouble = pcall(require, "trouble.providers.telescope")
+local _, actions = pcall(require, 'telescope.actions')
+local _, trouble = pcall(require, 'trouble.providers.telescope')
 lvim.builtin.telescope.defaults.mappings = {
   i = {
-    ["<C-j>"] = actions.move_selection_next,
-    ["<C-k>"] = actions.move_selection_previous,
-    ["<C-n>"] = actions.cycle_history_next,
-    ["<C-p>"] = actions.cycle_history_prev,
-    ["<C-t>"] = trouble.open_with_trouble,
+    ['<C-j>'] = actions.move_selection_next,
+    ['<C-k>'] = actions.move_selection_previous,
+    ['<C-n>'] = actions.cycle_history_next,
+    ['<C-p>'] = actions.cycle_history_prev,
+    ['<C-t>'] = trouble.open_with_trouble,
   },
   n = {
-    ["<C-j>"] = actions.move_selection_next,
-    ["<C-k>"] = actions.move_selection_previous,
-    ["<C-t>"] = trouble.open_with_trouble,
+    ['<C-j>'] = actions.move_selection_next,
+    ['<C-k>'] = actions.move_selection_previous,
+    ['<C-t>'] = trouble.open_with_trouble,
   }
 }
 
 -- load telescope extensions
 lvim.builtin.telescope.on_config_done = function(telescope)
-  pcall(telescope.load_extension, "undo")
-  pcall(telescope.load_extension, "file_browser")
-  pcall(telescope.load_extension, "yank_history")
+  pcall(telescope.load_extension, 'undo')
+  pcall(telescope.load_extension, 'file_browser')
+  pcall(telescope.load_extension, 'yank_history')
 end
 
 -- add restore session button to dashboard
 lvim.builtin.alpha.dashboard.section.buttons = {
   opts = {
-    hl_shortcut = "Include",
+    hl_shortcut = 'Include',
     spacing = 1,
   },
   entries = {
-    { "f", lvim.icons.ui.FindFile .. "  Find File", "<CMD>Telescope find_files<CR>" },
-    { "n", lvim.icons.ui.NewFile .. "  New File", "<CMD>ene!<CR>" },
-    { "p", lvim.icons.ui.Project .. "  Projects ", "<CMD>Telescope projects<CR>" },
-    { "r", lvim.icons.ui.History .. "  Recent files", ":Telescope oldfiles <CR>" },
-    { "s", lvim.icons.ui.BookMark .. "  Restore session",
+    { 'f', lvim.icons.ui.FindFile .. '  Find File', '<CMD>Telescope find_files<CR>' },
+    { 'n', lvim.icons.ui.NewFile .. '  New File', '<CMD>ene!<CR>' },
+    { 'p', lvim.icons.ui.Project .. '  Projects ', '<CMD>Telescope projects<CR>' },
+    { 'r', lvim.icons.ui.History .. '  Recent files', ':Telescope oldfiles <CR>' },
+    { 's', lvim.icons.ui.BookMark .. '  Restore session',
       "<cmd>lua require('persistence').load({ last = true })<cr>" },
-    { "t", lvim.icons.ui.FindText .. "  Find Text", "<CMD>Telescope live_grep<CR>" },
-    { "c",
-      lvim.icons.ui.Gear .. "  Configuration",
-      "<CMD>edit " .. require("lvim.config"):get_user_config_path() .. " <CR>", }
+    { 't', lvim.icons.ui.FindText .. '  Find Text', '<CMD>Telescope live_grep<CR>' },
+    { 'c',
+      lvim.icons.ui.Gear .. '  Configuration',
+      '<CMD>edit ' .. require('lvim.config'):get_user_config_path() .. ' <CR>', }
   }
 }
 
 lvim.builtin.treesitter.ensure_installed = {
-  "bash",
-  "c",
-  "javascript",
-  "json",
-  "lua",
-  "python",
-  "ruby",
-  "typescript",
-  "tsx",
-  "css",
-  "yaml"
+  'bash',
+  'c',
+  'javascript',
+  'json',
+  'lua',
+  'python',
+  'ruby',
+  'typescript',
+  'tsx',
+  'css',
+  'yaml'
 }
 
 -- enhanced selections
@@ -217,28 +218,31 @@ lvim.builtin.treesitter.textobjects = {
     keymaps = {
       ['aa'] = '@parameter.outer',
       ['ia'] = '@parameter.inner',
-      ["af"] = "@function.outer",
-      ["if"] = "@function.inner",
-      ["ac"] = "@class.outer",
-      ["ic"] = "@class.inner",
+      ['af'] = '@function.outer',
+      ['if'] = '@function.inner',
+      ['ac'] = '@class.outer',
+      ['ic'] = '@class.inner',
     }
   }
 }
 lvim.builtin.treesitter.textsubjects.enable = true
 lvim.builtin.treesitter.textsubjects.keymaps = {
-  ["<CR>"] = "textsubjects-smart"
+  ['<CR>'] = 'textsubjects-smart'
 }
 
 -- fix lspinfo popup border
-require("lspconfig.ui.windows").default_options.border = "rounded"
+require('lspconfig.ui.windows').default_options.border = 'rounded'
 
 -- setup additional LSP servers
-require("lvim.lsp.manager").setup("marksman")
+require('lvim.lsp.manager').setup('marksman')
+
+-- manual setup of sumneko_lua LSP server for autoformat
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'sumneko_lua' })
 
 -- extra plugins
 lvim.plugins = {
-  { "alker0/chezmoi.vim" },
-  { "navarasu/onedark.nvim",
+  { 'alker0/chezmoi.vim' },
+  { 'navarasu/onedark.nvim',
     config = function()
       -- fix some border issues with telescope and LSP float windows
       require('onedark').setup({
@@ -252,45 +256,45 @@ lvim.plugins = {
       })
       require('onedark').load()
     end },
-  { "edkolev/tmuxline.vim" },
-  { "tpope/vim-repeat" },
-  { "tpope/vim-surround" },
-  { "folke/trouble.nvim", cmd = "TroubleToggle" },
-  { "ggandor/leap.nvim",
+  { 'edkolev/tmuxline.vim' },
+  { 'tpope/vim-repeat' },
+  { 'tpope/vim-surround' },
+  { 'folke/trouble.nvim', cmd = 'TroubleToggle' },
+  { 'ggandor/leap.nvim',
     config = function()
       require('leap').add_default_mappings()
     end },
-  { "ethanholz/nvim-lastplace",
-    event = "BufRead",
+  { 'ethanholz/nvim-lastplace',
+    event = 'BufRead',
     config = function()
-      require("nvim-lastplace").setup({
-        lastplace_ignore_buftype = { "quickfix", "nofile", "help" },
+      require('nvim-lastplace').setup({
+        lastplace_ignore_buftype = { 'quickfix', 'nofile', 'help' },
         lastplace_ignore_filetype = {
-          "gitcommit", "gitrebase", "svn", "hgcommit",
+          'gitcommit', 'gitrebase', 'svn', 'hgcommit',
         },
         lastplace_open_folds = true,
       })
     end },
-  { "ray-x/lsp_signature.nvim",
+  { 'ray-x/lsp_signature.nvim',
     config = function()
-      require("lsp_signature").setup({
+      require('lsp_signature').setup({
         bind = true,
         hint_enable = false,
-        hi_parameter = "NONE"
+        hi_parameter = 'NONE'
       })
     end },
-  { "folke/persistence.nvim",
-    event = "BufReadPre",
-    module = "persistence",
+  { 'folke/persistence.nvim',
+    event = 'BufReadPre',
+    module = 'persistence',
     config = function()
-      require("persistence").setup({
-        dir = vim.fn.expand(vim.fn.stdpath "config" .. "/session/"),
-        options = { "buffers", "curdir", "tabpages", "winsize" },
+      require('persistence').setup({
+        dir = vim.fn.expand(vim.fn.stdpath 'config' .. '/session/'),
+        options = { 'buffers', 'curdir', 'tabpages', 'winsize' },
       })
     end },
-  { "hrsh7th/cmp-cmdline",
+  { 'hrsh7th/cmp-cmdline',
     config = function()
-      local cmp = require("cmp")
+      local cmp = require('cmp')
       cmp.setup.cmdline(':', {
         mapping = cmp.mapping.preset.cmdline({
           ['<CR>'] = { c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = false }) },
@@ -308,57 +312,57 @@ lvim.plugins = {
         })
       })
     end },
-  { "jayp0521/mason-null-ls.nvim",
+  { 'jayp0521/mason-null-ls.nvim',
     config = function()
-      require("mason-null-ls").setup({
-        automatic_setup = true,
+      require('mason-null-ls').setup({
+        automatic_setup = false,
       })
-      require("mason-null-ls").setup_handlers()
+      require('mason-null-ls').setup_handlers()
     end },
-  { "tversteeg/registers.nvim",
+  { 'tversteeg/registers.nvim',
     config = function()
-      require("registers").setup({
+      require('registers').setup({
         window = {
-          border = "rounded",
+          border = 'rounded',
           transparency = 0
         }
       })
     end },
-  { "windwp/nvim-ts-autotag",
+  { 'windwp/nvim-ts-autotag',
     config = function()
-      require("nvim-ts-autotag").setup()
+      require('nvim-ts-autotag').setup()
     end },
-  { "RRethy/nvim-treesitter-textsubjects" },
-  { "nvim-treesitter/nvim-treesitter-textobjects",
+  { 'RRethy/nvim-treesitter-textsubjects' },
+  { 'nvim-treesitter/nvim-treesitter-textobjects',
     -- see pull #346
-    commit = "aba3ab3"
+    commit = 'aba3ab3'
   },
-  { "debugloop/telescope-undo.nvim" },
-  { "rmagatti/goto-preview",
+  { 'debugloop/telescope-undo.nvim' },
+  { 'rmagatti/goto-preview',
     config = function()
-      require("goto-preview").setup({
+      require('goto-preview').setup({
         width = 120,
         height = 25,
-        border = "rounded",
+        border = 'rounded',
         default_mappings = true,
         debug = false,
         opacity = nil,
         post_open_hook = function()
-          vim.keymap.set("n", "<ESC>", ":lua require('goto-preview').close_all_win()<CR>",
+          vim.keymap.set('n', '<ESC>', ":lua require('goto-preview').close_all_win()<CR>",
             { noremap = true, silent = true })
-          vim.keymap.set("n", "<C-c>", ":lua require('goto-preview').close_all_win()<CR>",
+          vim.keymap.set('n', '<C-c>', ":lua require('goto-preview').close_all_win()<CR>",
             { noremap = true, silent = true })
         end
       })
     end },
-  { "iamcco/markdown-preview.nvim",
-    run = "cd app && npm install",
-    ft = "markdown",
+  { 'iamcco/markdown-preview.nvim',
+    run = 'cd app && npm install',
+    ft = 'markdown',
     config = function()
       vim.g.mkdp_auto_start = 1
     end },
-  { "karb94/neoscroll.nvim",
-    event = "WinScrolled",
+  { 'karb94/neoscroll.nvim',
+    event = 'WinScrolled',
     config = function()
       require('neoscroll').setup({
         mappings = { '<C-u>', '<C-d>', '<C-b>', '<C-f>',
@@ -370,55 +374,68 @@ lvim.plugins = {
         cursor_scrolls_alone = true,
       })
     end },
-  { "asiryk/auto-hlsearch.nvim",
+  { 'asiryk/auto-hlsearch.nvim',
     config = function()
-      require("auto-hlsearch").setup()
+      require('auto-hlsearch').setup()
     end },
-  { "sitiom/nvim-numbertoggle" },
-  { "max397574/better-escape.nvim",
+  { 'sitiom/nvim-numbertoggle' },
+  { 'max397574/better-escape.nvim',
     config = function()
-      require("better_escape").setup()
+      require('better_escape').setup()
     end },
-  { "nvim-telescope/telescope-file-browser.nvim" },
-  { "gbprod/yanky.nvim",
+  { 'nvim-telescope/telescope-file-browser.nvim' },
+  { 'gbprod/yanky.nvim',
     config = function()
-      require("yanky").setup()
+      require('yanky').setup()
     end },
-  { "dense-analysis/neural",
+  { 'dense-analysis/neural',
     config = function()
       require('neural').setup({
         open_ai = {
           mappings = {
-            swift = "<C-n>",
-            prompt = "<C-p>"
+            swift = '<C-n>',
+            prompt = '<C-p>'
           },
-          api_key = "{{ (bitwarden "item" "OpenAI API Key").notes }}"
+          api_key = '{{ (bitwarden "item" "OpenAI API Key").notes }}'
         }
       })
     end,
     requires = {
-      "MunifTanjim/nui.nvim",
-      "ElPiloto/significant.nvim"
+      'MunifTanjim/nui.nvim',
+      'ElPiloto/significant.nvim'
     }
   },
-  {"kana/vim-textobj-user"},
-  {"Julian/vim-textobj-variable-segment"},
+  { 'kana/vim-textobj-user' },
+  { 'Julian/vim-textobj-variable-segment' },
 }
 
 lvim.autocommands = {
-  { "ColorScheme",
-    { pattern = "*",
+  { 'ColorScheme',
+    { pattern = '*',
       callback = function()
         -- customization for vim-illuminate
-        vim.api.nvim_set_hl(0, "IlluminatedWordRead", { bg = "#31353f", underline = false, bold = true })
-        vim.api.nvim_set_hl(0, "IlluminatedWordText", { bg = "#31353f", underline = false, bold = true })
-        vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { bg = "#31353f", underline = false, bold = true })
+        vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { bg = '#31353f', underline = false, bold = true })
+        vim.api.nvim_set_hl(0, 'IlluminatedWordText', { bg = '#31353f', underline = false, bold = true })
+        vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { bg = '#31353f', underline = false, bold = true })
         -- fix lspinfo float window border
-        vim.api.nvim_set_hl(0, "LspInfoBorder", { fg = "#848b98", bg = "#282c34" })
-        vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { underline = false })
+        vim.api.nvim_set_hl(0, 'LspInfoBorder', { fg = '#848b98', bg = '#282c34' })
+        vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', { underline = false })
       end,
     }
   },
   -- set line numbers in telescope preview window
-  { "User", { pattern = { "TelescopePreviewerLoaded" }, command = "setlocal number" } }
+  { 'User', { pattern = { 'TelescopePreviewerLoaded' }, command = 'setlocal number' } },
+  -- set filetypes for chezmoi templates files
+  { 'FileType', { pattern = 'lua.chezmoitmpl', command = 'set filetype=lua' } },
+  -- test autosave when leaving the buffer test
+  {
+    { 'BufLeave', 'FocusLost' },
+    { pattern = '*',
+      callback = function()
+        if vim.bo.modified and not vim.bo.readonly and vim.fn.expand('%') ~= '' and vim.bo.buftype == '' then
+          vim.cmd 'silent! w'
+        end
+      end
+    }
+  }
 }
