@@ -28,4 +28,6 @@ fi
 
 export GEM_HOME="$HOME/.gem/ruby/3.0.0"
 PATH="$PATH:$GEM_HOME/bin"
-EDITOR="lvim"
+export EDITOR="lvim"
+
+PATH="$PATH:$HOME/.npm-global/bin"
