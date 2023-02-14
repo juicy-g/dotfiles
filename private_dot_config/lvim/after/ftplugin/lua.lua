@@ -1,8 +1,14 @@
 local opts = {
   settings = {
     Lua = {
+      telemetry = {
+        enable = false,
+      },
+      runtime = {
+        version = 'LuaJIT',
+      },
       diagnostics = {
-        globals = { "vim", "lvim" },
+        globals = { "vim", "lvim", 'reload' },
       },
       format = {
         enable = true,
@@ -27,4 +33,4 @@ local opts = {
     },
   }
 }
-require("lvim.lsp.manager").setup("sumneko_lua", opts)
+require("lspconfig").lua_ls.setup(opts)
