@@ -1,7 +1,5 @@
 -- general options
 vim.cmd('let g:tmuxline_powerline_separators = 0')
-vim.opt.tabstop = 2
-vim.opt.shiftwidth = 2
 vim.opt.wrap = true
 vim.opt.cursorline = false
 lvim.colorscheme = 'onedark'
@@ -131,9 +129,8 @@ lvim.builtin.cmp.formatting.duplicates = {
   nvim_lsp = 0,
   luasnip = 1,
 }
--- preselect the first suggestion
 lvim.builtin.cmp.completion = {
-  completeopt = 'menu,menuone,preview'
+  completeopt = 'menu,menuone,noselect,preview'
 }
 -- TODO: fix <M-2> terminal size when nvim-tree open
 lvim.builtin.terminal.direction = 'vertical'
@@ -183,9 +180,9 @@ lvim.builtin.alpha.dashboard.section.buttons = {
     spacing = 1,
   },
   entries = {
-    { 'f', lvim.icons.ui.FindFile .. '  Find File', '<CMD>Telescope find_files<CR>' },
-    { 'n', lvim.icons.ui.NewFile .. '  New File', '<CMD>ene!<CR>' },
-    { 'p', lvim.icons.ui.Project .. '  Projects ', '<CMD>Telescope projects<CR>' },
+    { 'f', lvim.icons.ui.FindFile .. '  Find File',   '<CMD>Telescope find_files<CR>' },
+    { 'n', lvim.icons.ui.NewFile .. '  New File',     '<CMD>ene!<CR>' },
+    { 'p', lvim.icons.ui.Project .. '  Projects ',    '<CMD>Telescope projects<CR>' },
     { 'r', lvim.icons.ui.History .. '  Recent files', ':Telescope oldfiles <CR>' },
     { 's', lvim.icons.ui.BookMark .. '  Restore session',
       "<cmd>lua require('persistence').load({ last = true })<cr>" },
@@ -236,30 +233,32 @@ require('lspconfig.ui.windows').default_options.border = 'rounded'
 -- setup additional LSP servers
 require('lvim.lsp.manager').setup('marksman')
 
--- manual setup of sumneko_lua LSP server for autoformat
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'sumneko_lua' })
+-- manual setup of lua_ls for autoformat
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'lua_ls' })
 
 -- extra plugins
 lvim.plugins = {
   { 'alker0/chezmoi.vim' },
   { 'navarasu/onedark.nvim',
     config = function()
+      local onedark = require('onedark')
       -- fix some border issues with telescope and LSP float windows
-      require('onedark').setup({
+      onedark.setup({
+        style = 'darker',
         highlights = {
           TelescopePromptBorder = { fg = '#848b98' },
           TelescopeResultsBorder = { fg = '#848b98' },
           TelescopePreviewBorder = { fg = '#848b98' },
-          FloatBorder = { bg = '#282c34' },
-          NormalFloat = { bg = '#282c34' }
+          FloatBorder = { bg = '#1f2329' },
+          NormalFloat = { bg = '#1f2329' }
         }
       })
-      require('onedark').load()
+      onedark.load()
     end },
   { 'edkolev/tmuxline.vim' },
   { 'tpope/vim-repeat' },
   { 'tpope/vim-surround' },
-  { 'folke/trouble.nvim', cmd = 'TroubleToggle' },
+  { 'folke/trouble.nvim',  cmd = 'TroubleToggle' },
   { 'ggandor/leap.nvim',
     config = function()
       require('leap').add_default_mappings()
@@ -297,16 +296,15 @@ lvim.plugins = {
       local cmp = require('cmp')
       cmp.setup.cmdline(':', {
         mapping = cmp.mapping.preset.cmdline({
-          ['<CR>'] = { c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = false }) },
-          ['<Down>'] = { c = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }) },
-          ['<Up>'] = { c = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }) },
+          ['<Down>'] = { c = cmp.mapping.select_next_item() },
+          ['<Up>'] = { c = cmp.mapping.select_prev_item() },
         }),
         sources = cmp.config.sources({
           { name = 'path' }
         }, {
           { name = 'cmdline',
             option = {
-              ignore_cmds = { 'q', 'Man', '!' }
+              ignore_cmds = { 'Man', '!' }
             }
           }
         })
@@ -418,16 +416,16 @@ lvim.autocommands = {
         vim.api.nvim_set_hl(0, 'IlluminatedWordText', { bg = '#31353f', underline = false, bold = true })
         vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { bg = '#31353f', underline = false, bold = true })
         -- fix lspinfo float window border
-        vim.api.nvim_set_hl(0, 'LspInfoBorder', { fg = '#848b98', bg = '#282c34' })
+        vim.api.nvim_set_hl(0, 'LspInfoBorder', { fg = '#848b98', bg = '#1f2329' })
         vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', { underline = false })
       end,
     }
   },
   -- set line numbers in telescope preview window
-  { 'User', { pattern = { 'TelescopePreviewerLoaded' }, command = 'setlocal number' } },
+  { 'User',     { pattern = { 'TelescopePreviewerLoaded' }, command = 'setlocal number' } },
   -- set filetypes for chezmoi templates files
   { 'FileType', { pattern = 'lua.chezmoitmpl', command = 'set filetype=lua' } },
-  -- test autosave when leaving the buffer test
+  -- autosave when leaving the buffer test
   {
     { 'BufLeave', 'FocusLost' },
     { pattern = '*',
