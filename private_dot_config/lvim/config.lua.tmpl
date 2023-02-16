@@ -7,12 +7,12 @@ lvim.log.level = 'warn'
 lvim.format_on_save = true
 
 -- custom keymappings
-lvim.keys.normal_mode['<C-s>'] = ':w<cr>'
-lvim.keys.insert_mode['<C-s>'] = ':w<cr>'
-lvim.keys.normal_mode['<C-q>'] = ':q<cr>'
-lvim.keys.normal_mode['<S-x>'] = ':BufferKill<CR>'
-lvim.keys.normal_mode['<S-l>'] = ':BufferLineCycleNext<CR>'
-lvim.keys.normal_mode['<S-h>'] = ':BufferLineCyclePrev<CR>'
+lvim.keys.normal_mode['<C-s>'] = ':w<Cr>'
+lvim.keys.insert_mode['<C-s>'] = '<Cmd>:w<Cr>'
+lvim.keys.normal_mode['<C-q>'] = ':q<Cr>'
+lvim.keys.normal_mode['<S-x>'] = ':BufferKill<Cr>'
+lvim.keys.normal_mode['<S-l>'] = ':BufferLineCycleNext<Cr>'
+lvim.keys.normal_mode['<S-h>'] = ':BufferLineCyclePrev<Cr>'
 lvim.keys.insert_mode['<C-c>'] = '<Esc>'
 
 -- keep searched word in the middle of the screen
@@ -22,7 +22,7 @@ lvim.keys.normal_mode['N'] = 'Nzzzv'
 -- return cursor to previous location when cancelling from visual mode
 vim.keymap.set({ 'n' }, 'v', 'mav', { noremap = true })
 vim.keymap.set({ 'n' }, 'V', 'maV', { noremap = true })
-vim.keymap.set('v', '<ESC>', '<ESC>`a', { noremap = true, silent = true })
+vim.keymap.set('v', '<Esc>', '<Esc>`a', { noremap = true, silent = true })
 
 -- keymaps for yanky.nvim
 vim.keymap.set({ 'n', 'x' }, 'p', '<Plug>(YankyPutAfter)')
@@ -39,7 +39,7 @@ lvim.builtin.which_key.mappings['d'] = {}
 vim.keymap.set({ 'n', 'v' }, '<leader>d', '\"_d')
 
 -- which_key remappings
-lvim.builtin.which_key.mappings['<space>'] = {
+lvim.builtin.which_key.mappings['<Space>'] = {
   '<cmd>Telescope buffers<cr>', 'Buffers List'
 }
 lvim.builtin.which_key.mappings['D'] = {
@@ -425,7 +425,7 @@ lvim.autocommands = {
   { 'User',     { pattern = { 'TelescopePreviewerLoaded' }, command = 'setlocal number' } },
   -- set filetypes for chezmoi templates files
   { 'FileType', { pattern = 'lua.chezmoitmpl', command = 'set filetype=lua' } },
-  -- autosave when leaving the buffer test
+  -- autosave when leaving the buffer
   {
     { 'BufLeave', 'FocusLost' },
     { pattern = '*',
