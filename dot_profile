@@ -26,8 +26,10 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-export GEM_HOME="$HOME/.gem/ruby/3.0.0"
+export GEM_HOME="$HOME/.gem/ruby/3.1.0"
 PATH="$PATH:$GEM_HOME/bin"
 export EDITOR="lvim"
 
 PATH="$PATH:$HOME/.npm-global/bin"
+PATH="$PATH:$HOME/.cargo/bin"
+
