@@ -8,21 +8,21 @@ local opts = {
         version = 'LuaJIT',
       },
       diagnostics = {
-        globals = { "vim", "lvim", 'reload' },
+        globals = { 'vim', 'lvim', 'reload' },
       },
       format = {
         enable = true,
         defaultConfig = {
-          indent_style = "space",
-          indent_size = "2",
-          quote_style = "single"
+          indent_style = 'space',
+          indent_size = '2',
+          quote_style = 'single'
         }
       },
       workspace = {
         library = {
-          vim.fn.expand "$VIMRUNTIME",
+          vim.fn.expand '$VIMRUNTIME',
           get_lvim_base_dir(),
-          require("neodev.config").types(),
+          require('neodev.config').types(),
           plugins = true,
         },
         checkThirdParty = false,
@@ -33,4 +33,4 @@ local opts = {
     },
   }
 }
-require("lspconfig").lua_ls.setup(opts)
+require('lvim.lsp.manager').setup('lua_ls', opts)
