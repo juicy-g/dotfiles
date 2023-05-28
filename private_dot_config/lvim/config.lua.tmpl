@@ -1,7 +1,10 @@
 -- general options
 vim.cmd('let g:tmuxline_powerline_separators = 0')
+vim.cmd('let g:tmuxline_separators = { "left": "", "left_alt": "", "right": "", "right_alt": "", "space": " "}')
 vim.opt.wrap = true
 vim.opt.cursorline = false
+lvim.builtin.lualine.style = "default"
+lvim.builtin.lualine.options = { section_separators = '', component_separators = '' }
 lvim.colorscheme = 'onedark'
 lvim.log.level = 'warn'
 lvim.format_on_save = true
@@ -103,16 +106,7 @@ lvim.builtin.which_key.mappings['S'] = {
   name = 'Session',
   c = { "<cmd>lua require('persistence').load()<cr>", 'Restore last session for current dir' },
   l = { "<cmd>lua require('persistence').load({ last = true })<cr>", 'Restore last session' },
-  Q = { "<cmd>lua require('persistence').stop()<cr>", 'Quit without saving session' },
-}
-lvim.builtin.which_key.mappings['P'] = {
-  name = 'Packer',
-  c = { '<cmd>PackerCompile<cr>', 'Compile' },
-  i = { '<cmd>PackerInstall<cr>', 'Install' },
-  r = { "<cmd>lua require('lvim.plugin-loader').recompile()<cr>", 'Re-compile' },
-  s = { '<cmd>PackerSync<cr>', 'Sync' },
-  S = { '<cmd>PackerStatus<cr>', 'Status' },
-  u = { '<cmd>PackerUpdate<cr>', 'Update' },
+  q = { "<cmd>lua require('persistence').stop()<cr>", 'Quit without saving session' },
 }
 
 -- core plugins configs
@@ -129,9 +123,8 @@ lvim.builtin.cmp.formatting.duplicates = {
   nvim_lsp = 0,
   luasnip = 1,
 }
-lvim.builtin.cmp.completion = {
-  completeopt = 'menu,menuone,noselect,preview'
-}
+lvim.builtin.cmp.cmdline.enable = true
+
 -- TODO: fix <M-2> terminal size when nvim-tree open
 lvim.builtin.terminal.direction = 'vertical'
 lvim.builtin.terminal.size = function(term)
@@ -141,10 +134,7 @@ lvim.builtin.terminal.size = function(term)
     return vim.o.columns * 0.3
   end
 end
--- enable telescope file preview in horizontal layout
-lvim.builtin.telescope.pickers.find_files = {
-  layout_strategy = 'horizontal',
-}
+
 lvim.builtin.telescope.defaults.file_ignore_patterns = {
   '.git/',
 }
@@ -176,20 +166,20 @@ end
 -- add restore session button to dashboard
 lvim.builtin.alpha.dashboard.section.buttons = {
   opts = {
-    hl_shortcut = 'Include',
     spacing = 1,
   },
   entries = {
-    { 'f', lvim.icons.ui.FindFile .. '  Find File',   '<CMD>Telescope find_files<CR>' },
-    { 'n', lvim.icons.ui.NewFile .. '  New File',     '<CMD>ene!<CR>' },
-    { 'p', lvim.icons.ui.Project .. '  Projects ',    '<CMD>Telescope projects<CR>' },
-    { 'r', lvim.icons.ui.History .. '  Recent files', ':Telescope oldfiles <CR>' },
+    { 'f', lvim.icons.ui.FindFile .. '  Find File', '<CMD>Telescope find_files<CR>' },
+    { 'n', lvim.icons.ui.NewFile .. '  New File', '<CMD>ene!<CR>' },
+    { 'p', lvim.icons.ui.Project .. '  Projects', '<CMD>Telescope projects<CR>' },
+    { 'r', lvim.icons.ui.History .. '  Recent files', '<CMD>Telescope oldfiles<CR>' },
     { 's', lvim.icons.ui.BookMark .. '  Restore session',
-      "<cmd>lua require('persistence').load({ last = true })<cr>" },
+      "<CMD>lua require('persistence').load({ last = true })<CR>" },
     { 't', lvim.icons.ui.FindText .. '  Find Text', '<CMD>Telescope live_grep<CR>' },
     { 'c',
       lvim.icons.ui.Gear .. '  Configuration',
-      '<CMD>edit ' .. require('lvim.config'):get_user_config_path() .. ' <CR>', }
+      '<CMD>edit ' .. require('lvim.config'):get_user_config_path() .. ' <CR>' },
+    { 'q', lvim.icons.ui.Close .. '  Quit', '<CMD>quit<CR>' },
   }
 }
 
@@ -232,9 +222,6 @@ require('lspconfig.ui.windows').default_options.border = 'rounded'
 
 -- setup additional LSP servers
 require('lvim.lsp.manager').setup('marksman')
-
--- manual setup of lua_ls for autoformat
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'lua_ls' })
 
 -- extra plugins
 lvim.plugins = {
@@ -283,42 +270,8 @@ lvim.plugins = {
       })
     end },
   { 'folke/persistence.nvim',
-    event = 'BufReadPre',
-    module = 'persistence',
-    config = function()
-      require('persistence').setup({
-        dir = vim.fn.expand(vim.fn.stdpath 'config' .. '/session/'),
-        options = { 'buffers', 'curdir', 'tabpages', 'winsize' },
-      })
-    end },
-  { 'hrsh7th/cmp-cmdline',
-    config = function()
-      local cmp = require('cmp')
-      cmp.setup.cmdline(':', {
-        mapping = cmp.mapping.preset.cmdline({
-          ['<Down>'] = { c = cmp.mapping.select_next_item() },
-          ['<Up>'] = { c = cmp.mapping.select_prev_item() },
-        }),
-        sources = cmp.config.sources({
-          { name = 'path' }
-        }, {
-          { name = 'cmdline',
-            option = {
-              ignore_cmds = { 'Man', '!' }
-            }
-          }
-        })
-      })
-    end },
-  { 'jayp0521/mason-null-ls.nvim',
-    config = function()
-      require('mason-null-ls').setup({
-        -- needs a empty function to prevent automatic setup
-        -- see pull #59
-        handlers = { function()
-        end },
-      })
-    end },
+    event = 'BufReadPre'
+  },
   { 'tversteeg/registers.nvim',
     config = function()
       require('registers').setup({
@@ -356,7 +309,7 @@ lvim.plugins = {
       })
     end },
   { 'iamcco/markdown-preview.nvim',
-    run = 'cd app && npm install',
+    build = 'cd app && npm install',
     ft = 'markdown',
     config = function()
       vim.g.mkdp_auto_start = 1
@@ -400,15 +353,17 @@ lvim.plugins = {
         }
       })
     end,
-    requires = {
+    dependencies = {
       'MunifTanjim/nui.nvim',
       'ElPiloto/significant.nvim'
     }
   },
   { 'kana/vim-textobj-user' },
-  { 'Julian/vim-textobj-variable-segment' },
+  { 'Julian/vim-textobj-variable-segment',
+    dependencies = { 'kana/vim-textobj-user' }
+  },
   { 'folke/todo-comments.nvim',
-    requires = 'nvim-lua/plenary.nvim',
+    dependencies = 'nvim-lua/plenary.nvim',
     config = function()
       require('todo-comments').setup()
     end
@@ -432,7 +387,7 @@ lvim.autocommands = {
   -- set line numbers in telescope preview window
   { 'User',     { pattern = { 'TelescopePreviewerLoaded' }, command = 'setlocal number' } },
   -- set filetypes for chezmoi templates files
-  { 'FileType', { pattern = 'lua.chezmoitmpl', command = 'set filetype=lua' } },
+  { 'BufReadPost', { pattern = { '*.lua.tmpl' }, command = 'setlocal filetype=lua' } },
   -- autosave when leaving the buffer
   {
     { 'BufLeave', 'FocusLost' },
