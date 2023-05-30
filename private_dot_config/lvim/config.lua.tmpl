@@ -223,6 +223,8 @@ require('lspconfig.ui.windows').default_options.border = 'rounded'
 -- setup additional LSP servers
 require('lvim.lsp.manager').setup('marksman')
 
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "lua_ls" })
+
 -- extra plugins
 lvim.plugins = {
   { 'alker0/chezmoi.vim' },
