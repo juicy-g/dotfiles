@@ -33,3 +33,6 @@ export EDITOR="lvim"
 PATH="$PATH:$HOME/.npm-global/bin"
 PATH="$PATH:$HOME/.cargo/bin"
 
+export BREW_HOME="/home/linuxbrew/.linuxbrew/bin"
+export PATH="$PATH:$BREW_HOME"
+export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"
