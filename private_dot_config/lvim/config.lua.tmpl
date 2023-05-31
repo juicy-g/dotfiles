@@ -423,7 +423,8 @@ lvim.autocommands = {
     }
   },
   -- set line numbers in telescope preview window
-  { 'User', { pattern = { 'TelescopePreviewerLoaded' }, command = 'setlocal number' } },
+  { 'User',     { pattern = { 'TelescopePreviewerLoaded' }, command = 'setlocal number' } },
+  { 'BufRead', { pattern = '*.lua.tmpl', command = 'set filetype=lua' } },
   -- autosave when leaving the buffer
   {
     { 'BufLeave', 'FocusLost' },
