@@ -18,12 +18,11 @@ fi
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+    PATH="$PATH:$HOME/bin"
 fi
 
-# set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
+    PATH="$PATH:$HOME/.local/bin"
 fi
 
 export GEM_HOME="$HOME/.gem/ruby/3.1.0"
@@ -34,5 +33,5 @@ PATH="$PATH:$HOME/.npm-global/bin"
 PATH="$PATH:$HOME/.cargo/bin"
 
 export BREW_HOME="/home/linuxbrew/.linuxbrew/bin"
-export PATH="$PATH:$BREW_HOME"
-export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"
+PATH="$PATH:$BREW_HOME"
+PATH="$PATH:/home/linuxbrew/.linuxbrew/opt/node@18/bin"
