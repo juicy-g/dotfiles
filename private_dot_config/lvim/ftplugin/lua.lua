@@ -1,4 +1,6 @@
 local opts = {
+  cmd = { 'lua-language-server' },
+  filetypes = { 'lua', 'lua.chezmoitmpl' },
   settings = {
     Lua = {
       telemetry = {
@@ -6,6 +8,9 @@ local opts = {
       },
       runtime = {
         version = 'LuaJIT',
+        special = {
+          reload = 'require',
+        },
       },
       diagnostics = {
         globals = { 'vim', 'lvim', 'reload' },

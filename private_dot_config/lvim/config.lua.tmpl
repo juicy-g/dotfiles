@@ -3,7 +3,7 @@ vim.cmd('let g:tmuxline_powerline_separators = 0')
 vim.cmd('let g:tmuxline_separators = { "left": "", "left_alt": "", "right": "", "right_alt": "", "space": " "}')
 vim.opt.wrap = true
 vim.opt.cursorline = false
-lvim.builtin.lualine.style = "default"
+lvim.builtin.lualine.style = 'default'
 lvim.builtin.lualine.options = { section_separators = '', component_separators = '' }
 lvim.colorscheme = 'onedark'
 lvim.log.level = 'warn'
@@ -169,9 +169,9 @@ lvim.builtin.alpha.dashboard.section.buttons = {
     spacing = 1,
   },
   entries = {
-    { 'f', lvim.icons.ui.FindFile .. '  Find File', '<CMD>Telescope find_files<CR>' },
-    { 'n', lvim.icons.ui.NewFile .. '  New File', '<CMD>ene!<CR>' },
-    { 'p', lvim.icons.ui.Project .. '  Projects', '<CMD>Telescope projects<CR>' },
+    { 'f', lvim.icons.ui.FindFile .. '  Find File',   '<CMD>Telescope find_files<CR>' },
+    { 'n', lvim.icons.ui.NewFile .. '  New File',     '<CMD>ene!<CR>' },
+    { 'p', lvim.icons.ui.Project .. '  Projects',     '<CMD>Telescope projects<CR>' },
     { 'r', lvim.icons.ui.History .. '  Recent files', '<CMD>Telescope oldfiles<CR>' },
     { 's', lvim.icons.ui.BookMark .. '  Restore session',
       "<CMD>lua require('persistence').load({ last = true })<CR>" },
@@ -179,7 +179,7 @@ lvim.builtin.alpha.dashboard.section.buttons = {
     { 'c',
       lvim.icons.ui.Gear .. '  Configuration',
       '<CMD>edit ' .. require('lvim.config'):get_user_config_path() .. ' <CR>' },
-    { 'q', lvim.icons.ui.Close .. '  Quit', '<CMD>quit<CR>' },
+    { 'q', lvim.icons.ui.Close .. '  Quit',         '<CMD>quit<CR>' },
   }
 }
 
@@ -223,12 +223,13 @@ require('lspconfig.ui.windows').default_options.border = 'rounded'
 -- setup additional LSP servers
 require('lvim.lsp.manager').setup('marksman')
 
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "lua_ls" })
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'lua_ls' })
 
 -- extra plugins
 lvim.plugins = {
   { 'alker0/chezmoi.vim' },
-  { 'navarasu/onedark.nvim',
+  {
+    'navarasu/onedark.nvim',
     config = function()
       local onedark = require('onedark')
       -- fix some border issues with telescope and LSP float windows
@@ -243,16 +244,20 @@ lvim.plugins = {
         }
       })
       onedark.load()
-    end },
+    end
+  },
   { 'edkolev/tmuxline.vim' },
   { 'tpope/vim-repeat' },
   { 'tpope/vim-surround' },
   { 'folke/trouble.nvim',  cmd = 'TroubleToggle' },
-  { 'ggandor/leap.nvim',
+  {
+    'ggandor/leap.nvim',
     config = function()
       require('leap').add_default_mappings()
-    end },
-  { 'ethanholz/nvim-lastplace',
+    end
+  },
+  {
+    'ethanholz/nvim-lastplace',
     event = 'BufRead',
     config = function()
       require('nvim-lastplace').setup({
@@ -262,19 +267,30 @@ lvim.plugins = {
         },
         lastplace_open_folds = true,
       })
-    end },
-  { 'ray-x/lsp_signature.nvim',
+    end
+  },
+  {
+    'ray-x/lsp_signature.nvim',
     config = function()
       require('lsp_signature').setup({
         bind = true,
         hint_enable = false,
         hi_parameter = 'NONE'
       })
-    end },
-  { 'folke/persistence.nvim',
-    event = 'BufReadPre'
+    end
   },
-  { 'tversteeg/registers.nvim',
+  {
+    'folke/persistence.nvim',
+    event = 'BufReadPre',
+    config = function()
+      require('persistence').setup({
+        dir = vim.fn.expand(vim.fn.stdpath 'config' .. '/session/'),
+        options = { 'buffers', 'curdir', 'tabpages', 'winsize' },
+      })
+    end
+  },
+  {
+    'tversteeg/registers.nvim',
     config = function()
       require('registers').setup({
         window = {
@@ -282,18 +298,23 @@ lvim.plugins = {
           transparency = 0
         }
       })
-    end },
-  { 'windwp/nvim-ts-autotag',
+    end
+  },
+  {
+    'windwp/nvim-ts-autotag',
     config = function()
       require('nvim-ts-autotag').setup()
-    end },
+    end
+  },
   { 'RRethy/nvim-treesitter-textsubjects' },
-  { 'nvim-treesitter/nvim-treesitter-textobjects',
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects',
     -- see pull #346
     commit = 'aba3ab3'
   },
   { 'debugloop/telescope-undo.nvim' },
-  { 'rmagatti/goto-preview',
+  {
+    'rmagatti/goto-preview',
     config = function()
       require('goto-preview').setup({
         width = 120,
@@ -309,14 +330,18 @@ lvim.plugins = {
             { noremap = true, silent = true })
         end
       })
-    end },
-  { 'iamcco/markdown-preview.nvim',
+    end
+  },
+  {
+    'iamcco/markdown-preview.nvim',
     build = 'cd app && npm install',
     ft = 'markdown',
     config = function()
       vim.g.mkdp_auto_start = 1
-    end },
-  { 'karb94/neoscroll.nvim',
+    end
+  },
+  {
+    'karb94/neoscroll.nvim',
     event = 'WinScrolled',
     config = function()
       require('neoscroll').setup({
@@ -328,22 +353,30 @@ lvim.plugins = {
         respect_scrolloff = false,
         cursor_scrolls_alone = true,
       })
-    end },
-  { 'asiryk/auto-hlsearch.nvim',
+    end
+  },
+  {
+    'asiryk/auto-hlsearch.nvim',
     config = function()
       require('auto-hlsearch').setup()
-    end },
+    end
+  },
   { 'sitiom/nvim-numbertoggle' },
-  { 'max397574/better-escape.nvim',
+  {
+    'max397574/better-escape.nvim',
     config = function()
       require('better_escape').setup()
-    end },
+    end
+  },
   { 'nvim-telescope/telescope-file-browser.nvim' },
-  { 'gbprod/yanky.nvim',
+  {
+    'gbprod/yanky.nvim',
     config = function()
       require('yanky').setup()
-    end },
-  { 'dense-analysis/neural',
+    end
+  },
+  {
+    'dense-analysis/neural',
     config = function()
       require('neural').setup({
         open_ai = {
@@ -361,10 +394,12 @@ lvim.plugins = {
     }
   },
   { 'kana/vim-textobj-user' },
-  { 'Julian/vim-textobj-variable-segment',
+  {
+    'Julian/vim-textobj-variable-segment',
     dependencies = { 'kana/vim-textobj-user' }
   },
-  { 'folke/todo-comments.nvim',
+  {
+    'folke/todo-comments.nvim',
     dependencies = 'nvim-lua/plenary.nvim',
     config = function()
       require('todo-comments').setup()
@@ -374,7 +409,8 @@ lvim.plugins = {
 
 lvim.autocommands = {
   { 'ColorScheme',
-    { pattern = '*',
+    {
+      pattern = '*',
       callback = function()
         -- customization for vim-illuminate
         vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { bg = '#31353f', underline = false, bold = true })
@@ -387,13 +423,12 @@ lvim.autocommands = {
     }
   },
   -- set line numbers in telescope preview window
-  { 'User',     { pattern = { 'TelescopePreviewerLoaded' }, command = 'setlocal number' } },
-  -- set filetypes for chezmoi templates files
-  { 'BufReadPost', { pattern = { '*.lua.tmpl' }, command = 'setlocal filetype=lua' } },
+  { 'User', { pattern = { 'TelescopePreviewerLoaded' }, command = 'setlocal number' } },
   -- autosave when leaving the buffer
   {
     { 'BufLeave', 'FocusLost' },
-    { pattern = '*',
+    {
+      pattern = '*',
       callback = function()
         if vim.bo.modified and not vim.bo.readonly and vim.fn.expand('%') ~= '' and vim.bo.buftype == '' then
           vim.cmd 'silent! w'
