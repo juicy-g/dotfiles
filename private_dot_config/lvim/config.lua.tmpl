@@ -80,6 +80,7 @@ lvim.builtin.which_key.mappings['F'] = {
   '<cmd>Telescope file_browser<cr>', 'File Browser'
 }
 -- additional pickers for search menu
+lvim.builtin.which_key.mappings['se'] = { '<cmd>Telescope emoji<cr>', 'Find emoji' }
 lvim.builtin.which_key.mappings['s/'] = {
   function()
     require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown())
@@ -88,6 +89,9 @@ lvim.builtin.which_key.mappings['s/'] = {
 }
 lvim.builtin.which_key.mappings['sl'] = {
   '<cmd>Telescope resume<cr>', 'Last search'
+}
+lvim.builtin.which_key.mappings['ss'] = {
+  '<cmd>Telescope grep_string<cr>', 'Find current word'
 }
 lvim.builtin.which_key.mappings['su'] = {
   '<cmd>Telescope undo<cr>', 'Current buffer undo tree'
@@ -162,6 +166,7 @@ lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, 'undo')
   pcall(telescope.load_extension, 'file_browser')
   pcall(telescope.load_extension, 'yank_history')
+  pcall(telescope.load_extension, 'emoji')
 end
 
 -- add restore session button to dashboard
@@ -405,6 +410,9 @@ lvim.plugins = {
     config = function()
       require('todo-comments').setup()
     end
+  },
+  {
+    'xiyaowong/telescope-emoji.nvim'
   }
 }
 
