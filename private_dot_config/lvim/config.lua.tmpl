@@ -3,11 +3,22 @@ vim.cmd('let g:tmuxline_powerline_separators = 0')
 vim.cmd('let g:tmuxline_separators = { "left": "", "left_alt": "", "right": "", "right_alt": "", "space": " "}')
 vim.opt.wrap = true
 vim.opt.cursorline = false
-lvim.builtin.lualine.style = 'default'
-lvim.builtin.lualine.options = { section_separators = '', component_separators = '' }
 lvim.colorscheme = 'onedark'
 lvim.log.level = 'warn'
 lvim.format_on_save = true
+
+-- status line customization
+lvim.builtin.lualine.style = 'lvim'
+lvim.builtin.lualine.options = { section_separators = '', component_separators = '' }
+lvim.builtin.lualine.options.disabled_filetypes = { 'alpha', 'dashboard', 'NvimTree', 'Outline' }
+local components = require 'lvim.core.lualine.components'
+lvim.builtin.lualine.sections.lualine_x = {
+  components.diagnostics,
+  { function() return vim.fn['codeium#GetStatusString']() end, icon = '󰘦' },
+  components.lsp,
+  components.spaces,
+  components.filetype,
+}
 
 -- custom keymappings
 lvim.keys.normal_mode['<C-s>'] = ':w<Cr>'
@@ -382,22 +393,10 @@ lvim.plugins = {
     end
   },
   {
-    'dense-analysis/neural',
+    'Exafunction/codeium.vim',
     config = function()
-      require('neural').setup({
-        open_ai = {
-          mappings = {
-            swift = '<C-n>',
-            prompt = '<C-p>'
-          },
-          api_key = '{{ (bitwarden "item" "OpenAI API Key").notes }}'
-        }
-      })
-    end,
-    dependencies = {
-      'MunifTanjim/nui.nvim',
-      'ElPiloto/significant.nvim'
-    }
+      vim.keymap.set('i', '<C-g>', function() return vim.fn['codeium#Accept']() end, { expr = true })
+    end
   },
   { 'kana/vim-textobj-user' },
   {
