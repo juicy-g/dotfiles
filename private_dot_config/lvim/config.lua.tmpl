@@ -140,6 +140,9 @@ lvim.builtin.cmp.formatting.duplicates = {
   luasnip = 1,
 }
 lvim.builtin.cmp.cmdline.enable = true
+lvim.icons.kind['Codeium'] = ''
+table.insert(lvim.builtin.cmp.sources, { name = 'codeium', max_item_count = 3 })
+lvim.builtin.cmp.formatting.source_names['codeium'] = '(Codeium)'
 
 -- TODO: fix <M-2> terminal size when nvim-tree open
 lvim.builtin.terminal.direction = 'vertical'
@@ -393,9 +396,13 @@ lvim.plugins = {
     end
   },
   {
-    'Exafunction/codeium.vim',
+    'jcdickinson/codeium.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'hrsh7th/nvim-cmp',
+    },
     config = function()
-      vim.keymap.set('i', '<C-g>', function() return vim.fn['codeium#Accept']() end, { expr = true })
+      require('codeium').setup({})
     end
   },
   { 'kana/vim-textobj-user' },
