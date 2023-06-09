@@ -11,14 +11,6 @@ lvim.format_on_save = true
 lvim.builtin.lualine.style = 'lvim'
 lvim.builtin.lualine.options = { section_separators = '', component_separators = '' }
 lvim.builtin.lualine.options.disabled_filetypes = { 'alpha', 'dashboard', 'NvimTree', 'Outline' }
-local components = require 'lvim.core.lualine.components'
-lvim.builtin.lualine.sections.lualine_x = {
-  components.diagnostics,
-  { function() return vim.fn['codeium#GetStatusString']() end, icon = '󰘦' },
-  components.lsp,
-  components.spaces,
-  components.filetype,
-}
 
 -- custom keymappings
 lvim.keys.normal_mode['<C-s>'] = ':w<Cr>'
@@ -143,6 +135,10 @@ lvim.builtin.cmp.cmdline.enable = true
 lvim.icons.kind['Codeium'] = ''
 table.insert(lvim.builtin.cmp.sources, { name = 'codeium', max_item_count = 3 })
 lvim.builtin.cmp.formatting.source_names['codeium'] = '(Codeium)'
+lvim.builtin.cmp.experimental = {
+  ghost_text = true,
+  native_menu = false,
+}
 
 -- TODO: fix <M-2> terminal size when nvim-tree open
 lvim.builtin.terminal.direction = 'vertical'
