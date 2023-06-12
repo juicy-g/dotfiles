@@ -36,13 +36,15 @@ vim.keymap.set({ 'n', 'x' }, 'P', '<Plug>(YankyPutBefore)')
 vim.keymap.set({ 'n', 'x' }, 'gp', '<Plug>(YankyGPutAfter)')
 vim.keymap.set({ 'n', 'x' }, 'gP', '<Plug>(YankyGPutBefore)')
 vim.keymap.set({ 'n', 'x' }, 'y', '<Plug>(YankyYank)')
+vim.keymap.set('n', '<c-n>', '<Plug>(YankyCycleForward)')
+vim.keymap.set('n', '<c-p>', '<Plug>(YankyCycleBackward)')
 
--- keep yanked word in the last register when pasting
-lvim.builtin.which_key.mappings['p'] = {}
-vim.keymap.set('x', '<leader>p', '\"_dgP')
 -- delete to void register
 lvim.builtin.which_key.mappings['d'] = {}
-vim.keymap.set({ 'n', 'v' }, '<leader>d', '\"_d')
+lvim.keys.visual_block_mode['<leader>d'] = '"_d'
+-- keep yanked word in the last register when pasting
+lvim.builtin.which_key.mappings['p'] = {}
+lvim.keys.visual_block_mode['<leader>p'] = '"_dP'
 
 -- which_key remappings
 lvim.builtin.which_key.mappings['e'] = { ':NvimTreeFocus<CR>', 'Explorer' }
