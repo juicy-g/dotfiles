@@ -230,10 +230,6 @@ lvim.builtin.treesitter.textobjects = {
     }
   }
 }
-lvim.builtin.treesitter.textsubjects.enable = true
-lvim.builtin.treesitter.textsubjects.keymaps = {
-  ['<CR>'] = 'textsubjects-smart'
-}
 
 -- fix lspinfo popup border
 require('lspconfig.ui.windows').default_options.border = 'rounded'
@@ -241,6 +237,7 @@ require('lspconfig.ui.windows').default_options.border = 'rounded'
 -- setup additional LSP servers
 require('lvim.lsp.manager').setup('marksman')
 
+-- Skip automatic configuration for lua_ls to enable autoformatting
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'lua_ls' })
 
 -- extra plugins
@@ -324,12 +321,23 @@ lvim.plugins = {
       require('nvim-ts-autotag').setup()
     end
   },
-  { 'RRethy/nvim-treesitter-textsubjects' },
   {
-    'nvim-treesitter/nvim-treesitter-textobjects',
-    -- see pull #346
-    commit = 'aba3ab3'
+    'RRethy/nvim-treesitter-textsubjects',
+    config = function()
+      require('nvim-treesitter.configs').setup({
+        textsubjects = {
+          enable = true,
+          prev_selection = ',',
+          keymaps = {
+            ['.'] = 'textsubjects-smart',
+            [';'] = 'textsubjects-container-outer',
+            ['i;'] = 'textsubjects-container-inner',
+          },
+        },
+      })
+    end
   },
+  { 'nvim-treesitter/nvim-treesitter-textobjects' },
   { 'debugloop/telescope-undo.nvim' },
   {
     'rmagatti/goto-preview',
