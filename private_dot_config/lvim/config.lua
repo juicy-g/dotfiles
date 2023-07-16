@@ -77,6 +77,7 @@ lvim.builtin.which_key.mappings['t'] = {
   l = { '<cmd>TroubleToggle loclist<cr>', 'loclist' },
   r = { '<cmd>TroubleToggle lsp_references<cr>', 'references' },
 }
+lvim.builtin.which_key.mappings['bs'] = { '<cmd>BufferLinePick<cr>', 'Pick a buffer' }
 -- change to use the find_files picker rather than git_files
 lvim.builtin.which_key.mappings['f'] = {
   '<cmd>Telescope find_files<cr>', 'Find File'
@@ -121,7 +122,7 @@ lvim.builtin.which_key.mappings['S'] = {
 
 -- core plugins configs
 lvim.builtin.bufferline.options.always_show_bufferline = true
-lvim.builtin.bufferline.options.numbers = 'id'
+lvim.builtin.bufferline.options.numbers = 'ordinal'
 -- i don't like indentlines
 lvim.builtin.indentlines.active = false
 -- change the order from the default
@@ -152,9 +153,6 @@ lvim.builtin.terminal.size = function(term)
   end
 end
 
-lvim.builtin.telescope.defaults.file_ignore_patterns = {
-  '.git/',
-}
 -- add additional telescope mappings
 local _, actions = pcall(require, 'telescope.actions')
 local _, trouble = pcall(require, 'trouble.providers.telescope')
@@ -230,6 +228,7 @@ lvim.builtin.treesitter.textobjects = {
     }
   }
 }
+lvim.builtin.treesitter.additional_vim_regex_highlighting = true
 
 -- fix lspinfo popup border
 require('lspconfig.ui.windows').default_options.border = 'rounded'
@@ -242,7 +241,6 @@ vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'lua_ls' })
 
 -- extra plugins
 lvim.plugins = {
-  { 'alker0/chezmoi.vim' },
   {
     'navarasu/onedark.nvim',
     config = function()
@@ -436,7 +434,11 @@ lvim.plugins = {
       require('mason-null-ls').setup({
         handlers = {},
       })
-    end,
+    end
+  },
+  {
+    'nmac427/guess-indent.nvim',
+    config = function() require('guess-indent').setup({}) end
   }
 }
 
