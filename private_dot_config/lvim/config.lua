@@ -6,6 +6,7 @@ vim.opt.cursorline = false
 lvim.colorscheme = 'onedark'
 lvim.log.level = 'warn'
 lvim.format_on_save = true
+lvim.builtin.illuminate.active = false
 
 -- status line customization
 lvim.builtin.lualine.style = 'lvim'
@@ -39,6 +40,18 @@ vim.keymap.set({ 'n', 'x' }, 'y', '<Plug>(YankyYank)')
 vim.keymap.set('n', '<c-n>', '<Plug>(YankyCycleForward)')
 vim.keymap.set('n', '<c-p>', '<Plug>(YankyCycleBackward)')
 
+-- shows registers on " in NORMAL or <C-r> in INSERT mode
+lvim.builtin.which_key.setup.plugins.registers = true
+lvim.builtin.which_key.setup.plugins.presets = {
+  operators = false,   -- adds help for operators like d, y, ...
+  motions = false,     -- adds help for motions
+  text_objects = true, -- help for text objects triggered after entering an operator
+  windows = false,     -- default bindings on <c-w>
+  nav = false,         -- misc bindings to work with windows
+  z = false,           -- bindings for folds, spelling and others prefixed with z
+  g = true,            -- bindings for prefixed with g
+}
+
 -- delete to void register
 lvim.builtin.which_key.mappings['d'] = {}
 lvim.keys.visual_block_mode['<leader>d'] = '"_d'
@@ -69,7 +82,7 @@ lvim.builtin.which_key.mappings['D'] = {
   U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", 'Toggle UI' },
 }
 lvim.builtin.which_key.mappings['t'] = {
-  name = 'Diagnostics',
+  name = 'Trouble',
   t = { '<cmd>TroubleToggle<cr>', 'trouble' },
   w = { '<cmd>TroubleToggle workspace_diagnostics<cr>', 'workspace' },
   d = { '<cmd>TroubleToggle document_diagnostics<cr>', 'document' },
@@ -78,9 +91,9 @@ lvim.builtin.which_key.mappings['t'] = {
   r = { '<cmd>TroubleToggle lsp_references<cr>', 'references' },
 }
 lvim.builtin.which_key.mappings['bs'] = { '<cmd>BufferLinePick<cr>', 'Pick a buffer' }
--- change to use the find_files picker rather than git_files
 lvim.builtin.which_key.mappings['f'] = {
-  '<cmd>Telescope find_files<cr>', 'Find File'
+  '<cmd>Telescope find_files find_command=rg,--ignore,--hidden,--files<cr>',
+  'Find File',
 }
 lvim.builtin.which_key.mappings['F'] = {
   '<cmd>Telescope file_browser<cr>', 'File Browser'
@@ -120,6 +133,7 @@ lvim.builtin.which_key.mappings['S'] = {
   q = { "<cmd>lua require('persistence').stop()<cr>", 'Quit without saving session' },
 }
 
+
 -- core plugins configs
 lvim.builtin.bufferline.options.always_show_bufferline = true
 lvim.builtin.bufferline.options.numbers = 'ordinal'
@@ -127,6 +141,11 @@ lvim.builtin.bufferline.options.numbers = 'ordinal'
 lvim.builtin.indentlines.active = false
 -- change the order from the default
 lvim.builtin.cmp.formatting.fields = { 'abbr', 'kind', 'menu' }
+-- select the first option
+lvim.builtin.cmp.confirm_opts.select = true
+lvim.builtin.cmp.completion = {
+  completeopt = 'menu,menuone,select'
+}
 -- remove duplicates between lsp and buffer words
 lvim.builtin.cmp.formatting.duplicates = {
   buffer = 0,
@@ -179,6 +198,12 @@ lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, 'emoji')
 end
 
+-- ignore these folders when searching
+lvim.builtin.telescope.defaults.file_ignore_patterns = {
+  '.git/',
+  'node_modules/',
+}
+
 -- add restore session button to dashboard
 lvim.builtin.alpha.dashboard.section.buttons = {
   opts = {
@@ -213,21 +238,11 @@ lvim.builtin.treesitter.ensure_installed = {
   'yaml'
 }
 
--- enhanced selections
-lvim.builtin.treesitter.textobjects = {
-  select = {
-    enable = true,
-    lookahead = true,
-    keymaps = {
-      ['aa'] = '@parameter.outer',
-      ['ia'] = '@parameter.inner',
-      ['af'] = '@function.outer',
-      ['if'] = '@function.inner',
-      ['ac'] = '@class.outer',
-      ['ic'] = '@class.inner',
-    }
-  }
-}
+-- Repeat movement with ; and ,
+-- ensure ; goes forward and , goes backward regardless of the last direction
+local ts_repeat_move = require 'nvim-treesitter.textobjects.repeatable_move'
+vim.keymap.set({ 'n', 'x', 'o' }, ';', ts_repeat_move.repeat_last_move_next)
+vim.keymap.set({ 'n', 'x', 'o' }, ',', ts_repeat_move.repeat_last_move_previous)
 lvim.builtin.treesitter.additional_vim_regex_highlighting = true
 
 -- fix lspinfo popup border
@@ -236,8 +251,13 @@ require('lspconfig.ui.windows').default_options.border = 'rounded'
 -- setup additional LSP servers
 require('lvim.lsp.manager').setup('marksman')
 
--- Skip automatic configuration for lua_ls to enable autoformatting
+-- skip automatic configuration for lua_ls to enable autoformatting
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'lua_ls' })
+-- skip server configuration for typescript
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'tsserver' })
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'tailwindcss' })
+-- skip server to use schemastore
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'jsonls' })
 
 -- extra plugins
 lvim.plugins = {
@@ -260,8 +280,14 @@ lvim.plugins = {
     end
   },
   { 'edkolev/tmuxline.vim' },
-  { 'tpope/vim-repeat' },
-  { 'tpope/vim-surround' },
+  {
+    'kylechui/nvim-surround',
+    version = '*',
+    event = 'VeryLazy',
+    config = function()
+      require('nvim-surround').setup({})
+    end
+  },
   { 'folke/trouble.nvim',  cmd = 'TroubleToggle' },
   {
     'ggandor/leap.nvim',
@@ -283,33 +309,12 @@ lvim.plugins = {
     end
   },
   {
-    'ray-x/lsp_signature.nvim',
-    config = function()
-      require('lsp_signature').setup({
-        bind = true,
-        hint_enable = false,
-        hi_parameter = 'NONE'
-      })
-    end
-  },
-  {
     'folke/persistence.nvim',
     event = 'BufReadPre',
     config = function()
       require('persistence').setup({
         dir = vim.fn.expand(vim.fn.stdpath 'config' .. '/session/'),
         options = { 'buffers', 'curdir', 'tabpages', 'winsize' },
-      })
-    end
-  },
-  {
-    'tversteeg/registers.nvim',
-    config = function()
-      require('registers').setup({
-        window = {
-          border = 'rounded',
-          transparency = 0
-        }
       })
     end
   },
@@ -325,17 +330,72 @@ lvim.plugins = {
       require('nvim-treesitter.configs').setup({
         textsubjects = {
           enable = true,
-          prev_selection = ',',
-          keymaps = {
-            ['.'] = 'textsubjects-smart',
-            [';'] = 'textsubjects-container-outer',
-            ['i;'] = 'textsubjects-container-inner',
-          },
+          keymaps = { ['.'] = 'textsubjects-smart', [';'] = 'textsubjects-big' },
         },
       })
     end
   },
-  { 'nvim-treesitter/nvim-treesitter-textobjects' },
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    config = function()
+      require('nvim-treesitter.configs').setup({
+        textobjects = {
+          select = {
+            enable = true,
+            lookahead = true,
+            keymaps = {
+              ['aa'] = '@parameter.outer',
+              ['ia'] = '@parameter.inner',
+              ['af'] = '@function.outer',
+              ['if'] = '@function.inner',
+              ['ac'] = '@class.outer',
+              ['ic'] = '@class.inner',
+              ['as'] = '@scope'
+            },
+          },
+          swap = {
+            enable = true,
+            swap_next = {
+              ['<leader>a'] = '@parameter.inner',
+            },
+            swap_previous = {
+              ['<leader>a'] = '@parameter.inner',
+            },
+          },
+          move = {
+            enable = true,
+            set_jumps = true,
+            goto_next_start = {
+              [']m'] = '@function.outer',
+              [']]'] = { query = '@class.outer', desc = 'next class start' },
+              [']o'] = '@loop.*',
+              -- ["]o"] = { query = { "@loop.inner", "@loop.outer" } }
+              [']s'] = { query = '@scope', query_group = 'locals', desc = 'next scope' },
+              [']z'] = { query = '@fold', query_group = 'folds', desc = 'next fold' },
+            },
+            goto_next_end = {
+              [']m'] = '@function.outer',
+              [']['] = '@class.outer',
+            },
+            goto_previous_start = {
+              ['[m'] = '@function.outer',
+              ['[['] = '@class.outer',
+            },
+            goto_previous_end = {
+              ['[m'] = '@function.outer',
+              ['[]'] = '@class.outer',
+            },
+            goto_next = {
+              [']d'] = '@conditional.outer',
+            },
+            goto_previous = {
+              ['[d'] = '@conditional.outer',
+            }
+          },
+        }
+      })
+    end
+  },
   { 'debugloop/telescope-undo.nvim' },
   {
     'rmagatti/goto-preview',
@@ -430,6 +490,7 @@ lvim.plugins = {
       'jose-elias-alvarez/null-ls.nvim',
     },
     config = function()
+      -- automatic setup of sources
       require('mason').setup()
       require('mason-null-ls').setup({
         handlers = {},
@@ -439,18 +500,48 @@ lvim.plugins = {
   {
     'nmac427/guess-indent.nvim',
     config = function() require('guess-indent').setup({}) end
-  }
+  },
 }
+
+-- function to split a string with line endings into a table
+local function lines(str)
+  local t = {}
+  local function helper(line)
+    -- trim leading whitespace
+    line = line:gsub('^[ \t]+', '')
+    table.insert(t, line)
+    return ''
+  end
+  helper((str:gsub('(.-)\r?\n', helper)))
+  return t
+end
+
+vim.diagnostic.config({
+  float = {
+    focusable = true,
+    style = 'minimal',
+    border = 'rounded',
+    source = 'if_many',
+    header = '',
+    prefix = '',
+    format = function(diagnostic)
+      if diagnostic.source == 'typescript' then
+        -- these errors messages are too long so only show the first line
+        if diagnostic.code == 2322 then
+          local content = lines(diagnostic.message)
+          return content[1]
+        end
+      end
+      return diagnostic.message
+    end
+  }
+})
 
 lvim.autocommands = {
   { 'ColorScheme',
     {
       pattern = '*',
       callback = function()
-        -- customization for vim-illuminate
-        vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { bg = '#31353f', underline = false, bold = true })
-        vim.api.nvim_set_hl(0, 'IlluminatedWordText', { bg = '#31353f', underline = false, bold = true })
-        vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { bg = '#31353f', underline = false, bold = true })
         -- fix lspinfo float window border
         vim.api.nvim_set_hl(0, 'LspInfoBorder', { fg = '#848b98', bg = '#1f2329' })
         vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', { underline = false })
@@ -458,8 +549,7 @@ lvim.autocommands = {
     }
   },
   -- set line numbers in telescope preview window
-  { 'User',    { pattern = { 'TelescopePreviewerLoaded' }, command = 'setlocal number' } },
-  { 'BufRead', { pattern = '*.lua.tmpl', command = 'set filetype=lua' } },
+  { 'User', { pattern = { 'TelescopePreviewerLoaded' }, command = 'setlocal number' } },
   -- autosave when leaving the buffer
   {
     { 'BufLeave', 'FocusLost' },
