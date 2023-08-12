@@ -16,7 +16,7 @@ lvim.builtin.lualine.options.disabled_filetypes = { 'alpha', 'dashboard', 'Outli
 -- custom keymappings
 lvim.keys.normal_mode['<C-s>'] = ':w<Cr>'
 lvim.keys.insert_mode['<C-s>'] = '<Cmd>:w<Cr>'
-lvim.keys.normal_mode['<C-q>'] = ':q<Cr>'
+-- lvim.keys.normal_mode['<C-q>'] = ':q<Cr>'
 lvim.keys.normal_mode['<S-x>'] = ':BufferKill<Cr>'
 lvim.keys.normal_mode['<S-l>'] = ':BufferLineCycleNext<Cr>'
 lvim.keys.normal_mode['<S-h>'] = ':BufferLineCyclePrev<Cr>'
@@ -32,13 +32,17 @@ vim.keymap.set({ 'n' }, 'V', 'maV', { noremap = true })
 vim.keymap.set('v', '<Esc>', '<Esc>`a', { noremap = true, silent = true })
 
 -- keymaps for yanky.nvim
-vim.keymap.set({ 'n', 'x' }, 'p', '<Plug>(YankyPutAfter)')
-vim.keymap.set({ 'n', 'x' }, 'P', '<Plug>(YankyPutBefore)')
-vim.keymap.set({ 'n', 'x' }, 'gp', '<Plug>(YankyGPutAfter)')
-vim.keymap.set({ 'n', 'x' }, 'gP', '<Plug>(YankyGPutBefore)')
+lvim.keys.normal_mode['p'] = { '<Plug>(YankyPutAfter)', { desc = 'Put after cursor' } }
+lvim.keys.normal_mode['P'] = { '<Plug>(YankyPutBefore)', { desc = 'Put before cursor' } }
+lvim.keys.normal_mode['gp'] = { '<Plug>(YankyGPutAfter)', { desc = 'Put after cursor and leave cursor after' } }
+lvim.keys.normal_mode['gP'] = { '<Plug>(YankyGPutBefore)', { desc = 'Put before cursor and leave cursor after' } }
+lvim.keys.normal_mode['<C-n>'] = { '<Plug>(YankyCycleForward)', { desc = 'Cycle forward' } }
+lvim.keys.normal_mode['<C-p'] = { '<Plug>(YankyCycleBackward)', { desc = 'Cycle backward' } }
+lvim.keys.visual_block_mode['p'] = { '<Plug>(YankyPutAfter)', { desc = 'Put after cursor' } }
+lvim.keys.visual_block_mode['P'] = { '<Plug>(YankyPutBefore)', { desc = 'Put before cursor' } }
+lvim.keys.visual_block_mode['gp'] = { '<Plug>(YankyGPutAfter)', { desc = 'Put after cursor and leave cursor after' } }
+lvim.keys.visual_block_mode['gp'] = { '<Plug>(YankyGPutBefore)', { desc = 'Put before cursor and leave cursor after' } }
 vim.keymap.set({ 'n', 'x' }, 'y', '<Plug>(YankyYank)')
-vim.keymap.set('n', '<c-n>', '<Plug>(YankyCycleForward)')
-vim.keymap.set('n', '<c-p>', '<Plug>(YankyCycleBackward)')
 
 -- shows registers on " in NORMAL or <C-r> in INSERT mode
 lvim.builtin.which_key.setup.plugins.registers = true
@@ -46,9 +50,9 @@ lvim.builtin.which_key.setup.plugins.presets = {
   operators = false,   -- adds help for operators like d, y, ...
   motions = false,     -- adds help for motions
   text_objects = true, -- help for text objects triggered after entering an operator
-  windows = false,     -- default bindings on <c-w>
+  windows = false,     -- default bindings on <C-w>
   nav = false,         -- misc bindings to work with windows
-  z = false,           -- bindings for folds, spelling and others prefixed with z
+  z = true,            -- bindings for folds, spelling and others prefixed with z
   g = true,            -- bindings for prefixed with g
 }
 
@@ -62,7 +66,7 @@ lvim.keys.visual_block_mode['<leader>p'] = '"_dP'
 -- which_key remappings
 lvim.builtin.which_key.mappings['e'] = { ':NvimTreeFocus<CR>', 'Explorer' }
 lvim.builtin.which_key.mappings['<Space>'] = {
-  '<cmd>Telescope buffers<cr>', 'Buffers List'
+  '<cmd>Telescope buffers<cr>', 'Buffers list'
 }
 lvim.builtin.which_key.mappings['D'] = {
   name = 'Debug',
@@ -83,12 +87,12 @@ lvim.builtin.which_key.mappings['D'] = {
 }
 lvim.builtin.which_key.mappings['t'] = {
   name = 'Trouble',
-  t = { '<cmd>TroubleToggle<cr>', 'trouble' },
-  w = { '<cmd>TroubleToggle workspace_diagnostics<cr>', 'workspace' },
-  d = { '<cmd>TroubleToggle document_diagnostics<cr>', 'document' },
-  q = { '<cmd>TroubleToggle quickfix<cr>', 'quickfix' },
-  l = { '<cmd>TroubleToggle loclist<cr>', 'loclist' },
-  r = { '<cmd>TroubleToggle lsp_references<cr>', 'references' },
+  t = { '<cmd>TroubleToggle<cr>', 'Trouble' },
+  w = { '<cmd>TroubleToggle workspace_diagnostics<cr>', 'Workspace' },
+  d = { '<cmd>TroubleToggle document_diagnostics<cr>', 'Document' },
+  q = { '<cmd>TroubleToggle quickfix<cr>', 'Quickfix' },
+  l = { '<cmd>TroubleToggle loclist<cr>', 'Loclist' },
+  r = { '<cmd>TroubleToggle lsp_references<cr>', 'References' },
 }
 lvim.builtin.which_key.mappings['bs'] = { '<cmd>BufferLinePick<cr>', 'Pick a buffer' }
 lvim.builtin.which_key.mappings['f'] = {
@@ -97,6 +101,13 @@ lvim.builtin.which_key.mappings['f'] = {
 }
 lvim.builtin.which_key.mappings['F'] = {
   '<cmd>Telescope file_browser<cr>', 'File Browser'
+}
+-- add a sessions menu
+lvim.builtin.which_key.mappings['S'] = {
+  name = 'Session',
+  c = { "<cmd>lua require('persistence').load()<cr>", 'Restore last session for current dir' },
+  l = { "<cmd>lua require('persistence').load({ last = true })<cr>", 'Restore last session' },
+  q = { "<cmd>lua require('persistence').stop()<cr>", 'Quit without saving session' },
 }
 -- additional pickers for search menu
 lvim.builtin.which_key.mappings['se'] = { '<cmd>Telescope emoji<cr>', 'Find emoji' }
@@ -125,14 +136,6 @@ lvim.builtin.which_key.mappings['Ts'] = {
   end,
   'Search Treesitter'
 }
--- add a sessions menu
-lvim.builtin.which_key.mappings['S'] = {
-  name = 'Session',
-  c = { "<cmd>lua require('persistence').load()<cr>", 'Restore last session for current dir' },
-  l = { "<cmd>lua require('persistence').load({ last = true })<cr>", 'Restore last session' },
-  q = { "<cmd>lua require('persistence').stop()<cr>", 'Quit without saving session' },
-}
-
 
 -- core plugins configs
 lvim.builtin.bufferline.options.always_show_bufferline = true
@@ -141,9 +144,8 @@ lvim.builtin.bufferline.options.numbers = 'ordinal'
 lvim.builtin.indentlines.active = false
 -- change the order from the default
 lvim.builtin.cmp.formatting.fields = { 'abbr', 'kind', 'menu' }
--- select the first option
-lvim.builtin.cmp.confirm_opts.select = true
 lvim.builtin.cmp.completion = {
+  scrollbar = false,
   completeopt = 'menu,menuone,select'
 }
 -- remove duplicates between lsp and buffer words
@@ -202,6 +204,7 @@ end
 lvim.builtin.telescope.defaults.file_ignore_patterns = {
   '.git/',
   'node_modules/',
+  '.next/'
 }
 
 -- add restore session button to dashboard
@@ -238,7 +241,7 @@ lvim.builtin.treesitter.ensure_installed = {
   'yaml'
 }
 
--- Repeat movement with ; and ,
+-- repeat movement with ; and ,
 -- ensure ; goes forward and , goes backward regardless of the last direction
 local ts_repeat_move = require 'nvim-treesitter.textobjects.repeatable_move'
 vim.keymap.set({ 'n', 'x', 'o' }, ';', ts_repeat_move.repeat_last_move_next)
@@ -408,7 +411,7 @@ lvim.plugins = {
         debug = false,
         opacity = nil,
         post_open_hook = function()
-          vim.keymap.set('n', '<ESC>', ":lua require('goto-preview').close_all_win()<CR>",
+          vim.keymap.set('n', '<Esc>', ":lua require('goto-preview').close_all_win()<CR>",
             { noremap = true, silent = true })
           vim.keymap.set('n', '<C-c>', ":lua require('goto-preview').close_all_win()<CR>",
             { noremap = true, silent = true })
