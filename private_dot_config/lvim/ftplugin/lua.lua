@@ -1,6 +1,6 @@
 local opts = {
   cmd = { 'lua-language-server' },
-  filetypes = { 'lua', 'lua.chezmoitmpl' },
+  filetypes = { 'lua' },
   settings = {
     Lua = {
       telemetry = {
@@ -14,6 +14,9 @@ local opts = {
       },
       diagnostics = {
         globals = { 'vim', 'lvim', 'reload' },
+      },
+      completion = {
+        callSnippet = 'Replace'
       },
       format = {
         enable = true,
@@ -38,4 +41,5 @@ local opts = {
     },
   }
 }
+require('neodev').setup({})
 require('lvim.lsp.manager').setup('lua_ls', opts)
