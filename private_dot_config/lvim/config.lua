@@ -96,14 +96,14 @@ lvim.builtin.which_key.mappings['t'] = {
 }
 lvim.builtin.which_key.mappings['bs'] = { '<cmd>BufferLinePick<cr>', 'Pick a buffer' }
 lvim.builtin.which_key.mappings['f'] = {
-  '<cmd>Telescope find_files find_command=rg,--ignore,--hidden,--files<cr>',
+  '<cmd>Telescope find_files find_command=rg,--ignore,--hidden,--files,-u<cr>',
   'Find File',
 }
 lvim.builtin.which_key.mappings['F'] = {
   '<cmd>Telescope file_browser<cr>', 'File Browser'
 }
 -- add a sessions menu
-lvim.builtin.which_key.mappings['S'] = {
+lvim.builtin.which_key.mappings['P'] = {
   name = 'Session',
   c = { "<cmd>lua require('persistence').load()<cr>", 'Restore last session for current dir' },
   l = { "<cmd>lua require('persistence').load({ last = true })<cr>", 'Restore last session' },
@@ -156,8 +156,34 @@ lvim.builtin.cmp.formatting.duplicates = {
   luasnip = 1,
 }
 lvim.builtin.cmp.cmdline.enable = true
-lvim.icons.kind['Codeium'] = ''
+-- complete entry selected in cmdline menu on <CR>
+local _, cmp_types = pcall(require, 'cmp.types.cmp')
+local ConfirmBehavior = cmp_types.ConfirmBehavior
+local cmp = require('lvim.utils.modules').require_on_index 'cmp'
+local cmp_mapping = require 'cmp.config.mapping'
+lvim.builtin.cmp.mapping['<CR>'] = cmp_mapping({
+  -- this function is copied from Lunarvim's source code
+  i = function(fallback)
+    if cmp.visible() then
+      local confirm_opts = vim.deepcopy(lvim.builtin.cmp.confirm_opts)
+      local is_insert_mode = function()
+        return vim.api.nvim_get_mode().mode:sub(1, 1) == 'i'
+      end
+      if is_insert_mode() then
+        confirm_opts.behavior = ConfirmBehavior.Insert
+      end
+      if cmp.confirm(confirm_opts) then
+        return
+      end
+    end
+    fallback()
+  end,
+  -- this line adds the desired behavior for <CR>
+  c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
+})
+-- add codeium as a nvim-cmp source
 table.insert(lvim.builtin.cmp.sources, { name = 'codeium', max_item_count = 3 })
+lvim.icons.kind['Codeium'] = ''
 lvim.builtin.cmp.formatting.source_names['codeium'] = '(Codeium)'
 lvim.builtin.cmp.experimental = {
   ghost_text = true,
@@ -288,8 +314,20 @@ lvim.plugins = {
     version = '*',
     event = 'VeryLazy',
     config = function()
-      require('nvim-surround').setup({})
+      require('nvim-surround').setup()
     end
+  },
+  {
+    'roobert/surround-ui.nvim',
+    dependencies = {
+      'kylechui/nvim-surround',
+      'folke/which-key.nvim',
+    },
+    config = function()
+      require('surround-ui').setup({
+        root_key = 'S'
+      })
+    end,
   },
   { 'folke/trouble.nvim',  cmd = 'TroubleToggle' },
   {
@@ -330,6 +368,7 @@ lvim.plugins = {
   {
     'RRethy/nvim-treesitter-textsubjects',
     config = function()
+      ---@diagnostic disable-next-line: missing-fields
       require('nvim-treesitter.configs').setup({
         textsubjects = {
           enable = true,
@@ -341,6 +380,7 @@ lvim.plugins = {
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
     config = function()
+      ---@diagnostic disable-next-line: missing-fields
       require('nvim-treesitter.configs').setup({
         textobjects = {
           select = {
@@ -497,6 +537,8 @@ lvim.plugins = {
       require('mason').setup()
       require('mason-null-ls').setup({
         handlers = {},
+        ensure_installed = {},
+        automatic_installation = false
       })
     end
   },
@@ -564,23 +606,26 @@ lvim.autocommands = {
         end
       end
     }
+  },
+  -- quit lvim when nvimtree is only left open
+  {
+    'QuitPre',
+    {
+      pattern = '*',
+      callback = function()
+        local invalid_win = {}
+        local wins = vim.api.nvim_list_wins()
+        for _, w in ipairs(wins) do
+          local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w))
+          if bufname:match('NvimTree_') ~= nil then
+            table.insert(invalid_win, w)
+          end
+        end
+        if #invalid_win == #wins - 1 then
+          -- Should quit, so we close all invalid windows.
+          for _, w in ipairs(invalid_win) do vim.api.nvim_win_close(w, true) end
+        end
+      end
+    }
   }
 }
-
--- quit lvim when nvimtree is only left open
-vim.api.nvim_create_autocmd('QuitPre', {
-  callback = function()
-    local invalid_win = {}
-    local wins = vim.api.nvim_list_wins()
-    for _, w in ipairs(wins) do
-      local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w))
-      if bufname:match('NvimTree_') ~= nil then
-        table.insert(invalid_win, w)
-      end
-    end
-    if #invalid_win == #wins - 1 then
-      -- Should quit, so we close all invalid windows.
-      for _, w in ipairs(invalid_win) do vim.api.nvim_win_close(w, true) end
-    end
-  end
-})
