@@ -27,9 +27,10 @@ lvim.keys.normal_mode['n'] = 'nzzzv'
 lvim.keys.normal_mode['N'] = 'Nzzzv'
 
 -- return cursor to previous location when cancelling from visual mode
-vim.keymap.set({ 'n' }, 'v', 'mav', { noremap = true })
-vim.keymap.set({ 'n' }, 'V', 'maV', { noremap = true })
-vim.keymap.set('v', '<Esc>', '<Esc>`a', { noremap = true, silent = true })
+-- doesn't work with wildfire.nvim so commented out for now
+-- vim.keymap.set({ 'n' }, 'v', 'mav', { noremap = true })
+-- vim.keymap.set({ 'n' }, 'V', 'maV', { noremap = true })
+-- vim.keymap.set('v', '<Esc>', '<Esc>`a', { noremap = true, silent = true })
 
 -- keymaps for yanky.nvim
 lvim.keys.normal_mode['p'] = { '<Plug>(YankyPutAfter)', { desc = 'Put after cursor' } }
@@ -41,8 +42,7 @@ lvim.keys.normal_mode['<C-p'] = { '<Plug>(YankyCycleBackward)', { desc = 'Cycle 
 lvim.keys.visual_block_mode['p'] = { '<Plug>(YankyPutAfter)', { desc = 'Put after cursor' } }
 lvim.keys.visual_block_mode['P'] = { '<Plug>(YankyPutBefore)', { desc = 'Put before cursor' } }
 lvim.keys.visual_block_mode['gp'] = { '<Plug>(YankyGPutAfter)', { desc = 'Put after cursor and leave cursor after' } }
-lvim.keys.visual_block_mode['gp'] = { '<Plug>(YankyGPutBefore)', { desc = 'Put before cursor and leave cursor after' } }
-vim.keymap.set({ 'n', 'x' }, 'y', '<Plug>(YankyYank)')
+lvim.keys.visual_block_mode['gP'] = { '<Plug>(YankyGPutBefore)', { desc = 'Put before cursor and leave cursor after' } }
 
 -- shows registers on " in NORMAL or <C-r> in INSERT mode
 lvim.builtin.which_key.setup.plugins.registers = true
@@ -138,6 +138,7 @@ lvim.builtin.which_key.mappings['Ts'] = {
 }
 
 -- core plugins configs
+lvim.builtin.project.show_hidden = true
 lvim.builtin.bufferline.options.always_show_bufferline = true
 lvim.builtin.bufferline.options.numbers = 'ordinal'
 -- i don't like indentlines
@@ -267,13 +268,6 @@ lvim.builtin.treesitter.ensure_installed = {
   'yaml'
 }
 
--- repeat movement with ; and ,
--- ensure ; goes forward and , goes backward regardless of the last direction
-local ts_repeat_move = require 'nvim-treesitter.textobjects.repeatable_move'
-vim.keymap.set({ 'n', 'x', 'o' }, ';', ts_repeat_move.repeat_last_move_next)
-vim.keymap.set({ 'n', 'x', 'o' }, ',', ts_repeat_move.repeat_last_move_previous)
-lvim.builtin.treesitter.additional_vim_regex_highlighting = true
-
 -- fix lspinfo popup border
 require('lspconfig.ui.windows').default_options.border = 'rounded'
 
@@ -307,6 +301,12 @@ lvim.plugins = {
       })
       onedark.load()
     end
+  },
+  {
+    'hrsh7th/cmp-cmdline',
+    lazy = true,
+    commit = '8ee981b',
+    enabled = lvim.builtin.cmp and lvim.builtin.cmp.cmdline.enable or false,
   },
   { 'edkolev/tmuxline.vim' },
   {
@@ -354,8 +354,8 @@ lvim.plugins = {
     event = 'BufReadPre',
     config = function()
       require('persistence').setup({
-        dir = vim.fn.expand(vim.fn.stdpath 'config' .. '/session/'),
-        options = { 'buffers', 'curdir', 'tabpages', 'winsize' },
+        dir = require('lvim.utils').join_paths(get_config_dir(), '/sessions/'),
+        options = { 'buffers', 'curdir', 'tabpages', 'winsize' }
       })
     end
   },
@@ -366,15 +366,11 @@ lvim.plugins = {
     end
   },
   {
-    'RRethy/nvim-treesitter-textsubjects',
+    'sustech-data/wildfire.nvim',
+    event = 'VeryLazy',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('nvim-treesitter.configs').setup({
-        textsubjects = {
-          enable = true,
-          keymaps = { ['.'] = 'textsubjects-smart', [';'] = 'textsubjects-big' },
-        },
-      })
+      require('wildfire').setup()
     end
   },
   {
@@ -383,57 +379,14 @@ lvim.plugins = {
       ---@diagnostic disable-next-line: missing-fields
       require('nvim-treesitter.configs').setup({
         textobjects = {
-          select = {
-            enable = true,
-            lookahead = true,
-            keymaps = {
-              ['aa'] = '@parameter.outer',
-              ['ia'] = '@parameter.inner',
-              ['af'] = '@function.outer',
-              ['if'] = '@function.inner',
-              ['ac'] = '@class.outer',
-              ['ic'] = '@class.inner',
-              ['as'] = '@scope'
-            },
-          },
           swap = {
             enable = true,
             swap_next = {
               ['<leader>a'] = '@parameter.inner',
             },
             swap_previous = {
-              ['<leader>a'] = '@parameter.inner',
+              ['<leader>A'] = '@parameter.inner',
             },
-          },
-          move = {
-            enable = true,
-            set_jumps = true,
-            goto_next_start = {
-              [']m'] = '@function.outer',
-              [']]'] = { query = '@class.outer', desc = 'next class start' },
-              [']o'] = '@loop.*',
-              -- ["]o"] = { query = { "@loop.inner", "@loop.outer" } }
-              [']s'] = { query = '@scope', query_group = 'locals', desc = 'next scope' },
-              [']z'] = { query = '@fold', query_group = 'folds', desc = 'next fold' },
-            },
-            goto_next_end = {
-              [']m'] = '@function.outer',
-              [']['] = '@class.outer',
-            },
-            goto_previous_start = {
-              ['[m'] = '@function.outer',
-              ['[['] = '@class.outer',
-            },
-            goto_previous_end = {
-              ['[m'] = '@function.outer',
-              ['[]'] = '@class.outer',
-            },
-            goto_next = {
-              [']d'] = '@conditional.outer',
-            },
-            goto_previous = {
-              ['[d'] = '@conditional.outer',
-            }
           },
         }
       })
@@ -547,40 +500,6 @@ lvim.plugins = {
     config = function() require('guess-indent').setup({}) end
   },
 }
-
--- function to split a string with line endings into a table
-local function lines(str)
-  local t = {}
-  local function helper(line)
-    -- trim leading whitespace
-    line = line:gsub('^[ \t]+', '')
-    table.insert(t, line)
-    return ''
-  end
-  helper((str:gsub('(.-)\r?\n', helper)))
-  return t
-end
-
-vim.diagnostic.config({
-  float = {
-    focusable = true,
-    style = 'minimal',
-    border = 'rounded',
-    source = 'if_many',
-    header = '',
-    prefix = '',
-    format = function(diagnostic)
-      if diagnostic.source == 'typescript' then
-        -- these errors messages are too long so only show the first line
-        if diagnostic.code == 2322 then
-          local content = lines(diagnostic.message)
-          return content[1]
-        end
-      end
-      return diagnostic.message
-    end
-  }
-})
 
 lvim.autocommands = {
   { 'ColorScheme',
