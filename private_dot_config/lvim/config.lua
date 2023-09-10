@@ -6,12 +6,6 @@ vim.opt.cursorline = false
 lvim.colorscheme = 'onedark'
 lvim.log.level = 'warn'
 lvim.format_on_save = true
-lvim.builtin.illuminate.active = false
-
--- status line customization
-lvim.builtin.lualine.style = 'lvim'
-lvim.builtin.lualine.options = { section_separators = '', component_separators = '' }
-lvim.builtin.lualine.options.disabled_filetypes = { 'alpha', 'dashboard', 'Outline' }
 
 -- custom keymappings
 lvim.keys.normal_mode['<C-s>'] = ':w<Cr>'
@@ -32,18 +26,6 @@ lvim.keys.normal_mode['N'] = 'Nzzzv'
 -- vim.keymap.set({ 'n' }, 'V', 'maV', { noremap = true })
 -- vim.keymap.set('v', '<Esc>', '<Esc>`a', { noremap = true, silent = true })
 
--- keymaps for yanky.nvim
-lvim.keys.normal_mode['p'] = { '<Plug>(YankyPutAfter)', { desc = 'Put after cursor' } }
-lvim.keys.normal_mode['P'] = { '<Plug>(YankyPutBefore)', { desc = 'Put before cursor' } }
-lvim.keys.normal_mode['gp'] = { '<Plug>(YankyGPutAfter)', { desc = 'Put after cursor and leave cursor after' } }
-lvim.keys.normal_mode['gP'] = { '<Plug>(YankyGPutBefore)', { desc = 'Put before cursor and leave cursor after' } }
-lvim.keys.normal_mode['<C-n>'] = { '<Plug>(YankyCycleForward)', { desc = 'Cycle forward' } }
-lvim.keys.normal_mode['<C-p'] = { '<Plug>(YankyCycleBackward)', { desc = 'Cycle backward' } }
-lvim.keys.visual_block_mode['p'] = { '<Plug>(YankyPutAfter)', { desc = 'Put after cursor' } }
-lvim.keys.visual_block_mode['P'] = { '<Plug>(YankyPutBefore)', { desc = 'Put before cursor' } }
-lvim.keys.visual_block_mode['gp'] = { '<Plug>(YankyGPutAfter)', { desc = 'Put after cursor and leave cursor after' } }
-lvim.keys.visual_block_mode['gP'] = { '<Plug>(YankyGPutBefore)', { desc = 'Put before cursor and leave cursor after' } }
-
 -- shows registers on " in NORMAL or <C-r> in INSERT mode
 lvim.builtin.which_key.setup.plugins.registers = true
 lvim.builtin.which_key.setup.plugins.presets = {
@@ -56,34 +38,10 @@ lvim.builtin.which_key.setup.plugins.presets = {
   g = true,            -- bindings for prefixed with g
 }
 
--- delete to void register
-lvim.builtin.which_key.mappings['d'] = {}
-lvim.keys.visual_block_mode['<leader>d'] = '"_d'
--- keep yanked word in the last register when pasting
-lvim.builtin.which_key.mappings['p'] = {}
-lvim.keys.visual_block_mode['<leader>p'] = '"_dP'
-
 -- which_key remappings
 lvim.builtin.which_key.mappings['e'] = { ':NvimTreeFocus<CR>', 'Explorer' }
 lvim.builtin.which_key.mappings['<Space>'] = {
   '<cmd>Telescope buffers<cr>', 'Buffers list'
-}
-lvim.builtin.which_key.mappings['D'] = {
-  name = 'Debug',
-  t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", 'Toggle Breakpoint' },
-  b = { "<cmd>lua require'dap'.step_back()<cr>", 'Step Back' },
-  c = { "<cmd>lua require'dap'.continue()<cr>", 'Continue' },
-  C = { "<cmd>lua require'dap'.run_to_cursor()<cr>", 'Run To Cursor' },
-  d = { "<cmd>lua require'dap'.disconnect()<cr>", 'Disconnect' },
-  g = { "<cmd>lua require'dap'.session()<cr>", 'Get Session' },
-  i = { "<cmd>lua require'dap'.step_into()<cr>", 'Step Into' },
-  o = { "<cmd>lua require'dap'.step_over()<cr>", 'Step Over' },
-  u = { "<cmd>lua require'dap'.step_out()<cr>", 'Step Out' },
-  p = { "<cmd>lua require'dap'.pause()<cr>", 'Pause' },
-  r = { "<cmd>lua require'dap'.repl.toggle()<cr>", 'Toggle Repl' },
-  s = { "<cmd>lua require'dap'.continue()<cr>", 'Start' },
-  q = { "<cmd>lua require'dap'.close()<cr>", 'Quit' },
-  U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", 'Toggle UI' },
 }
 lvim.builtin.which_key.mappings['t'] = {
   name = 'Trouble',
@@ -138,7 +96,13 @@ lvim.builtin.which_key.mappings['Ts'] = {
 }
 
 -- core plugins configs
+lvim.builtin.illuminate.active = false
 lvim.builtin.project.show_hidden = true
+-- status line customization
+lvim.builtin.lualine.style = 'lvim'
+lvim.builtin.lualine.options = { section_separators = '', component_separators = '' }
+lvim.builtin.lualine.options.disabled_filetypes = { 'alpha', 'dashboard', 'Outline' }
+-- bufferline customization
 lvim.builtin.bufferline.options.always_show_bufferline = true
 lvim.builtin.bufferline.options.numbers = 'ordinal'
 -- i don't like indentlines
@@ -147,7 +111,7 @@ lvim.builtin.indentlines.active = false
 lvim.builtin.cmp.formatting.fields = { 'abbr', 'kind', 'menu' }
 lvim.builtin.cmp.completion = {
   scrollbar = false,
-  completeopt = 'menu,menuone,select'
+  completeopt = 'menu,menuone,select,preview'
 }
 -- remove duplicates between lsp and buffer words
 lvim.builtin.cmp.formatting.duplicates = {
@@ -450,12 +414,6 @@ lvim.plugins = {
   },
   { 'nvim-telescope/telescope-file-browser.nvim' },
   {
-    'gbprod/yanky.nvim',
-    config = function()
-      require('yanky').setup()
-    end
-  },
-  {
     'jcdickinson/codeium.nvim',
     dependencies = {
       'nvim-lua/plenary.nvim',
@@ -498,6 +456,15 @@ lvim.plugins = {
   {
     'nmac427/guess-indent.nvim',
     config = function() require('guess-indent').setup({}) end
+  },
+  {
+    'gbprod/cutlass.nvim',
+    config = function()
+      require('cutlass').setup({
+        cut_key = 'x',
+        exclude = { 'ns', 'nS' },
+      })
+    end
   },
 }
 
