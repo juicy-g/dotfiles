@@ -82,7 +82,7 @@ if command -v tmux &> /dev/null \
 	&& [[ ! "$TERM" =~ tmux ]] \
 	&& [ -z "$TMUX" ] \
 	&& ! pstree -s $$ | grep -wq code; then
-  exec tmux new-session -A -s main
+  exec tmux new-session
 fi
 
 # Enable fzf
