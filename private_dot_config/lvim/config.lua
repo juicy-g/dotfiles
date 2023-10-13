@@ -10,7 +10,7 @@ lvim.format_on_save = true
 -- custom keymappings
 lvim.keys.normal_mode['<C-s>'] = ':w<Cr>'
 lvim.keys.insert_mode['<C-s>'] = '<Cmd>:w<Cr>'
--- lvim.keys.normal_mode['<C-q>'] = ':q<Cr>'
+lvim.keys.normal_mode['<C-q>'] = ':q<Cr>'
 lvim.keys.normal_mode['<S-x>'] = ':BufferKill<Cr>'
 lvim.keys.normal_mode['<S-l>'] = ':BufferLineCycleNext<Cr>'
 lvim.keys.normal_mode['<S-h>'] = ':BufferLineCyclePrev<Cr>'
@@ -136,6 +136,12 @@ lvim.builtin.cmp.mapping['<CR>'] = cmp_mapping({
       end
       if is_insert_mode() then
         confirm_opts.behavior = ConfirmBehavior.Insert
+      end
+      local entry = cmp.get_selected_entry()
+      local is_codeium = entry and entry.source.name == 'codeium'
+      if is_codeium then
+        confirm_opts.behavior = ConfirmBehavior.Replace
+        confirm_opts.select = true
       end
       if cmp.confirm(confirm_opts) then
         return
