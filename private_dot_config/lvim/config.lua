@@ -20,6 +20,10 @@ lvim.keys.insert_mode['<C-c>'] = '<Esc>'
 lvim.keys.normal_mode['n'] = 'nzzzv'
 lvim.keys.normal_mode['N'] = 'Nzzzv'
 
+-- add empty lines before and after cursor line
+lvim.keys.normal_mode['gO'] = "<Cmd>call append(line('.') - 1, repeat([''], v:count1))<CR>"
+lvim.keys.normal_mode['go'] = "<Cmd>call append(line('.'),     repeat([''], v:count1))<CR>"
+
 -- return cursor to previous location when cancelling from visual mode
 -- doesn't work with wildfire.nvim so commented out for now
 -- vim.keymap.set({ 'n' }, 'v', 'mav', { noremap = true })
@@ -69,6 +73,7 @@ lvim.builtin.which_key.mappings['P'] = {
 }
 -- additional pickers for search menu
 lvim.builtin.which_key.mappings['se'] = { '<cmd>Telescope emoji<cr>', 'Find emoji' }
+lvim.builtin.which_key.mappings['sm'] = { '<cmd>Telescope harpoon marks<cr>', 'Harpoon Marks' }
 lvim.builtin.which_key.mappings['s/'] = {
   function()
     require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown())
@@ -127,7 +132,7 @@ local ConfirmBehavior = cmp_types.ConfirmBehavior
 local cmp = require('lvim.utils.modules').require_on_index 'cmp'
 local cmp_mapping = require 'cmp.config.mapping'
 lvim.builtin.cmp.mapping['<CR>'] = cmp_mapping({
-  -- this function is copied from Lunarvim's source code
+  -- this function is copied from Lunarvim's source code but changed to use Codeium
   i = function(fallback)
     if cmp.visible() then
       local confirm_opts = vim.deepcopy(lvim.builtin.cmp.confirm_opts)
@@ -152,6 +157,7 @@ lvim.builtin.cmp.mapping['<CR>'] = cmp_mapping({
   -- this line adds the desired behavior for <CR>
   c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
 })
+
 -- add codeium as a nvim-cmp source
 table.insert(lvim.builtin.cmp.sources, { name = 'codeium', max_item_count = 3 })
 lvim.icons.kind['Codeium'] = ''
@@ -195,6 +201,7 @@ lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, 'file_browser')
   pcall(telescope.load_extension, 'yank_history')
   pcall(telescope.load_extension, 'emoji')
+  pcall(telescope.load_extension, 'harpoon')
 end
 
 -- ignore these folders when searching
@@ -472,6 +479,40 @@ lvim.plugins = {
       })
     end
   },
+  {
+    'stevearc/aerial.nvim',
+    opts = {},
+    -- Optional dependencies
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-tree/nvim-web-devicons'
+    },
+    config = function()
+      require('aerial').setup()
+      lvim.builtin.which_key.mappings['o'] = {
+        '<CMD>AerialToggle<CR>', 'Code Outline'
+      }
+    end
+  },
+  {
+    'ThePrimeagen/harpoon',
+    config = function()
+      lvim.builtin.which_key.mappings['m'] = {
+        '<CMD>lua require("harpoon.mark").add_file()<CR>', 'Mark File'
+      }
+      lvim.builtin.which_key.mappings['h'] = {
+        '<CMD>lua require("harpoon.ui").toggle_quick_menu()<CR>', 'Harpoon'
+      }
+      vim.keymap.set('n', '1', ':lua require("harpoon.ui").nav_file(1)<CR>',
+        { noremap = true, silent = true })
+      vim.keymap.set('n', '2', ':lua require("harpoon.ui").nav_file(2)<CR>',
+        { noremap = true, silent = true })
+      vim.keymap.set('n', '3', ':lua require("harpoon.ui").nav_file(3)<CR>',
+        { noremap = true, silent = true })
+      vim.keymap.set('n', '4', ':lua require("harpoon.ui").nav_file(4)<CR>',
+        { noremap = true, silent = true })
+    end
+  }
 }
 
 lvim.autocommands = {
@@ -483,6 +524,16 @@ lvim.autocommands = {
         vim.api.nvim_set_hl(0, 'LspInfoBorder', { fg = '#848b98', bg = '#1f2329' })
         vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', { underline = false })
       end,
+    }
+  },
+  -- move thru lines in Harpoon quick menu
+  { 'Filetype',
+    {
+      pattern = 'harpoon',
+      callback = function()
+        vim.keymap.set('n', '<TAB>', 'j', { noremap = true, silent = true })
+        vim.keymap.set('n', '<S-TAB>', 'k', { noremap = true, silent = true })
+      end
     }
   },
   -- set line numbers in telescope preview window
