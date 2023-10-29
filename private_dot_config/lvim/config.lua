@@ -126,11 +126,13 @@ lvim.builtin.cmp.formatting.duplicates = {
   luasnip = 1,
 }
 lvim.builtin.cmp.cmdline.enable = true
+
 -- complete entry selected in cmdline menu on <CR>
 local _, cmp_types = pcall(require, 'cmp.types.cmp')
 local ConfirmBehavior = cmp_types.ConfirmBehavior
 local cmp = require('lvim.utils.modules').require_on_index 'cmp'
 local cmp_mapping = require 'cmp.config.mapping'
+
 lvim.builtin.cmp.mapping['<CR>'] = cmp_mapping({
   -- this function is copied from Lunarvim's source code but changed to use Codeium
   i = function(fallback)
@@ -156,6 +158,24 @@ lvim.builtin.cmp.mapping['<CR>'] = cmp_mapping({
   end,
   -- this line adds the desired behavior for <CR>
   c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
+})
+
+lvim.builtin.cmp.mapping['<Up>'] = cmp_mapping({
+  i = function(fallback)
+    if cmp.visible() then
+      cmp.close()
+    end
+    fallback()
+  end
+})
+
+lvim.builtin.cmp.mapping['<Down>'] = cmp_mapping({
+  i = function(fallback)
+    if cmp.visible() then
+      cmp.close()
+    end
+    fallback()
+  end
 })
 
 -- add codeium as a nvim-cmp source
@@ -304,13 +324,19 @@ lvim.plugins = {
       require('surround-ui').setup({
         root_key = 'S'
       })
-    end,
+    end
   },
   { 'folke/trouble.nvim',  cmd = 'TroubleToggle' },
   {
     'ggandor/leap.nvim',
     config = function()
       require('leap').add_default_mappings()
+    end
+  },
+  {
+    'ggandor/flit.nvim',
+    config = function()
+      require('flit').setup()
     end
   },
   {
