@@ -160,26 +160,8 @@ lvim.builtin.cmp.mapping['<CR>'] = cmp_mapping({
   c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
 })
 
-lvim.builtin.cmp.mapping['<Up>'] = cmp_mapping({
-  i = function(fallback)
-    if cmp.visible() then
-      cmp.close()
-    end
-    fallback()
-  end
-})
-
-lvim.builtin.cmp.mapping['<Down>'] = cmp_mapping({
-  i = function(fallback)
-    if cmp.visible() then
-      cmp.close()
-    end
-    fallback()
-  end
-})
-
 -- add codeium as a nvim-cmp source
-table.insert(lvim.builtin.cmp.sources, { name = 'codeium', max_item_count = 3 })
+table.insert(lvim.builtin.cmp.sources, { name = 'codeium', max_item_count = 4 })
 lvim.icons.kind['Codeium'] = ''
 lvim.builtin.cmp.formatting.source_names['codeium'] = '(Codeium)'
 lvim.builtin.cmp.experimental = {
@@ -278,6 +260,27 @@ vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'tsserver' }
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'tailwindcss' })
 -- skip server to use schemastore
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'jsonls' })
+
+-- setup debugging
+lvim.builtin.dap.active = true
+local dap = require('dap')
+for _, language in ipairs { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' } do
+  dap.configurations[language] = {
+    {
+      type = 'pwa-node',
+      request = 'attach',
+      name = 'Attach Program (pwa-node, select pid)',
+      processId = require('dap.utils').pick_process,
+      sourceMaps = true,
+      resolveSourceMapLocations = { '${workspaceFolder}/**',
+        '!**/node_modules/**' },
+      cwd = '${workspaceFolder}/src',
+      skipFiles = { '${workspaceFolder}/node_modules/**/*.js' },
+    },
+  }
+end
+
+
 
 -- extra plugins
 lvim.plugins = {
@@ -385,10 +388,10 @@ lvim.plugins = {
           swap = {
             enable = true,
             swap_next = {
-              ['<leader>a'] = '@parameter.inner',
+              ['<leader>a'] = { query = '@parameter.inner', desc = 'which_key_ignore' },
             },
             swap_previous = {
-              ['<leader>A'] = '@parameter.inner',
+              ['<leader>A'] = { query = '@parameter.outer', desc = 'which_key_ignore' },
             },
           },
         }
@@ -453,7 +456,7 @@ lvim.plugins = {
   },
   { 'nvim-telescope/telescope-file-browser.nvim' },
   {
-    'jcdickinson/codeium.nvim',
+    'Exafunction/codeium.nvim',
     dependencies = {
       'nvim-lua/plenary.nvim',
       'hrsh7th/nvim-cmp',
@@ -529,14 +532,37 @@ lvim.plugins = {
       lvim.builtin.which_key.mappings['h'] = {
         '<CMD>lua require("harpoon.ui").toggle_quick_menu()<CR>', 'Harpoon'
       }
-      vim.keymap.set('n', '1', ':lua require("harpoon.ui").nav_file(1)<CR>',
-        { noremap = true, silent = true })
-      vim.keymap.set('n', '2', ':lua require("harpoon.ui").nav_file(2)<CR>',
-        { noremap = true, silent = true })
-      vim.keymap.set('n', '3', ':lua require("harpoon.ui").nav_file(3)<CR>',
-        { noremap = true, silent = true })
-      vim.keymap.set('n', '4', ':lua require("harpoon.ui").nav_file(4)<CR>',
-        { noremap = true, silent = true })
+      lvim.builtin.which_key.mappings['1'] = {
+        ':lua require("harpoon.ui").nav_file(1)<CR>', 'which_key_ignore'
+      }
+      lvim.builtin.which_key.mappings['2'] = {
+        ':lua require("harpoon.ui").nav_file(2)<CR>', 'which_key_ignore'
+      }
+      lvim.builtin.which_key.mappings['3'] = {
+        ':lua require("harpoon.ui").nav_file(3)<CR>', 'which_key_ignore'
+      }
+      lvim.builtin.which_key.mappings['4'] = {
+        ':lua require("harpoon.ui").nav_file(4)<CR>', 'which_key_ignore'
+      }
+    end
+  },
+  {
+    'microsoft/vscode-js-debug',
+    version = '1.x',
+    build = 'npm i && npm run compile vsDebugServerBundle && mv dist out'
+  },
+  {
+    'mxsdev/nvim-dap-vscode-js',
+    dependencies = { 'mfussenegger/nvim-dap' },
+    config = function()
+      local utils = require 'lvim.utils'
+      local join_paths = utils.join_paths
+      ---@diagnostic disable-next-line: missing-fields
+      require('dap-vscode-js').setup({
+        ---@diagnostic disable-next-line: undefined-global
+        debugger_path = join_paths(get_runtime_dir(), 'site', 'pack', 'lazy', 'opt', 'vscode-js-debug'),
+        adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' },
+      })
     end
   }
 }
