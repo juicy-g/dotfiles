@@ -13,7 +13,8 @@ local opts = {
         },
       },
       diagnostics = {
-        globals = { 'vim', 'lvim', 'reload' },
+        -- globals = { 'vim', 'lvim', 'reload', 'get_config_dir', 'get_lvim_base_dir' },
+        disable = { 'undefined-global', 'missing-fields' }
       },
       completion = {
         callSnippet = 'Replace'
@@ -30,16 +31,15 @@ local opts = {
         library = {
           vim.fn.expand '$VIMRUNTIME',
           get_lvim_base_dir(),
-          require('neodev.config').types(),
+          -- require('neodev.config').types(),
           plugins = true,
         },
         checkThirdParty = false,
-
         maxPreload = 5000,
         preloadFileSize = 10000,
       }
     },
   }
 }
-require('neodev').setup({})
+-- require('neodev').setup({})
 require('lvim.lsp.manager').setup('lua_ls', opts)
