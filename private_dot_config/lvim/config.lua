@@ -64,6 +64,7 @@ lvim.builtin.which_key.mappings['f'] = {
 lvim.builtin.which_key.mappings['F'] = {
   '<cmd>Telescope file_browser<cr>', 'File Browser'
 }
+lvim.builtin.which_key.mappings['H'] = { '<cmd>nohlsearch<CR>', 'No Highlight' }
 -- add a sessions menu
 lvim.builtin.which_key.mappings['P'] = {
   name = 'Session',
@@ -261,27 +262,6 @@ vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'tailwindcss
 -- skip server to use schemastore
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { 'jsonls' })
 
--- setup debugging
-lvim.builtin.dap.active = true
-local dap = require('dap')
-for _, language in ipairs { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' } do
-  dap.configurations[language] = {
-    {
-      type = 'pwa-node',
-      request = 'attach',
-      name = 'Attach Program (pwa-node, select pid)',
-      processId = require('dap.utils').pick_process,
-      sourceMaps = true,
-      resolveSourceMapLocations = { '${workspaceFolder}/**',
-        '!**/node_modules/**' },
-      cwd = '${workspaceFolder}/src',
-      skipFiles = { '${workspaceFolder}/node_modules/**/*.js' },
-    },
-  }
-end
-
-
-
 -- extra plugins
 lvim.plugins = {
   {
@@ -382,7 +362,6 @@ lvim.plugins = {
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
       require('nvim-treesitter.configs').setup({
         textobjects = {
           swap = {
@@ -511,7 +490,6 @@ lvim.plugins = {
   {
     'stevearc/aerial.nvim',
     opts = {},
-    -- Optional dependencies
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
       'nvim-tree/nvim-web-devicons'
@@ -547,25 +525,79 @@ lvim.plugins = {
     end
   },
   {
+    'theHamsta/nvim-dap-virtual-text',
+    opts = {}
+  },
+  {
     'microsoft/vscode-js-debug',
     version = '1.x',
-    build = 'npm i && npm run compile vsDebugServerBundle && mv dist out'
+    build = 'npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out'
+  },
+  {
+    'firefox-devtools/vscode-firefox-debug',
+    build = 'npm install && npm run build',
   },
   {
     'mxsdev/nvim-dap-vscode-js',
     dependencies = { 'mfussenegger/nvim-dap' },
     config = function()
-      local utils = require 'lvim.utils'
-      local join_paths = utils.join_paths
-      ---@diagnostic disable-next-line: missing-fields
       require('dap-vscode-js').setup({
-        ---@diagnostic disable-next-line: undefined-global
         debugger_path = join_paths(get_runtime_dir(), 'site', 'pack', 'lazy', 'opt', 'vscode-js-debug'),
         adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' },
       })
     end
   }
 }
+
+-- setup debugging
+-- lvim.builtin.dap.log.level = 'error'
+lvim.builtin.dap.on_config_done = function(dap)
+  dap.adapters.firefox = {
+    type = 'executable',
+    command = 'node',
+    args = { join_paths(get_runtime_dir(), 'site', 'pack', 'lazy', 'opt', 'vscode-firefox-debug/dist/adapter.bundle.js') }
+  }
+  for _, language in ipairs { 'javascript', 'typescript', 'typescriptreact' } do
+    dap.configurations[language] = {
+      {
+        type = 'pwa-node',
+        request = 'launch',
+        name = 'Next.js: Debug Server Code',
+        program = '${workspaceFolder}/node_modules/.bin/next',
+        args = { 'dev' },
+        sourceMaps = true,
+        resolveSourceMapLocations = { '${workspaceFolder}/**', '!**/node_modules/**' },
+        cwd = '${workspaceFolder}',
+        outputCapture = 'std',
+        console = 'integratedTerminal',
+        skipFiles = { '<node_internals>/**', '${workspaceFolder}/node_modules/**' },
+      },
+      {
+        type = 'firefox',
+        request = 'launch',
+        -- reAttach = true,
+        name = 'Launch Firefox to debug client side code',
+        url = 'http://localhost:3000',
+        firefoxExecutable = '/home/juicy/.local/share/umake/bin/firefox-developer',
+        -- firefoxArgs = { '--start-debugger-server' },
+        -- firefoxArgs = { '-P', 'default-release' },
+        -- profileDir = '/mnt/c/Users/joce_/AppData/Roaming/Mozilla/Firefox/Profiles/qj1xsd22.default-release',
+        -- -- profile = 'default',
+        sourceMaps = true,
+        webRoot = '${workspaceFolder}',
+        -- protocol = 'inspector',
+        -- host = '172.25.96.1',
+        port = 9229,
+        -- detached = false,
+        skipFiles = { '**/node_modules/**/*' },
+        log = {
+          fileName = vim.fn.stdpath('cache') .. '/vscode-firefox-debug.log',
+          -- fileLevel = { default = 'Debug' }
+        }
+      }
+    }
+  end
+end
 
 lvim.autocommands = {
   { 'ColorScheme',
