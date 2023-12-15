@@ -30,6 +30,21 @@ lvim.keys.normal_mode['go'] = "<Cmd>call append(line('.'),     repeat([''], v:co
 -- vim.keymap.set({ 'n' }, 'V', 'maV', { noremap = true })
 -- vim.keymap.set('v', '<Esc>', '<Esc>`a', { noremap = true, silent = true })
 
+-- keymaps to jump between diagnostics
+local diagnostic_goto = function(next, severity)
+  local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
+  severity = severity and vim.diagnostic.severity[severity] or nil
+  return function()
+    go({ severity = severity })
+  end
+end
+lvim.keys.normal_mode[']d'] = diagnostic_goto(true)
+lvim.keys.normal_mode['[d'] = diagnostic_goto(false)
+lvim.keys.normal_mode[']e'] = diagnostic_goto(true, 'ERROR')
+lvim.keys.normal_mode['[e'] = diagnostic_goto(false, 'ERROR')
+lvim.keys.normal_mode[']w'] = diagnostic_goto(true, 'WARN')
+lvim.keys.normal_mode['[w'] = diagnostic_goto(false, 'WARN')
+
 -- shows registers on " in NORMAL or <C-r> in INSERT mode
 lvim.builtin.which_key.setup.plugins.registers = true
 lvim.builtin.which_key.setup.plugins.presets = {
@@ -60,9 +75,6 @@ lvim.builtin.which_key.mappings['bs'] = { '<cmd>BufferLinePick<cr>', 'Pick a buf
 lvim.builtin.which_key.mappings['f'] = {
   '<cmd>Telescope find_files find_command=rg,--ignore,--hidden,--files,-u<cr>',
   'Find File',
-}
-lvim.builtin.which_key.mappings['F'] = {
-  '<cmd>Telescope file_browser<cr>', 'File Browser'
 }
 lvim.builtin.which_key.mappings['H'] = { '<cmd>nohlsearch<CR>', 'No Highlight' }
 -- add a sessions menu
@@ -201,7 +213,6 @@ lvim.builtin.telescope.defaults.mappings = {
 -- load telescope extensions
 lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, 'undo')
-  pcall(telescope.load_extension, 'file_browser')
   pcall(telescope.load_extension, 'yank_history')
   pcall(telescope.load_extension, 'emoji')
   pcall(telescope.load_extension, 'harpoon')
@@ -286,7 +297,7 @@ lvim.plugins = {
     'hrsh7th/cmp-cmdline',
     lazy = true,
     commit = '8ee981b',
-    enabled = lvim.builtin.cmp and lvim.builtin.cmp.cmdline.enable or false,
+    enabled = true,
   },
   { 'edkolev/tmuxline.vim' },
   {
@@ -364,6 +375,13 @@ lvim.plugins = {
     config = function()
       require('nvim-treesitter.configs').setup({
         textobjects = {
+          move = {
+            enable = true,
+            goto_next_start = { [']f'] = '@function.outer', [']c'] = '@class.outer' },
+            goto_next_end = { [']F'] = '@function.outer', [']C'] = '@class.outer' },
+            goto_previous_start = { ['[f'] = '@function.outer', ['[c'] = '@class.outer' },
+            goto_previous_end = { ['[F'] = '@function.outer', ['[C'] = '@class.outer' },
+          },
           swap = {
             enable = true,
             swap_next = {
@@ -433,7 +451,6 @@ lvim.plugins = {
       require('better_escape').setup()
     end
   },
-  { 'nvim-telescope/telescope-file-browser.nvim' },
   {
     'Exafunction/codeium.nvim',
     dependencies = {
@@ -452,9 +469,10 @@ lvim.plugins = {
   {
     'folke/todo-comments.nvim',
     dependencies = 'nvim-lua/plenary.nvim',
-    config = function()
-      require('todo-comments').setup()
-    end
+    keys = {
+      { ']t', function() require('todo-comments').jump_next() end, desc = 'Next todo comment' },
+      { '[t', function() require('todo-comments').jump_prev() end, desc = 'Previous todo comment' },
+    }
   },
   { 'xiyaowong/telescope-emoji.nvim' },
   {
@@ -489,7 +507,6 @@ lvim.plugins = {
   },
   {
     'stevearc/aerial.nvim',
-    opts = {},
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
       'nvim-tree/nvim-web-devicons'
@@ -525,44 +542,63 @@ lvim.plugins = {
     end
   },
   {
+    'lmburns/lf.nvim',
+    cmd = 'Lf',
+    dependencies = { 'nvim-lua/plenary.nvim', 'akinsho/toggleterm.nvim' },
+    opts = {
+      winblend = 0,
+      highlights = { NormalFloat = { guibg = 'NONE' } },
+      border = 'single',
+      escape_quit = true,
+    },
+    keys = {
+      { '<leader>F', '<cmd>Lf<cr>', desc = 'File Manager' },
+    },
+  },
+  {
     'theHamsta/nvim-dap-virtual-text',
-    opts = {}
   },
   {
     'microsoft/vscode-js-debug',
     version = '1.x',
-    build = 'npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out'
+    build = 'npm ci && npx gulp dapDebugServer'
   },
   {
     'firefox-devtools/vscode-firefox-debug',
-    build = 'npm install && npm run build',
+    version = '2.x',
+    build = 'npm ci && npm run build',
   },
-  {
-    'mxsdev/nvim-dap-vscode-js',
-    dependencies = { 'mfussenegger/nvim-dap' },
-    config = function()
-      require('dap-vscode-js').setup({
-        debugger_path = join_paths(get_runtime_dir(), 'site', 'pack', 'lazy', 'opt', 'vscode-js-debug'),
-        adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' },
-      })
-    end
-  }
 }
 
 -- setup debugging
--- lvim.builtin.dap.log.level = 'error'
 lvim.builtin.dap.on_config_done = function(dap)
-  dap.adapters.firefox = {
+  for _, adapter in ipairs { 'pwa-node', 'pwa-chrome', 'pwa-msedge' } do
+    dap.adapters[adapter] = {
+      type = 'server',
+      host = 'localhost',
+      port = '${port}',
+      executable = {
+        command = 'node',
+        args = {
+          get_runtime_dir() .. '/site/pack/lazy/opt/vscode-js-debug/dist/src/dapDebugServer.js',
+          '${port}',
+        },
+      },
+    }
+  end
+
+  dap.adapters['firefox'] = {
     type = 'executable',
     command = 'node',
-    args = { join_paths(get_runtime_dir(), 'site', 'pack', 'lazy', 'opt', 'vscode-firefox-debug/dist/adapter.bundle.js') }
+    args = { get_runtime_dir() .. '/site/pack/lazy/opt/vscode-firefox-debug/dist/adapter.bundle.js' }
   }
-  for _, language in ipairs { 'javascript', 'typescript', 'typescriptreact' } do
+
+  for _, language in ipairs { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' } do
     dap.configurations[language] = {
       {
         type = 'pwa-node',
         request = 'launch',
-        name = 'Next.js: Debug Server Code',
+        name = '(Launch) Next.js: Debug Server Code',
         program = '${workspaceFolder}/node_modules/.bin/next',
         args = { 'dev' },
         sourceMaps = true,
@@ -572,29 +608,66 @@ lvim.builtin.dap.on_config_done = function(dap)
         console = 'integratedTerminal',
         skipFiles = { '<node_internals>/**', '${workspaceFolder}/node_modules/**' },
       },
-      {
-        type = 'firefox',
-        request = 'launch',
-        -- reAttach = true,
-        name = 'Launch Firefox to debug client side code',
-        url = 'http://localhost:3000',
-        firefoxExecutable = '/home/juicy/.local/share/umake/bin/firefox-developer',
-        -- firefoxArgs = { '--start-debugger-server' },
-        -- firefoxArgs = { '-P', 'default-release' },
-        -- profileDir = '/mnt/c/Users/joce_/AppData/Roaming/Mozilla/Firefox/Profiles/qj1xsd22.default-release',
-        -- -- profile = 'default',
-        sourceMaps = true,
-        webRoot = '${workspaceFolder}',
-        -- protocol = 'inspector',
-        -- host = '172.25.96.1',
-        port = 9229,
-        -- detached = false,
-        skipFiles = { '**/node_modules/**/*' },
-        log = {
-          fileName = vim.fn.stdpath('cache') .. '/vscode-firefox-debug.log',
-          -- fileLevel = { default = 'Debug' }
-        }
-      }
+      -- {
+      --   type = 'pwa-node',
+      --   request = 'attach',
+      --   name = '(Attach) Auto-Attach to Node Process with --inspect Flag',
+      --   protocol = 'inspector',
+      --   -- processId = require 'dap.utils'.pick_process,
+      --   sourceMaps = true,
+      --   resolveSourceMapLocations = { '${workspaceFolder}/**', '!**/node_modules/**' },
+      --   cwd = '${workspaceFolder}',
+      --   skipFiles = { '<node_internals>/**', '${workspaceFolder}/node_modules/**' },
+      -- },
+      -- {
+      --   type = 'pwa-chrome',
+      --   request = 'launch',
+      --   name = '(Launch) Chrome to Debug Client Code on localhost:3000',
+      --   runtimeExecutable = '/mnt/c/Program Files/Google/Chrome/Application/chrome.exe',
+      --   port = 9222,
+      --   sourceMaps = true,
+      --   resolveSourceMapLocations = { '${workspaceFolder}/**', '!**/node_modules/**' },
+      --   url = 'http://localhost:3000',
+      --   webRoot = '${workspaceFolder}',
+      --   skipFiles = { '<node_internals>/**', '${workspaceFolder}/node_modules/**' },
+      --   outputCapture = 'std',
+      -- },
+      -- {
+      --   type = 'pwa-msedge',
+      --   request = 'launch',
+      --   name = '(Launch) Edge to Debug Client Code on localhost:3000',
+      --   runtimeExecutable = '/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
+      --   port = 9222,
+      --   sourceMaps = true,
+      --   resolveSourceMapLocations = { '${workspaceFolder}/**', '!**/node_modules/**' },
+      --   url = 'http://localhost:3000',
+      --   webRoot = '${workspaceFolder}',
+      --   skipFiles = { '<node_internals>/**', '${workspaceFolder}/node_modules/**' },
+      --   outputCapture = 'std',
+      -- },
+      -- {
+      --   type = 'firefox',
+      --   request = 'launch',
+      --   name = 'Launch Firefox to debug client side code',
+      --   url = 'http://localhost:3000',
+      --   firefoxExecutable = '/mnt/c/Program Files/Mozilla Firefox/firefox.exe',
+      --   -- firefoxArgs = { '--start-debugger-server' },
+      --   -- firefoxArgs = { '-P', '%APPDATA%/profiles/default' },
+      --   profileDir = '/mnt/c/Users/joce_/AppData/Roaming/Mozilla/Firefox/Profiles/qj1xsd22.default-release',
+      --   -- profile = 'default-release',
+      --   tmpDir = os.getenv 'HOME' .. '/tmp/firefox-debug',
+      --   sourceMaps = true,
+      --   resolveSourceMapLocations = { '${workspaceFolder}/**', '!**/node_modules/**' },
+      --   webRoot = '${workspaceFolder}',
+      --   port = 9222,
+      --   skipFiles = { '<node_internals>/**', '${workspaceFolder}/node_modules/**' },
+      --   -- log = {
+      --   --   file = '/home/juicy/.cache/lvim/vscode-firefox-debug.log',
+      --   --   fileLevel = {
+      --   --     default = 'Debug'
+      --   --   }
+      --   -- }
+      -- }
     }
   end
 end
