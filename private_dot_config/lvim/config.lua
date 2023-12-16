@@ -113,24 +113,47 @@ lvim.builtin.which_key.mappings['Ts'] = {
   'Search Treesitter'
 }
 
--- core plugins configs
-lvim.builtin.illuminate.active = false
+lvim.builtin.illuminate.on_config_done = function()
+  local function map(key, dir, buffer)
+    vim.keymap.set('n', key, function()
+      require('illuminate')['goto_' .. dir .. '_reference'](false)
+    end, { desc = dir:sub(1, 1):upper() .. dir:sub(2) .. ' Reference', buffer = buffer })
+  end
+
+  map(']]', 'next')
+  map('[[', 'prev')
+
+  -- also set it after loading ftplugins, since a lot overwrite [[ and ]]
+  vim.api.nvim_create_autocmd('FileType', {
+    callback = function()
+      local buffer = vim.api.nvim_get_current_buf()
+      map(']]', 'next', buffer)
+      map('[[', 'prev', buffer)
+    end,
+  })
+end
+
 lvim.builtin.project.show_hidden = true
+
 -- status line customization
 lvim.builtin.lualine.style = 'lvim'
 lvim.builtin.lualine.options = { section_separators = '', component_separators = '' }
 lvim.builtin.lualine.options.disabled_filetypes = { 'alpha', 'dashboard', 'Outline' }
+
 -- bufferline customization
 lvim.builtin.bufferline.options.always_show_bufferline = true
 lvim.builtin.bufferline.options.numbers = 'ordinal'
+
 -- i don't like indentlines
 lvim.builtin.indentlines.active = false
--- change the order from the default
+
+-- change the cmp menu order from the default
 lvim.builtin.cmp.formatting.fields = { 'abbr', 'kind', 'menu' }
 lvim.builtin.cmp.completion = {
   scrollbar = false,
   completeopt = 'menu,menuone,select,preview'
 }
+
 -- remove duplicates between lsp and buffer words
 lvim.builtin.cmp.formatting.duplicates = {
   buffer = 0,
@@ -138,7 +161,25 @@ lvim.builtin.cmp.formatting.duplicates = {
   nvim_lsp = 0,
   luasnip = 1,
 }
+
+-- setup cmp for cmdline completion
 lvim.builtin.cmp.cmdline.enable = true
+lvim.builtin.cmp.cmdline.options = {
+  {
+    type = { '/', '?' },
+    sources = {},
+  },
+}
+lvim.builtin.cmp.on_config_done = function(cmp)
+  cmp.setup.cmdline(':', {
+    completion = { completeopt = 'menu,menuone,noselect' },
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'path' },
+      { name = 'cmdline' },
+    }
+  })
+end
 
 -- complete entry selected in cmdline menu on <CR>
 local _, cmp_types = pcall(require, 'cmp.types.cmp')
@@ -170,7 +211,7 @@ lvim.builtin.cmp.mapping['<CR>'] = cmp_mapping({
     fallback()
   end,
   -- this line adds the desired behavior for <CR>
-  c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
+  c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
 })
 
 -- add codeium as a nvim-cmp source
@@ -296,8 +337,8 @@ lvim.plugins = {
   {
     'hrsh7th/cmp-cmdline',
     lazy = true,
-    commit = '8ee981b',
-    enabled = true,
+    -- commit = '8ee981b',
+    -- enabled = true,
   },
   { 'edkolev/tmuxline.vim' },
   {
@@ -679,6 +720,9 @@ lvim.autocommands = {
       callback = function()
         -- fix lspinfo float window border
         vim.api.nvim_set_hl(0, 'LspInfoBorder', { fg = '#848b98', bg = '#1f2329' })
+        vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { bg = '#30363f' })
+        vim.api.nvim_set_hl(0, 'IlluminatedWordText', { bg = '#30363f' })
+        vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { bg = '#30363f' })
         vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', { underline = false })
       end,
     }
