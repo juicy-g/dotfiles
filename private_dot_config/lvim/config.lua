@@ -337,17 +337,13 @@ lvim.plugins = {
   {
     'hrsh7th/cmp-cmdline',
     lazy = true,
-    -- commit = '8ee981b',
-    -- enabled = true,
   },
   { 'edkolev/tmuxline.vim' },
   {
     'kylechui/nvim-surround',
     version = '*',
     event = 'VeryLazy',
-    config = function()
-      require('nvim-surround').setup()
-    end
+    config = true
   },
   {
     'roobert/surround-ui.nvim',
@@ -365,14 +361,12 @@ lvim.plugins = {
   {
     'ggandor/leap.nvim',
     config = function()
-      require('leap').add_default_mappings()
+      require('leap').add_default_mappings(true)
     end
   },
   {
     'ggandor/flit.nvim',
-    config = function()
-      require('flit').setup()
-    end
+    config = true
   },
   {
     'ethanholz/nvim-lastplace',
@@ -399,17 +393,13 @@ lvim.plugins = {
   },
   {
     'windwp/nvim-ts-autotag',
-    config = function()
-      require('nvim-ts-autotag').setup()
-    end
+    config = true
   },
   {
     'sustech-data/wildfire.nvim',
     event = 'VeryLazy',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    config = function()
-      require('wildfire').setup()
-    end
+    config = true
   },
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
@@ -481,16 +471,12 @@ lvim.plugins = {
   },
   {
     'asiryk/auto-hlsearch.nvim',
-    config = function()
-      require('auto-hlsearch').setup()
-    end
+    config = true
   },
   { 'sitiom/nvim-numbertoggle' },
   {
     'max397574/better-escape.nvim',
-    config = function()
-      require('better_escape').setup()
-    end
+    config = true
   },
   {
     'Exafunction/codeium.nvim',
@@ -535,10 +521,11 @@ lvim.plugins = {
   },
   {
     'nmac427/guess-indent.nvim',
-    config = function() require('guess-indent').setup({}) end
+    config = true
   },
   {
     'gbprod/cutlass.nvim',
+    lazy = false,
     config = function()
       require('cutlass').setup({
         cut_key = 'x',
@@ -552,12 +539,10 @@ lvim.plugins = {
       'nvim-treesitter/nvim-treesitter',
       'nvim-tree/nvim-web-devicons'
     },
-    config = function()
-      require('aerial').setup()
-      lvim.builtin.which_key.mappings['o'] = {
-        '<CMD>AerialToggle<CR>', 'Code Outline'
-      }
-    end
+    config = true,
+    keys = {
+      { '<LEADER>o', '<CMD>AerialToggle<CR>', desc = 'Code Outline' }
+    }
   },
   {
     'ThePrimeagen/harpoon',
