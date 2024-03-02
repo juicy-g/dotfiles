@@ -361,12 +361,9 @@ lvim.plugins = {
   {
     'ggandor/leap.nvim',
     config = function()
+      require('leap').opts.safe_labels = {}
       require('leap').add_default_mappings(true)
     end
-  },
-  {
-    'ggandor/flit.nvim',
-    config = true
   },
   {
     'ethanholz/nvim-lastplace',
@@ -593,6 +590,27 @@ lvim.plugins = {
     'firefox-devtools/vscode-firefox-debug',
     version = '2.x',
     build = 'npm ci && npm run build',
+  },
+  {
+    'chrisgrieser/nvim-spider',
+    config = true,
+    keys = {
+      {
+        'e',
+        "<cmd>lua require('spider').motion('e')<CR>",
+        mode = { 'n', 'o', 'x' },
+      },
+      {
+        'w',
+        "<cmd>lua require('spider').motion('w')<CR>",
+        mode = { 'n', 'o', 'x' },
+      },
+      {
+        'b',
+        "<cmd>lua require('spider').motion('b')<CR>",
+        mode = { 'n', 'o', 'x' },
+      }
+    }
   },
 }
 
