@@ -400,9 +400,27 @@ lvim.plugins = {
   },
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
       require('nvim-treesitter.configs').setup({
         textobjects = {
+          select = {
+            enable = true,
+            keymaps = {
+              ['ak'] = '@block.outer',
+              ['ik'] = '@block.inner',
+              ['ac'] = '@class.outer',
+              ['ic'] = '@class.inner',
+              ['a?'] = '@conditional.outer',
+              ['i?'] = '@conditional.inner',
+              ['af'] = '@function.outer',
+              ['if'] = '@function.inner',
+              ['al'] = '@loop.outer',
+              ['il'] = '@loop.inner',
+              ['aa'] = '@parameter.outer',
+              ['ia'] = '@parameter.inner',
+            }
+          },
           move = {
             enable = true,
             goto_next_start = { [']f'] = '@function.outer', [']c'] = '@class.outer' },
