@@ -1,6 +1,10 @@
 -- general options
 vim.cmd("let g:tmuxline_powerline_separators = 0")
 vim.cmd('let g:tmuxline_separators = { "left": "", "left_alt": "", "right": "", "right_alt": "", "space": " "}')
+vim.opt.fillchars:append({
+	stl = " ",
+	vert = " ",
+})
 vim.opt.wrap = true
 vim.opt.cursorline = false
 lvim.colorscheme = "onedark"
@@ -161,6 +165,14 @@ lvim.builtin.lualine.options.disabled_filetypes = { "alpha", "dashboard", "Outli
 -- bufferline customization
 lvim.builtin.bufferline.options.always_show_bufferline = true
 lvim.builtin.bufferline.options.numbers = "ordinal"
+lvim.builtin.bufferline.options.indicator.style = "none"
+lvim.builtin.bufferline.options.offsets = {
+	{
+		filetype = "NvimTree",
+		text = "Explorer",
+		highlight = "BufferLineFill",
+	},
+}
 
 -- i don't like indentlines
 lvim.builtin.indentlines.active = false
