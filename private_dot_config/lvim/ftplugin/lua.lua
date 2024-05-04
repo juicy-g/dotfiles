@@ -1,45 +1,48 @@
 local opts = {
-  cmd = { 'lua-language-server' },
-  filetypes = { 'lua' },
-  settings = {
-    Lua = {
-      telemetry = {
-        enable = false,
-      },
-      runtime = {
-        version = 'LuaJIT',
-        special = {
-          reload = 'require',
-        },
-      },
-      diagnostics = {
-        -- globals = { 'vim', 'lvim', 'reload', 'get_config_dir', 'get_lvim_base_dir' },
-        disable = { 'undefined-global', 'missing-fields' }
-      },
-      completion = {
-        callSnippet = 'Replace'
-      },
-      format = {
-        enable = true,
-        defaultConfig = {
-          indent_style = 'space',
-          indent_size = '2',
-          quote_style = 'single'
-        }
-      },
-      workspace = {
-        library = {
-          vim.fn.expand '$VIMRUNTIME',
-          get_lvim_base_dir(),
-          -- require('neodev.config').types(),
-          plugins = true,
-        },
-        checkThirdParty = false,
-        maxPreload = 5000,
-        preloadFileSize = 10000,
-      }
-    },
-  }
+	cmd = { "lua-language-server" },
+	filetypes = { "lua" },
+	settings = {
+		Lua = {
+			telemetry = {
+				enable = false,
+			},
+			runtime = {
+				version = "LuaJIT",
+				special = {
+					reload = "require",
+				},
+			},
+			diagnostics = {
+				disable = { "undefined-global", "missing-fields" },
+			},
+			completion = {
+				callSnippet = "Replace",
+			},
+			format = {
+				enable = false,
+				defaultConfig = {
+					indent_style = "space",
+					indent_size = "2",
+					quote_style = "double",
+				},
+			},
+			workspace = {
+				checkThirdParty = false,
+				maxPreload = 5000,
+				preloadFileSize = 10000,
+			},
+		},
+	},
 }
--- require('neodev').setup({})
-require('lvim.lsp.manager').setup('lua_ls', opts)
+
+-- setup neodev single file mode for config.lua
+local filename = vim.fn.expand("%:t")
+if filename == "config.lua" then
+	local plugins_dir = get_runtime_dir() .. "/site/pack/lazy/opt"
+	opts.settings.Lua.workspace.library = {
+		plugins_dir .. "/neodev.nvim/types/stable",
+		vim.fn.expand("$VIMRUNTIME"),
+	}
+end
+
+require("lvim.lsp.manager").setup("lua_ls", opts)
