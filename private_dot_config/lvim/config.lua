@@ -1,10 +1,10 @@
 -- general options
 vim.cmd("let g:tmuxline_powerline_separators = 0")
 vim.cmd('let g:tmuxline_separators = { "left": "", "left_alt": "", "right": "", "right_alt": "", "space": " "}')
-vim.opt.fillchars:append({
+vim.opt.fillchars = {
 	stl = " ",
 	vert = " ",
-})
+}
 vim.opt.wrap = true
 vim.opt.cursorline = false
 lvim.colorscheme = "onedark"
@@ -27,8 +27,6 @@ lvim.keys.normal_mode["N"] = "Nzzzv"
 -- add empty lines before and after cursor line
 lvim.keys.normal_mode["gO"] = "<Cmd>call append(line('.') - 1, repeat([''], v:count1))<CR>"
 lvim.keys.normal_mode["go"] = "<Cmd>call append(line('.'),     repeat([''], v:count1))<CR>"
-
-vim.keymap.set("o", "x", "d", { remap = true })
 
 -- return cursor to previous location when cancelling from visual mode
 -- doesn't work with wildfire.nvim so commented out for now
@@ -157,6 +155,7 @@ lvim.builtin.illuminate.on_config_done = function()
 	})
 end
 
+-- show hidden files when opening a project
 lvim.builtin.project.show_hidden = true
 
 -- status line customization
@@ -343,7 +342,7 @@ require("lspconfig.ui.windows").default_options.border = "rounded"
 -- setup additional LSP servers
 require("lvim.lsp.manager").setup("marksman")
 
--- skip automatic configuration for lua_ls to enable autoformatting
+-- skip automatic configuration for lua_ls to enable autoformatting and neodev
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "lua_ls" })
 -- skip server configuration for typescript
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tsserver" })
