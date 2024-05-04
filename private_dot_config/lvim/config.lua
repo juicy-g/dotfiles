@@ -28,6 +28,8 @@ lvim.keys.normal_mode["N"] = "Nzzzv"
 lvim.keys.normal_mode["gO"] = "<Cmd>call append(line('.') - 1, repeat([''], v:count1))<CR>"
 lvim.keys.normal_mode["go"] = "<Cmd>call append(line('.'),     repeat([''], v:count1))<CR>"
 
+vim.keymap.set("o", "x", "d", { remap = true })
+
 -- return cursor to previous location when cancelling from visual mode
 -- doesn't work with wildfire.nvim so commented out for now
 -- vim.keymap.set({ 'n' }, 'v', 'mav', { noremap = true })
@@ -392,15 +394,20 @@ lvim.plugins = {
 	--     })
 	--   end
 	-- },
-	{
-		"tpope/vim-surround",
-	},
+	{ "tpope/vim-surround" },
 	{ "folke/trouble.nvim", cmd = "TroubleToggle" },
 	{
 		"ggandor/leap.nvim",
+		keys = {
+			{ "s", mode = { "n", "x", "o" }, desc = "Leap forward to" },
+			{ "S", mode = { "n", "x", "o" }, desc = "Leap backward to" },
+			{ "gs", mode = { "n", "x", "o" }, desc = "Leap from windows" },
+		},
 		config = function()
-			require("leap").opts.safe_labels = {}
-			require("leap").add_default_mappings(true)
+			local leap = require("leap")
+			leap.add_default_mappings(true)
+			vim.keymap.del({ "x", "o" }, "x")
+			vim.keymap.del({ "x", "o" }, "X")
 		end,
 	},
 	{
