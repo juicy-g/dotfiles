@@ -64,7 +64,7 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-# enable programmable completion features (you don't need to enable
+# Enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
@@ -75,22 +75,18 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Tmux configuration
-if command -v tmux &> /dev/null \
-	&& [ -n "$PS1" ] \
-	&& [[ ! "$TERM" =~ screen ]] \
-	&& [[ ! "$TERM" =~ tmux ]] \
-	&& [ -z "$TMUX" ] \
-	&& ! pstree -s $$ | grep -wq code; then
-  exec tmux new-session
-fi
-
-# Enable fzf
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
 # Source homebrew env variables
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # Enable the Starship prompt
 eval "$(starship init bash)"
 
+# Enable fzf
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# Enable zoxide
+eval "$(zoxide init bash)"
+
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+    tmux attach || tmux new -s home
+fi
