@@ -1,10 +1,6 @@
 -- general options
 vim.cmd("let g:tmuxline_powerline_separators = 0")
 vim.cmd('let g:tmuxline_separators = { "left": "", "left_alt": "", "right": "", "right_alt": "", "space": " "}')
-vim.opt.fillchars = {
-	stl = " ",
-	vert = " ",
-}
 vim.opt.wrap = true
 vim.opt.cursorline = false
 lvim.colorscheme = "onedark"
@@ -33,21 +29,6 @@ lvim.keys.normal_mode["go"] = "<Cmd>call append(line('.'),     repeat([''], v:co
 -- vim.keymap.set({ 'n' }, 'v', 'mav', { noremap = true })
 -- vim.keymap.set({ 'n' }, 'V', 'maV', { noremap = true })
 -- vim.keymap.set('v', '<Esc>', '<Esc>`a', { noremap = true, silent = true })
-
--- keymaps to jump between diagnostics
-local diagnostic_goto = function(next, severity)
-	local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
-	severity = severity and vim.diagnostic.severity[severity] or nil
-	return function()
-		go({ severity = severity })
-	end
-end
-lvim.keys.normal_mode["]d"] = diagnostic_goto(true)
-lvim.keys.normal_mode["[d"] = diagnostic_goto(false)
-lvim.keys.normal_mode["]e"] = diagnostic_goto(true, "ERROR")
-lvim.keys.normal_mode["[e"] = diagnostic_goto(false, "ERROR")
-lvim.keys.normal_mode["]w"] = diagnostic_goto(true, "WARN")
-lvim.keys.normal_mode["[w"] = diagnostic_goto(false, "WARN")
 
 -- keymaps to jump between buffers
 lvim.keys.normal_mode["]b"] = "<Cmd>bnext<CR>"
@@ -103,7 +84,6 @@ lvim.builtin.which_key.mappings["P"] = {
 
 -- additional pickers for search menu
 lvim.builtin.which_key.mappings["se"] = { "<cmd>Telescope emoji<cr>", "Find emoji" }
-lvim.builtin.which_key.mappings["sm"] = { "<cmd>Telescope harpoon marks<cr>", "Harpoon Marks" }
 lvim.builtin.which_key.mappings["s/"] = {
 	function()
 		require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_dropdown())
@@ -157,6 +137,7 @@ end
 
 -- show hidden files when opening a project
 lvim.builtin.project.show_hidden = true
+lvim.builtin.lir.show_hidden_files = true
 
 -- status line customization
 lvim.builtin.lualine.style = "lvim"
@@ -171,7 +152,7 @@ lvim.builtin.bufferline.options.offsets = {
 	{
 		filetype = "NvimTree",
 		text = "Explorer",
-		highlight = "BufferLineFill",
+		separator = true,
 	},
 }
 
@@ -287,7 +268,6 @@ lvim.builtin.telescope.on_config_done = function(telescope)
 	pcall(telescope.load_extension, "undo")
 	pcall(telescope.load_extension, "yank_history")
 	pcall(telescope.load_extension, "emoji")
-	pcall(telescope.load_extension, "harpoon")
 	pcall(telescope.load_extension, "git_worktree")
 end
 
@@ -336,9 +316,6 @@ lvim.builtin.treesitter.ensure_installed = {
 	"yaml",
 }
 
--- fix lspinfo popup border
-require("lspconfig.ui.windows").default_options.border = "rounded"
-
 -- setup additional LSP servers
 require("lvim.lsp.manager").setup("marksman")
 
@@ -375,25 +352,24 @@ lvim.plugins = {
 		lazy = true,
 	},
 	{ "edkolev/tmuxline.vim" },
-	-- {
-	--   'kylechui/nvim-surround',
-	--   version = '*',
-	--   event = 'VeryLazy',
-	--   config = true
-	-- },
-	-- {
-	--   'roobert/surround-ui.nvim',
-	--   dependencies = {
-	--     'kylechui/nvim-surround',
-	--     'folke/which-key.nvim',
-	--   },
-	--   config = function()
-	--     require('surround-ui').setup({
-	--       root_key = 'S'
-	--     })
-	--   end
-	-- },
-	{ "tpope/vim-surround" },
+	{
+		"kylechui/nvim-surround",
+		version = "*",
+		event = "VeryLazy",
+		config = true,
+	},
+	{
+		"roobert/surround-ui.nvim",
+		dependencies = {
+			"kylechui/nvim-surround",
+			"folke/which-key.nvim",
+		},
+		config = function()
+			require("surround-ui").setup({
+				root_key = "S",
+			})
+		end,
+	},
 	{ "folke/trouble.nvim", cmd = "TroubleToggle" },
 	{
 		"ggandor/leap.nvim",
@@ -558,6 +534,7 @@ lvim.plugins = {
 	{
 		"folke/todo-comments.nvim",
 		dependencies = "nvim-lua/plenary.nvim",
+		opts = {},
 		keys = {
 			{
 				"]t",
@@ -617,35 +594,6 @@ lvim.plugins = {
 		keys = {
 			{ "<LEADER>o", "<CMD>AerialToggle<CR>", desc = "Code Outline" },
 		},
-	},
-	{
-		"ThePrimeagen/harpoon",
-		config = function()
-			lvim.builtin.which_key.mappings["m"] = {
-				'<CMD>lua require("harpoon.mark").add_file()<CR>',
-				"Mark File",
-			}
-			lvim.builtin.which_key.mappings["h"] = {
-				'<CMD>lua require("harpoon.ui").toggle_quick_menu()<CR>',
-				"Harpoon",
-			}
-			lvim.builtin.which_key.mappings["1"] = {
-				':lua require("harpoon.ui").nav_file(1)<CR>',
-				"which_key_ignore",
-			}
-			lvim.builtin.which_key.mappings["2"] = {
-				':lua require("harpoon.ui").nav_file(2)<CR>',
-				"which_key_ignore",
-			}
-			lvim.builtin.which_key.mappings["3"] = {
-				':lua require("harpoon.ui").nav_file(3)<CR>',
-				"which_key_ignore",
-			}
-			lvim.builtin.which_key.mappings["4"] = {
-				':lua require("harpoon.ui").nav_file(4)<CR>',
-				"which_key_ignore",
-			}
-		end,
 	},
 	{
 		"lmburns/lf.nvim",
@@ -812,17 +760,10 @@ lvim.autocommands = {
 				vim.api.nvim_set_hl(0, "IlluminatedWordText", { bg = "#30363f" })
 				vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { bg = "#30363f" })
 				vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { underline = false })
-			end,
-		},
-	},
-	-- move thru lines in Harpoon quick menu
-	{
-		"Filetype",
-		{
-			pattern = "harpoon",
-			callback = function()
-				vim.keymap.set("n", "<TAB>", "j", { noremap = true, silent = true })
-				vim.keymap.set("n", "<S-TAB>", "k", { noremap = true, silent = true })
+				-- fix vert split color in bufferline
+				vim.api.nvim_set_hl(0, "BufferLineOffsetSeparator", { bg = "#1f2329", fg = "#323641" })
+				-- fix winbar when not in window
+				vim.api.nvim_set_hl(0, "WinbarNC", { bg = "#1f2329" })
 			end,
 		},
 	},
