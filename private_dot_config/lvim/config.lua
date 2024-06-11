@@ -16,6 +16,17 @@ lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<Cr>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<Cr>"
 lvim.keys.insert_mode["<C-c>"] = "<Esc>"
 
+-- jump to buffers
+lvim.keys.normal_mode["<leader>1"] = "<Cmd>lua require('bufferline').go_to(1, true)<Cr>"
+lvim.keys.normal_mode["<leader>2"] = "<Cmd>lua require('bufferline').go_to(2, true)<Cr>"
+lvim.keys.normal_mode["<leader>3"] = "<Cmd>lua require('bufferline').go_to(3, true)<Cr>"
+lvim.keys.normal_mode["<leader>4"] = "<Cmd>lua require('bufferline').go_to(4, true)<Cr>"
+lvim.keys.normal_mode["<leader>5"] = "<Cmd>lua require('bufferline').go_to(5, true)<Cr>"
+lvim.keys.normal_mode["<leader>6"] = "<Cmd>lua require('bufferline').go_to(6, true)<Cr>"
+lvim.keys.normal_mode["<leader>7"] = "<Cmd>lua require('bufferline').go_to(7, true)<Cr>"
+lvim.keys.normal_mode["<leader>8"] = "<Cmd>lua require('bufferline').go_to(8, true)<Cr>"
+lvim.keys.normal_mode["<leader>9"] = "<Cmd>lua require('bufferline').go_to(9, true)<Cr>"
+
 -- keep searched word in the middle of the screen
 lvim.keys.normal_mode["n"] = "nzzzv"
 lvim.keys.normal_mode["N"] = "Nzzzv"
@@ -31,8 +42,8 @@ lvim.keys.normal_mode["go"] = "<Cmd>call append(line('.'),     repeat([''], v:co
 -- vim.keymap.set('v', '<Esc>', '<Esc>`a', { noremap = true, silent = true })
 
 -- keymaps to jump between buffers
-lvim.keys.normal_mode["]b"] = "<Cmd>bnext<CR>"
-lvim.keys.normal_mode["[b"] = "<Cmd>bprevious<CR>"
+lvim.keys.normal_mode["]b"] = "<Cmd>BufferLineCycleNext<CR>"
+lvim.keys.normal_mode["[b"] = "<Cmd>BufferLineCyclePrev<CR>"
 
 -- shows registers on " in NORMAL or <C-r> in INSERT mode
 lvim.builtin.which_key.setup.plugins.registers = true
@@ -54,12 +65,13 @@ lvim.builtin.which_key.mappings["<Space>"] = {
 }
 lvim.builtin.which_key.mappings["t"] = {
 	name = "Trouble",
-	t = { "<cmd>TroubleToggle<cr>", "Trouble" },
-	w = { "<cmd>TroubleToggle workspace_diagnostics<cr>", "Workspace" },
-	d = { "<cmd>TroubleToggle document_diagnostics<cr>", "Document" },
-	q = { "<cmd>TroubleToggle quickfix<cr>", "Quickfix" },
-	l = { "<cmd>TroubleToggle loclist<cr>", "Loclist" },
-	r = { "<cmd>TroubleToggle lsp_references<cr>", "References" },
+	D = { "<cmd>Trouble diagnostics toggle<cr>", "Workspace Diagnostics" },
+	d = { "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", "Buffer Diagnostics" },
+	s = { "<cmd>Trouble symbols toggle focus=false<cr>", "Symbols" },
+	c = { "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", "LSP" },
+	l = { "<cmd>Trouble loclist toggle<cr>", "Location List" },
+	q = { "<cmd>Trouble qflist toggle<cr>", "Quickfix List" },
+	t = { "<cmd>Trouble todo filter = {tag = {TODO,FIX,FIXME}}<cr>", "Todo" },
 }
 lvim.builtin.which_key.mappings["bs"] = { "<cmd>BufferLinePick<cr>", "Pick a buffer" }
 lvim.builtin.which_key.mappings["f"] = {
@@ -97,6 +109,10 @@ lvim.builtin.which_key.mappings["sl"] = {
 lvim.builtin.which_key.mappings["ss"] = {
 	"<cmd>Telescope grep_string<cr>",
 	"Find current word",
+}
+lvim.builtin.which_key.mappings["sT"] = {
+	"<cmd>TodoTelescope<cr>",
+	"Find todos",
 }
 lvim.builtin.which_key.mappings["su"] = {
 	"<cmd>Telescope undo<cr>",
@@ -210,12 +226,12 @@ lvim.builtin.cmp.mapping["<CR>"] = cmp_mapping({
 			if is_insert_mode() then
 				confirm_opts.behavior = ConfirmBehavior.Insert
 			end
-			local entry = cmp.get_selected_entry()
-			local is_codeium = entry and entry.source.name == "codeium"
-			if is_codeium then
-				confirm_opts.behavior = ConfirmBehavior.Replace
-				confirm_opts.select = true
-			end
+			-- local entry = cmp.get_selected_entry()
+			-- local is_codeium = entry and entry.source.name == "codeium"
+			-- if is_codeium then
+			-- 	confirm_opts.behavior = ConfirmBehavior.Replace
+			-- 	confirm_opts.select = true
+			-- end
 			if cmp.confirm(confirm_opts) then
 				return
 			end
@@ -226,14 +242,13 @@ lvim.builtin.cmp.mapping["<CR>"] = cmp_mapping({
 	c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false }),
 })
 
--- add codeium as a nvim-cmp source
+-- add codeium as a completion source
 table.insert(lvim.builtin.cmp.sources, { name = "codeium", max_item_count = 4 })
 lvim.icons.kind["Codeium"] = ""
 lvim.builtin.cmp.formatting.source_names["codeium"] = "(Codeium)"
-lvim.builtin.cmp.experimental = {
-	ghost_text = true,
-	native_menu = false,
-}
+
+-- completion source for require statements and module annotations
+table.insert(lvim.builtin.cmp.sources, { name = "lazydev", group_index = 0 })
 
 -- TODO: fix <M-2> terminal size when nvim-tree open
 lvim.builtin.terminal.direction = "vertical"
@@ -247,19 +262,34 @@ end
 
 -- add additional telescope mappings
 local _, actions = pcall(require, "telescope.actions")
-local _, trouble = pcall(require, "trouble.providers.telescope")
+local _, trouble = pcall(require, "trouble.sources.telescope")
 lvim.builtin.telescope.defaults.mappings = {
 	i = {
 		["<C-j>"] = actions.move_selection_next,
 		["<C-k>"] = actions.move_selection_previous,
 		["<C-n>"] = actions.cycle_history_next,
 		["<C-p>"] = actions.cycle_history_prev,
-		["<C-t>"] = trouble.open_with_trouble,
+		["<C-t>"] = trouble.open,
 	},
 	n = {
 		["<C-j>"] = actions.move_selection_next,
 		["<C-k>"] = actions.move_selection_previous,
-		["<C-t>"] = trouble.open_with_trouble,
+		["<C-t>"] = trouble.open,
+	},
+}
+-- customize the telescope buffers picker
+lvim.builtin.telescope.pickers.buffers = {
+	initial_mode = "insert",
+	mappings = {
+		i = {
+			["<C-d>"] = actions.delete_buffer,
+			["<Tab>"] = actions.move_selection_next,
+			["<S-Tab>"] = actions.move_selection_previous,
+			["<Esc>"] = actions.close,
+		},
+		n = {
+			["dd"] = actions.delete_buffer,
+		},
 	},
 }
 
@@ -330,6 +360,14 @@ vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "jsonls" })
 -- extra plugins
 lvim.plugins = {
 	{
+		"folke/lazydev.nvim",
+		ft = "lua",
+		opts = {
+			library = {},
+		},
+	},
+	{ "folke/neodev.nvim", enabled = false },
+	{
 		"navarasu/onedark.nvim",
 		config = function()
 			local onedark = require("onedark")
@@ -351,7 +389,7 @@ lvim.plugins = {
 		"hrsh7th/cmp-cmdline",
 		lazy = true,
 	},
-	{ "edkolev/tmuxline.vim" },
+	{ "edkolev/tmuxline.vim", lazy = true },
 	{
 		"kylechui/nvim-surround",
 		version = "*",
@@ -370,7 +408,11 @@ lvim.plugins = {
 			})
 		end,
 	},
-	{ "folke/trouble.nvim", cmd = "TroubleToggle" },
+	{
+		"folke/trouble.nvim",
+		opts = {},
+		cmd = "Trouble",
+	},
 	{
 		"ggandor/leap.nvim",
 		keys = {
@@ -468,6 +510,7 @@ lvim.plugins = {
 	{ "debugloop/telescope-undo.nvim" },
 	{
 		"rmagatti/goto-preview",
+		lazy = true,
 		config = function()
 			require("goto-preview").setup({
 				width = 120,
@@ -533,6 +576,7 @@ lvim.plugins = {
 	},
 	{
 		"folke/todo-comments.nvim",
+		lazy = false,
 		dependencies = "nvim-lua/plenary.nvim",
 		opts = {},
 		keys = {

@@ -26,23 +26,31 @@ local opts = {
 					quote_style = "double",
 				},
 			},
-			workspace = {
-				checkThirdParty = false,
-				maxPreload = 5000,
-				preloadFileSize = 10000,
-			},
+			-- workspace = {
+			-- 	library = {
+			-- 		vim.fn.expand("$VIMRUNTIME"),
+			-- 		get_lvim_base_dir(),
+			-- 		require("neodev.config").types(),
+			-- 		"${3rd}/busted/library",
+			-- 		"${3rd}/luassert/library",
+			-- 		"${3rd}/luv/library",
+			-- 	},
+			-- 	-- checkThirdParty = false,
+			-- 	maxPreload = 5000,
+			-- 	preloadFileSize = 10000,
+			-- },
 		},
 	},
 }
 
--- setup neodev single file mode for config.lua
-local filename = vim.fn.expand("%:t")
-if filename == "config.lua" then
-	local plugins_dir = get_runtime_dir() .. "/site/pack/lazy/opt"
-	opts.settings.Lua.workspace.library = {
-		plugins_dir .. "/neodev.nvim/types/stable",
-		vim.fn.expand("$VIMRUNTIME"),
-	}
-end
+-- -- setup neodev single file mode for config.lua
+-- local filename = vim.fn.expand("%:t")
+-- if filename == "config.lua" then
+-- 	local plugins_dir = get_runtime_dir() .. "/site/pack/lazy/opt"
+-- 	opts.settings.Lua.workspace.library = {
+-- 		plugins_dir .. "/neodev.nvim/types/stable",
+-- 		vim.fn.expand("$VIMRUNTIME"),
+-- 	}
+-- end
 
 require("lvim.lsp.manager").setup("lua_ls", opts)
