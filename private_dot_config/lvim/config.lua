@@ -131,6 +131,7 @@ lvim.builtin.which_key.mappings["Ts"] = {
 	"Search Treesitter",
 }
 
+-- keymap to jump between illuminated words
 lvim.builtin.illuminate.on_config_done = function()
 	local function map(key, dir, buffer)
 		vim.keymap.set("n", key, function()
@@ -153,6 +154,7 @@ end
 
 -- show hidden files when opening a project
 lvim.builtin.project.show_hidden = true
+lvim.builtin.project.scope_chdir = "win"
 lvim.builtin.lir.show_hidden_files = true
 
 -- status line customization
@@ -246,6 +248,10 @@ lvim.builtin.cmp.mapping["<CR>"] = cmp_mapping({
 table.insert(lvim.builtin.cmp.sources, { name = "codeium", max_item_count = 4 })
 lvim.icons.kind["Codeium"] = ""
 lvim.builtin.cmp.formatting.source_names["codeium"] = "(Codeium)"
+
+-- add cmp-dotenv as a completion source
+table.insert(lvim.builtin.cmp.sources, { name = "dotenv" })
+lvim.builtin.cmp.formatting.source_names["dotenv"] = "(Dotenv)"
 
 -- completion source for require statements and module annotations
 table.insert(lvim.builtin.cmp.sources, { name = "lazydev", group_index = 0 })
@@ -349,7 +355,7 @@ lvim.builtin.treesitter.ensure_installed = {
 -- setup additional LSP servers
 require("lvim.lsp.manager").setup("marksman")
 
--- skip automatic configuration for lua_ls to enable autoformatting and neodev
+-- skip automatic configuration for lua_ls to enable autoformatting
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "lua_ls" })
 -- skip server configuration for typescript
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tsserver" })
@@ -385,10 +391,7 @@ lvim.plugins = {
 			onedark.load()
 		end,
 	},
-	{
-		"hrsh7th/cmp-cmdline",
-		lazy = true,
-	},
+	{ "SergioRibera/cmp-dotenv" },
 	{ "edkolev/tmuxline.vim", lazy = true },
 	{
 		"kylechui/nvim-surround",
@@ -407,6 +410,20 @@ lvim.plugins = {
 				root_key = "S",
 			})
 		end,
+	},
+	{
+		"abecodes/tabout.nvim",
+		lazy = false,
+		config = function()
+			require("tabout").setup({})
+		end,
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"L3MON4D3/LuaSnip",
+			"hrsh7th/nvim-cmp",
+		},
+		event = "InsertCharPre",
+		priority = 1000,
 	},
 	{
 		"folke/trouble.nvim",
@@ -578,7 +595,20 @@ lvim.plugins = {
 		"folke/todo-comments.nvim",
 		lazy = false,
 		dependencies = "nvim-lua/plenary.nvim",
-		opts = {},
+		opts = {
+			highlight = {
+				multiline = true,
+				multiline_pattern = "^.",
+				multiline_context = 10,
+				before = "",
+				keyword = "bg",
+				after = "",
+				pattern = [[.*<(KEYWORDS)\s*:]],
+				comments_only = true,
+				max_line_len = 400,
+				exclude = {},
+			},
+		},
 		keys = {
 			{
 				"]t",
