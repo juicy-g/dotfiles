@@ -1,0 +1,6 @@
+theme: onedark_darker
+heading:
+  visible: true
+  show_host: false
+theme_directory: /home/juicy/.config/posting/themes
+

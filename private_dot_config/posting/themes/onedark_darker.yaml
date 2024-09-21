@@ -1,0 +1,18 @@
+name: onedark_darker 
+background: '#1f2329'
+primary: '#61afef' 
+secondary: '#7a818e'
+accent: '#535965' 
+surface: '#282c34'
+error: '#e55561'
+warning: '#e2b86b'
+success: '#8ebd6b'
+panel: '#181b20'
+dark: true
+
+syntax:
+  json_key: '#48b0bd'
+  json_number: '#cc9057'
+  json_boolean: '#cc9057'
+  json_null: '#cc9057'
+  json_string: '#8ebd6b'
