@@ -1,6 +1,7 @@
 -- general options
 vim.cmd("let g:tmuxline_powerline_separators = 0")
 vim.cmd('let g:tmuxline_separators = { "left": "", "left_alt": "", "right": "", "right_alt": "", "space": " "}')
+vim.o.termguicolors = true
 vim.opt.wrap = true
 vim.opt.cursorline = false
 lvim.colorscheme = "onedark"
@@ -326,8 +327,13 @@ lvim.builtin.alpha.dashboard.section.buttons = {
 		{ "r", lvim.icons.ui.History .. "  Recent files", "<CMD>Telescope oldfiles<CR>" },
 		{
 			"s",
-			lvim.icons.ui.BookMark .. "  Restore session",
+			lvim.icons.ui.BookMark .. "  Last session",
 			"<CMD>lua require('persistence').load({ last = true })<CR>",
+		},
+		{
+			"S",
+			lvim.icons.ui.BookMark .. "  Last session for current directory",
+			"<CMD>lua require('persistence').load()<CR>",
 		},
 		{ "t", lvim.icons.ui.FindText .. "  Find Text", "<CMD>Telescope live_grep<CR>" },
 		{
@@ -362,6 +368,7 @@ vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tsserver" }
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tailwindcss" })
 -- skip server to use schemastore
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "jsonls" })
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" })
 
 -- extra plugins
 lvim.plugins = {
@@ -373,6 +380,7 @@ lvim.plugins = {
 		},
 	},
 	{ "folke/neodev.nvim", enabled = false },
+	{ "brenoprata10/nvim-highlight-colors", config = true },
 	{
 		"navarasu/onedark.nvim",
 		config = function()
@@ -392,7 +400,7 @@ lvim.plugins = {
 		end,
 	},
 	{ "SergioRibera/cmp-dotenv" },
-	{ "edkolev/tmuxline.vim", lazy = true },
+	{ "edkolev/tmuxline.vim", lazy = true, cmd = "Tmuxline" },
 	{
 		"kylechui/nvim-surround",
 		version = "*",
@@ -405,6 +413,8 @@ lvim.plugins = {
 			"kylechui/nvim-surround",
 			"folke/which-key.nvim",
 		},
+		-- temporary pin before which-key v3
+		commit = "49a1f62",
 		config = function()
 			require("surround-ui").setup({
 				root_key = "S",
@@ -578,13 +588,12 @@ lvim.plugins = {
 	},
 	{
 		"Exafunction/codeium.nvim",
+		enabled = false,
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"hrsh7th/nvim-cmp",
 		},
-		config = function()
-			require("codeium").setup({})
-		end,
+		config = true,
 	},
 	{ "kana/vim-textobj-user" },
 	{
@@ -593,38 +602,31 @@ lvim.plugins = {
 	},
 	{
 		"folke/todo-comments.nvim",
-		lazy = false,
-		dependencies = "nvim-lua/plenary.nvim",
-		opts = {
-			highlight = {
-				multiline = true,
-				multiline_pattern = "^.",
-				multiline_context = 10,
-				before = "",
-				keyword = "bg",
-				after = "",
-				pattern = [[.*<(KEYWORDS)\s*:]],
-				comments_only = true,
-				max_line_len = 400,
-				exclude = {},
-			},
-		},
-		keys = {
-			{
-				"]t",
-				function()
-					require("todo-comments").jump_next()
-				end,
-				desc = "Next todo comment",
-			},
-			{
-				"[t",
-				function()
-					require("todo-comments").jump_prev()
-				end,
-				desc = "Previous todo comment",
-			},
-		},
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			local todo = require("todo-comments")
+			todo.setup({
+				highlight = {
+					multiline = true,
+					multiline_pattern = "^.",
+					multiline_context = 10,
+					before = "",
+					keyword = "bg",
+					after = "",
+					pattern = [[.*<(KEYWORDS)\s*:]],
+					comments_only = true,
+					max_line_len = 400,
+					exclude = {},
+				},
+			})
+			vim.keymap.set("n", "]t", function()
+				todo.jump_next()
+			end, { desc = "Next todo comment" })
+
+			vim.keymap.set("n", "[t", function()
+				todo.jump_prev()
+			end, { desc = "Previous todo comment" })
+		end,
 	},
 	{ "xiyaowong/telescope-emoji.nvim" },
 	{
@@ -650,7 +652,6 @@ lvim.plugins = {
 	},
 	{
 		"gbprod/cutlass.nvim",
-		lazy = false,
 		config = function()
 			require("cutlass").setup({
 				cut_key = "x",
@@ -718,6 +719,30 @@ lvim.plugins = {
 		},
 	},
 	{ "ThePrimeagen/git-worktree.nvim" },
+	{
+		"mrcjkb/rustaceanvim",
+		version = "^5",
+		lazy = false,
+		ft = { "rust" },
+		config = function()
+			vim.g.rustaceanvim = {
+				server = {
+					on_attach = require("lvim.lsp").common_on_attach,
+				},
+				tools = {
+					float_win_config = {
+						border = "rounded",
+					},
+				},
+			}
+		end,
+	},
+	{
+		dir = "~/projects/devdocs.nvim",
+		opts = {
+			url = "http://localhost:9292",
+		},
+	},
 }
 
 -- setup debugging
@@ -874,6 +899,19 @@ lvim.autocommands = {
 					for _, w in ipairs(invalid_win) do
 						vim.api.nvim_win_close(w, true)
 					end
+				end
+			end,
+		},
+	},
+	{
+		"VimLeave",
+		{
+			pattern = "*",
+			callback = function()
+				local utils = require("lvim.utils")
+				local path = utils.join_paths(vim.fn.getcwd(), "Session.vim")
+				if not utils.is_file(path) then
+					utils.write_file(path, "lua require('persistence').load()", "w")
 				end
 			end,
 		},
