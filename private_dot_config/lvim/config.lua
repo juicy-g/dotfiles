@@ -17,6 +17,9 @@ lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<Cr>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<Cr>"
 lvim.keys.insert_mode["<C-c>"] = "<Esc>"
 
+-- if on a blank line, start insert mode properly indented
+lvim.keys.normal_mode["i"] = "i<c-f>"
+
 -- jump to buffers
 lvim.keys.normal_mode["<leader>1"] = "<Cmd>lua require('bufferline').go_to(1, true)<Cr>"
 lvim.keys.normal_mode["<leader>2"] = "<Cmd>lua require('bufferline').go_to(2, true)<Cr>"
@@ -37,10 +40,10 @@ lvim.keys.normal_mode["gO"] = "<Cmd>call append(line('.') - 1, repeat([''], v:co
 lvim.keys.normal_mode["go"] = "<Cmd>call append(line('.'),     repeat([''], v:count1))<CR>"
 
 -- return cursor to previous location when cancelling from visual mode
--- doesn't work with wildfire.nvim so commented out for now
--- vim.keymap.set({ 'n' }, 'v', 'mav', { noremap = true })
--- vim.keymap.set({ 'n' }, 'V', 'maV', { noremap = true })
--- vim.keymap.set('v', '<Esc>', '<Esc>`a', { noremap = true, silent = true })
+vim.keymap.set("n", "v", "mav", { noremap = true })
+vim.keymap.set("n", "V", "maV", { noremap = true })
+vim.keymap.set("v", "<Esc>", "<Esc>`a", { noremap = true, silent = true })
+vim.keymap.set("n", "<Cr>", "ma<Cmd>lua require('wildfire').init_selection()<Cr>", { noremap = true, silent = true })
 
 -- keymaps to jump between buffers
 lvim.keys.normal_mode["]b"] = "<Cmd>BufferLineCycleNext<CR>"
@@ -85,7 +88,6 @@ lvim.builtin.which_key.mappings["gw"] =
 	{ "<CMD>lua require('telescope').extensions.git_worktree.git_worktrees()<CR>", "Git Worktrees" }
 lvim.builtin.which_key.mappings["gW"] =
 	{ "<CMD>lua require('telescope').extensions.git_worktree.create_git_worktree()<CR>", "Create Git Worktree" }
-lvim.builtin.which_key.mappings["H"] = { "<cmd>nohlsearch<CR>", "No Highlight" }
 
 -- add a sessions menu
 lvim.builtin.which_key.mappings["P"] = {
@@ -380,7 +382,7 @@ lvim.plugins = {
 		},
 	},
 	{ "folke/neodev.nvim", enabled = false },
-	{ "brenoprata10/nvim-highlight-colors", config = true },
+	{ "brenoprata10/nvim-highlight-colors", event = "BufRead", config = true },
 	{
 		"navarasu/onedark.nvim",
 		config = function()
@@ -399,13 +401,13 @@ lvim.plugins = {
 			onedark.load()
 		end,
 	},
-	{ "SergioRibera/cmp-dotenv" },
-	{ "edkolev/tmuxline.vim", lazy = true, cmd = "Tmuxline" },
+	{ "SergioRibera/cmp-dotenv", lazy = true },
+	{ "edkolev/tmuxline.vim", cmd = "Tmuxline" },
 	{
 		"kylechui/nvim-surround",
 		version = "*",
 		event = "VeryLazy",
-		config = true,
+		opts = {},
 	},
 	{
 		"roobert/surround-ui.nvim",
@@ -415,25 +417,15 @@ lvim.plugins = {
 		},
 		-- temporary pin before which-key v3
 		commit = "49a1f62",
-		config = function()
-			require("surround-ui").setup({
-				root_key = "S",
-			})
-		end,
+		event = "VeryLazy",
+		opts = {
+			root_key = "S",
+		},
 	},
 	{
 		"abecodes/tabout.nvim",
-		lazy = false,
-		config = function()
-			require("tabout").setup({})
-		end,
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"L3MON4D3/LuaSnip",
-			"hrsh7th/nvim-cmp",
-		},
-		event = "InsertCharPre",
-		priority = 1000,
+		opts = {},
+		event = "InsertEnter",
 	},
 	{
 		"folke/trouble.nvim",
@@ -457,28 +449,24 @@ lvim.plugins = {
 	{
 		"ethanholz/nvim-lastplace",
 		event = "BufRead",
-		config = function()
-			require("nvim-lastplace").setup({
-				lastplace_ignore_buftype = { "quickfix", "nofile", "help" },
-				lastplace_ignore_filetype = {
-					"gitcommit",
-					"gitrebase",
-					"svn",
-					"hgcommit",
-				},
-				lastplace_open_folds = true,
-			})
-		end,
+		opts = {
+			lastplace_ignore_buftype = { "quickfix", "nofile", "help" },
+			lastplace_ignore_filetype = {
+				"gitcommit",
+				"gitrebase",
+				"svn",
+				"hgcommit",
+			},
+			lastplace_open_folds = true,
+		},
 	},
 	{
 		"folke/persistence.nvim",
 		event = "BufReadPre",
-		config = function()
-			require("persistence").setup({
-				dir = require("lvim.utils").join_paths(get_config_dir(), "/sessions/"),
-				options = { "buffers", "curdir", "tabpages", "winsize" },
-			})
-		end,
+		opts = {
+			dir = require("lvim.utils").join_paths(get_config_dir(), "/sessions/"),
+			options = { "buffers", "curdir", "tabpages", "winsize" },
+		},
 	},
 	{
 		"windwp/nvim-ts-autotag",
@@ -493,7 +481,6 @@ lvim.plugins = {
 	{
 		"nvim-treesitter/nvim-treesitter-textobjects",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
-		commit = "55e13ca",
 		config = function()
 			require("nvim-treesitter.configs").setup({
 				textobjects = {
@@ -538,57 +525,54 @@ lvim.plugins = {
 	{
 		"rmagatti/goto-preview",
 		lazy = true,
-		config = function()
-			require("goto-preview").setup({
-				width = 120,
-				height = 25,
-				border = "rounded",
-				default_mappings = true,
-				debug = false,
-				opacity = nil,
-				post_open_hook = function()
-					vim.keymap.set(
-						"n",
-						"<Esc>",
-						":lua require('goto-preview').close_all_win()<CR>",
-						{ noremap = true, silent = true }
-					)
-					vim.keymap.set(
-						"n",
-						"<C-c>",
-						":lua require('goto-preview').close_all_win()<CR>",
-						{ noremap = true, silent = true }
-					)
-				end,
-			})
-		end,
+		opts = {
+			width = 120,
+			height = 25,
+			border = "rounded",
+			default_mappings = true,
+			debug = false,
+			opacity = nil,
+			post_open_hook = function()
+				vim.keymap.set(
+					"n",
+					"<Esc>",
+					":lua require('goto-preview').close_all_win()<CR>",
+					{ noremap = true, silent = true }
+				)
+				vim.keymap.set(
+					"n",
+					"<C-c>",
+					":lua require('goto-preview').close_all_win()<CR>",
+					{ noremap = true, silent = true }
+				)
+			end,
+		},
 	},
 	{
 		"karb94/neoscroll.nvim",
 		event = "WinScrolled",
-		config = function()
-			require("neoscroll").setup({
-				mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-f>", "<C-y>", "<C-e>", "zt", "zz", "zb" },
-				hide_cursor = false,
-				stop_eof = true,
-				use_local_scrolloff = false,
-				respect_scrolloff = false,
-				cursor_scrolls_alone = true,
-			})
-		end,
+		opts = {
+			mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-f>", "<C-y>", "<C-e>", "zt", "zz", "zb" },
+			hide_cursor = false,
+			stop_eof = true,
+			use_local_scrolloff = false,
+			respect_scrolloff = false,
+			cursor_scrolls_alone = true,
+		},
 	},
 	{
 		"asiryk/auto-hlsearch.nvim",
 		config = true,
+		event = "VeryLazy",
 	},
-	{ "sitiom/nvim-numbertoggle" },
+	{ "sitiom/nvim-numbertoggle", event = "BufRead" },
 	{
 		"max397574/better-escape.nvim",
 		config = true,
+		event = "InsertEnter",
 	},
 	{
 		"Exafunction/codeium.nvim",
-		enabled = false,
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"hrsh7th/nvim-cmp",
@@ -649,15 +633,15 @@ lvim.plugins = {
 	{
 		"nmac427/guess-indent.nvim",
 		config = true,
+		event = "BufRead",
 	},
 	{
 		"gbprod/cutlass.nvim",
-		config = function()
-			require("cutlass").setup({
-				cut_key = "x",
-				exclude = { "ns", "nS" },
-			})
-		end,
+		opts = {
+			cut_key = "x",
+			exclude = { "ns", "nS" },
+		},
+		event = "VeryLazy",
 	},
 	{
 		"stevearc/aerial.nvim",
@@ -665,35 +649,24 @@ lvim.plugins = {
 			"nvim-treesitter/nvim-treesitter",
 			"nvim-tree/nvim-web-devicons",
 		},
-		config = true,
+		opts = {},
 		keys = {
 			{ "<LEADER>o", "<CMD>AerialToggle<CR>", desc = "Code Outline" },
 		},
 	},
 	{
-		"lmburns/lf.nvim",
-		cmd = "Lf",
-		dependencies = { "nvim-lua/plenary.nvim", "akinsho/toggleterm.nvim" },
-		opts = {
-			winblend = 0,
-			highlights = { NormalFloat = { guibg = "NONE" } },
-			border = "single",
-			escape_quit = true,
-		},
-		keys = {
-			{ "<leader>F", "<cmd>Lf<cr>", desc = "File Manager" },
-		},
-	},
-	{
 		"theHamsta/nvim-dap-virtual-text",
+		lazy = true,
 	},
 	{
 		"microsoft/vscode-js-debug",
+		lazy = true,
 		version = "1.x",
 		build = "npm ci && npx gulp dapDebugServer",
 	},
 	{
 		"firefox-devtools/vscode-firefox-debug",
+		lazy = true,
 		version = "2.x",
 		build = "npm ci && npm run build",
 	},
@@ -739,6 +712,7 @@ lvim.plugins = {
 	},
 	{
 		dir = "~/projects/devdocs.nvim",
+		cmd = "Devdocs",
 		opts = {
 			url = "http://localhost:9292",
 		},
@@ -903,6 +877,7 @@ lvim.autocommands = {
 			end,
 		},
 	},
+	-- write a session file for the current folder when leaving lvim
 	{
 		"VimLeave",
 		{
