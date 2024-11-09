@@ -73,6 +73,8 @@ if ! shopt -oq posix; then
 	fi
 fi
 
+{{ if eq .chezmoi.os "linux" }}
+{{ 	if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
 # Function to open a path with Explorer
 function open() {
 	if [[ "$#" -ne 1 ]]; then
@@ -84,12 +86,14 @@ function open() {
 	fi
 }
 export -f open
+{{ 	end }}
+{{ end }}
 
 # Enable the Starship prompt
 eval "$(starship init bash)"
 
 # Enable fzf
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+eval "$(fzf --bash)"
 
 # Enable zoxide
 eval "$(zoxide init bash)"
