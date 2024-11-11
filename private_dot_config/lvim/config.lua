@@ -1,12 +1,73 @@
 -- general options
 vim.cmd("let g:tmuxline_powerline_separators = 0")
 vim.cmd('let g:tmuxline_separators = { "left": "", "left_alt": "", "right": "", "right_alt": "", "space": " "}')
-vim.o.termguicolors = true
+vim.opt.termguicolors = true
 vim.opt.wrap = true
 vim.opt.cursorline = false
-lvim.colorscheme = "onedark"
 lvim.log.level = "warn"
 lvim.format_on_save = true
+
+vim.api.nvim_set_hl(0, "IlluminatedWordRead", { bg = "#30363f" })
+vim.api.nvim_set_hl(0, "IlluminatedWordText", { bg = "#30363f" })
+vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { bg = "#30363f" })
+vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { underline = false })
+
+-- theme customization
+lvim.colorscheme = "tokyonight"
+lvim.builtin.theme.name = "tokyonight"
+lvim.builtin.theme.tokyonight.options.styles.sidebars = "normal"
+lvim.builtin.theme.tokyonight.options.styles.floats = "normal"
+
+-- lualine customization
+lvim.builtin.lualine.options.disabled_filetypes = { "alpha", "dashboard", "Outline" }
+lvim.builtin.lualine.on_config_done = function()
+	local tokyonight = require("lualine.themes.tokyonight")
+	tokyonight.normal.c.bg = nil
+
+	local function get_short_cwd()
+		return vim.fn.fnamemodify(vim.fn.getcwd(), ":~")
+	end
+
+	local extension = {
+		sections = {
+			lualine_a = {
+				{
+					get_short_cwd,
+					separator = { left = "", right = "" },
+					left_padding = 2,
+				},
+			},
+		},
+		filetypes = { "NvimTree" },
+	}
+
+	local bubbles_theme = {
+		options = {
+			theme = tokyonight,
+			component_separators = "",
+			section_separators = { left = "", right = "" },
+		},
+		sections = {
+			lualine_a = { { "mode", separator = { left = "", right = "" }, right_padding = 2 } },
+			lualine_b = { "branch" },
+			lualine_c = { "filename" },
+			lualine_x = { "encoding", "fileformat", "filetype" },
+			lualine_y = { "progress" },
+			lualine_z = { { "location", separator = { left = "", right = "" }, left_padding = 2 } },
+		},
+		inactive_sections = {
+			lualine_a = {},
+			lualine_b = {},
+			lualine_c = { "filename" },
+			lualine_x = { "location" },
+			lualine_y = {},
+			lualine_z = {},
+		},
+		tabline = {},
+		extensions = { extension, "trouble" },
+	}
+	require("lualine").setup(bubbles_theme)
+end
 
 -- custom keymappings
 lvim.keys.normal_mode["<C-s>"] = ":w<Cr>"
@@ -18,7 +79,7 @@ lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<Cr>"
 lvim.keys.insert_mode["<C-c>"] = "<Esc>"
 
 -- if on a blank line, start insert mode properly indented
-lvim.keys.normal_mode["i"] = "i<c-f>"
+-- lvim.keys.normal_mode["i"] = "i<c-f>"
 
 -- jump to buffers
 lvim.keys.normal_mode["<leader>1"] = "<Cmd>lua require('bufferline').go_to(1, true)<Cr>"
@@ -160,11 +221,6 @@ lvim.builtin.project.show_hidden = true
 lvim.builtin.project.scope_chdir = "win"
 lvim.builtin.lir.show_hidden_files = true
 
--- status line customization
-lvim.builtin.lualine.style = "lvim"
-lvim.builtin.lualine.options = { section_separators = "", component_separators = "" }
-lvim.builtin.lualine.options.disabled_filetypes = { "alpha", "dashboard", "Outline" }
-
 -- bufferline customization
 lvim.builtin.bufferline.options.always_show_bufferline = true
 lvim.builtin.bufferline.options.numbers = "ordinal"
@@ -173,6 +229,7 @@ lvim.builtin.bufferline.options.offsets = {
 	{
 		filetype = "NvimTree",
 		text = "Explorer",
+		highlight = "Normal",
 		separator = true,
 	},
 }
@@ -308,6 +365,7 @@ lvim.builtin.telescope.on_config_done = function(telescope)
 	pcall(telescope.load_extension, "yank_history")
 	pcall(telescope.load_extension, "emoji")
 	pcall(telescope.load_extension, "git_worktree")
+	pcall(telescope.load_extension, "chezmoi")
 end
 
 -- ignore these folders when searching
@@ -323,6 +381,7 @@ lvim.builtin.alpha.dashboard.section.buttons = {
 		spacing = 1,
 	},
 	entries = {
+		{ "e", lvim.icons.ui.FileSymlink .. "  Edit dotfiles", "<CMD>Telescope chezmoi find_files<CR>" },
 		{ "f", lvim.icons.ui.FindFile .. "  Find File", "<CMD>Telescope find_files<CR>" },
 		{ "n", lvim.icons.ui.NewFile .. "  New File", "<CMD>ene!<CR>" },
 		{ "p", lvim.icons.ui.Project .. "  Projects", "<CMD>Telescope projects<CR>" },
@@ -383,24 +442,6 @@ lvim.plugins = {
 	},
 	{ "folke/neodev.nvim", enabled = false },
 	{ "brenoprata10/nvim-highlight-colors", event = "BufRead", config = true },
-	{
-		"navarasu/onedark.nvim",
-		config = function()
-			local onedark = require("onedark")
-			-- fix some border issues with telescope and LSP float windows
-			onedark.setup({
-				style = "darker",
-				highlights = {
-					TelescopePromptBorder = { fg = "#848b98" },
-					TelescopeResultsBorder = { fg = "#848b98" },
-					TelescopePreviewBorder = { fg = "#848b98" },
-					FloatBorder = { bg = "#1f2329" },
-					NormalFloat = { bg = "#1f2329" },
-				},
-			})
-			onedark.load()
-		end,
-	},
 	{ "SergioRibera/cmp-dotenv", lazy = true },
 	{ "edkolev/tmuxline.vim", cmd = "Tmuxline" },
 	{
@@ -566,6 +607,11 @@ lvim.plugins = {
 		event = "VeryLazy",
 	},
 	{ "sitiom/nvim-numbertoggle", event = "BufRead" },
+	{
+		"xvzc/chezmoi.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		opts = {},
+	},
 	{
 		"max397574/better-escape.nvim",
 		config = true,
@@ -827,16 +873,9 @@ lvim.autocommands = {
 		{
 			pattern = "*",
 			callback = function()
-				-- fix lspinfo float window border
-				vim.api.nvim_set_hl(0, "LspInfoBorder", { fg = "#848b98", bg = "#1f2329" })
-				vim.api.nvim_set_hl(0, "IlluminatedWordRead", { bg = "#30363f" })
-				vim.api.nvim_set_hl(0, "IlluminatedWordText", { bg = "#30363f" })
-				vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { bg = "#30363f" })
-				vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { underline = false })
-				-- fix vert split color in bufferline
-				vim.api.nvim_set_hl(0, "BufferLineOffsetSeparator", { bg = "#1f2329", fg = "#323641" })
-				-- fix winbar when not in window
-				vim.api.nvim_set_hl(0, "WinbarNC", { bg = "#1f2329" })
+				vim.api.nvim_set_hl(0, "BufferLineOffsetSeparator", { bold = true, fg = "#15161e" })
+				vim.api.nvim_set_hl(0, "BufferLineFill", { bg = "#1a1b26" })
+				vim.api.nvim_set_hl(0, "NvimTreeWinSeparator", { bold = true, fg = "#15161e" })
 			end,
 		},
 	},
@@ -854,7 +893,7 @@ lvim.autocommands = {
 			end,
 		},
 	},
-	-- quit lvim when nvimtree is only left open
+	-- quit lvim when nvimtree is only window left open
 	{
 		"QuitPre",
 		{
@@ -888,6 +927,20 @@ lvim.autocommands = {
 				if not utils.is_file(path) then
 					utils.write_file(path, "lua require('persistence').load()", "w")
 				end
+			end,
+		},
+	},
+	-- treat all files in chezmoi source directory as chezmoi files
+	{
+		{ "BufRead", "BufNewFile" },
+		{
+			pattern = os.getenv("HOME") .. "/.local/share/chezmoi/*",
+			callback = function(ev)
+				local bufnr = ev.buf
+				local edit_watch = function()
+					require("chezmoi.commands.__edit").watch(bufnr)
+				end
+				vim.schedule(edit_watch)
 			end,
 		},
 	},
