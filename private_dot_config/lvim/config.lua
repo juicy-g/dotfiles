@@ -182,10 +182,6 @@ lvim.builtin.which_key.mappings["su"] = {
 	"<cmd>Telescope undo<cr>",
 	"Current buffer undo tree",
 }
-lvim.builtin.which_key.mappings["sy"] = {
-	"<cmd>Telescope yank_history<cr>",
-	"Yank history",
-}
 
 -- additional picker for treesitter menu
 lvim.builtin.which_key.mappings["Ts"] = {
@@ -218,7 +214,6 @@ end
 
 -- show hidden files when opening a project
 lvim.builtin.project.show_hidden = true
-lvim.builtin.project.scope_chdir = "win"
 lvim.builtin.lir.show_hidden_files = true
 
 -- bufferline customization
@@ -362,7 +357,6 @@ lvim.builtin.telescope.pickers.buffers = {
 -- load telescope extensions
 lvim.builtin.telescope.on_config_done = function(telescope)
 	pcall(telescope.load_extension, "undo")
-	pcall(telescope.load_extension, "yank_history")
 	pcall(telescope.load_extension, "emoji")
 	pcall(telescope.load_extension, "git_worktree")
 	pcall(telescope.load_extension, "chezmoi")
@@ -611,6 +605,12 @@ lvim.plugins = {
 		"xvzc/chezmoi.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		opts = {},
+	},
+	{
+		"alker0/chezmoi.vim",
+		init = function()
+			vim.g["chezmoi#use_tmp_buffer"] = true
+		end,
 	},
 	{
 		"max397574/better-escape.nvim",
