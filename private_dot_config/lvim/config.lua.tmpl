@@ -187,14 +187,6 @@ lvim.builtin.which_key.mappings["su"] = {
 	"Current buffer undo tree",
 }
 
--- additional picker for treesitter menu
-lvim.builtin.which_key.mappings["Ts"] = {
-	function()
-		require("telescope.builtin").treesitter()
-	end,
-	"Search Treesitter",
-}
-
 -- keymap to jump between illuminated words
 lvim.builtin.illuminate.on_config_done = function()
 	local function map(key, dir, buffer)
