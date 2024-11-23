@@ -15,6 +15,18 @@ vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { underline = false })
 -- theme customization
 lvim.colorscheme = "tokyonight"
 lvim.builtin.theme.name = "tokyonight"
+lvim.builtin.theme.tokyonight.options.on_highlights = function(hl, c)
+	hl.TSConstructor = {
+		fg = c.blue1,
+	}
+	hl.TSTagDelimiter = {
+		fg = c.dark5,
+	}
+	hl.TelescopePromptBorder = {
+		bg = "#1a1b26",
+    fg = "#27a1b9"
+	}
+end
 lvim.builtin.theme.tokyonight.options.styles.sidebars = "normal"
 lvim.builtin.theme.tokyonight.options.styles.floats = "normal"
 
@@ -78,12 +90,12 @@ lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<Cr>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<Cr>"
 lvim.keys.insert_mode["<C-c>"] = "<Esc>"
 
-{{ if eq .chezmoi.os "linux" }}
+{{- if eq .chezmoi.os "linux" }}
 {{- 	if .chezmoi.kernel.osrelease | lower | contains "microsoft" -}}
 -- if on a blank line, start insert mode properly indented
 lvim.keys.normal_mode["i"] = "i<c-f>"
 {{- 	end -}}
-{{ end }}
+{{- end }}
 
 -- jump to buffers
 lvim.keys.normal_mode["<leader>1"] = "<Cmd>lua require('bufferline').go_to(1, true)<Cr>"
