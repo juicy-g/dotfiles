@@ -12,6 +12,9 @@ truncation_symbol = "…/"
 [aws]
 disabled = true
 
+[container]
+disabled = true
+
 [ruby]
 disabled = true
 
