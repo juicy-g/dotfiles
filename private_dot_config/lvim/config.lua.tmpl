@@ -15,15 +15,10 @@ vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { underline = false })
 -- theme customization
 lvim.colorscheme = "tokyonight"
 lvim.builtin.theme.name = "tokyonight"
+lvim.builtin.theme.tokyonight.options.style = "storm"
 lvim.builtin.theme.tokyonight.options.on_highlights = function(hl, c)
-	hl.TSConstructor = {
-		fg = c.blue1,
-	}
-	hl.TSTagDelimiter = {
-		fg = c.dark5,
-	}
 	hl.TelescopePromptBorder = {
-		bg = "#1a1b26",
+		bg = "#24283b",
     fg = "#27a1b9"
 	}
 end
@@ -882,9 +877,9 @@ lvim.autocommands = {
 		{
 			pattern = "*",
 			callback = function()
-				vim.api.nvim_set_hl(0, "BufferLineOffsetSeparator", { bold = true, fg = "#15161e" })
-				vim.api.nvim_set_hl(0, "BufferLineFill", { bg = "#1a1b26" })
-				vim.api.nvim_set_hl(0, "NvimTreeWinSeparator", { bold = true, fg = "#15161e" })
+				vim.api.nvim_set_hl(0, "BufferLineOffsetSeparator", { bold = true, fg = "#24283b" })
+				vim.api.nvim_set_hl(0, "BufferLineFill", { bg = "#24283b" })
+				vim.api.nvim_set_hl(0, "NvimTreeWinSeparator", { bold = true, fg = "#24283b" })
 			end,
 		},
 	},
