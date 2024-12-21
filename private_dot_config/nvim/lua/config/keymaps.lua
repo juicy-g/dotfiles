@@ -29,15 +29,15 @@ vim.keymap.set("n", "<S-h>", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev Buff
 vim.keymap.set("n", "<S-l>", "<cmd>BufferLineCycleNext<cr>", { desc = "Next Buffer" })
 vim.keymap.set("n", "[b", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev Buffer" })
 vim.keymap.set("n", "]b", "<cmd>BufferLineCycleNext<cr>", { desc = "Next Buffer" })
-vim.keymap.set("n", "<leader>1", "<cmd>lua require('bufferline').go_to(1, true)<cr>")
-vim.keymap.set("n", "<leader>2", "<cmd>lua require('bufferline').go_to(2, true)<cr>")
-vim.keymap.set("n", "<leader>3", "<cmd>lua require('bufferline').go_to(3, true)<cr>")
-vim.keymap.set("n", "<leader>4", "<cmd>lua require('bufferline').go_to(4, true)<cr>")
-vim.keymap.set("n", "<leader>5", "<cmd>lua require('bufferline').go_to(5, true)<cr>")
-vim.keymap.set("n", "<leader>6", "<cmd>lua require('bufferline').go_to(6, true)<cr>")
-vim.keymap.set("n", "<leader>7", "<cmd>lua require('bufferline').go_to(7, true)<cr>")
-vim.keymap.set("n", "<leader>8", "<cmd>lua require('bufferline').go_to(8, true)<cr>")
-vim.keymap.set("n", "<leader>9", "<cmd>lua require('bufferline').go_to(9, true)<cr>")
+vim.keymap.set("n", "<leader>1", "<cmd>lua require('bufferline').go_to(1, true)<cr>", { desc = "which_key_ignore" })
+vim.keymap.set("n", "<leader>2", "<cmd>lua require('bufferline').go_to(2, true)<cr>", { desc = "which_key_ignore" })
+vim.keymap.set("n", "<leader>3", "<cmd>lua require('bufferline').go_to(3, true)<cr>", { desc = "which_key_ignore" })
+vim.keymap.set("n", "<leader>4", "<cmd>lua require('bufferline').go_to(4, true)<cr>", { desc = "which_key_ignore" })
+vim.keymap.set("n", "<leader>5", "<cmd>lua require('bufferline').go_to(5, true)<cr>", { desc = "which_key_ignore" })
+vim.keymap.set("n", "<leader>6", "<cmd>lua require('bufferline').go_to(6, true)<cr>", { desc = "which_key_ignore" })
+vim.keymap.set("n", "<leader>7", "<cmd>lua require('bufferline').go_to(7, true)<cr>", { desc = "which_key_ignore" })
+vim.keymap.set("n", "<leader>8", "<cmd>lua require('bufferline').go_to(8, true)<cr>", { desc = "which_key_ignore" })
+vim.keymap.set("n", "<leader>9", "<cmd>lua require('bufferline').go_to(9, true)<cr>", { desc = "which_key_ignore" })
 
 -- Clear search with <esc>
 vim.keymap.set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and Clear hlsearch" })
@@ -80,13 +80,12 @@ vim.keymap.set("n", "]q", vim.cmd.cnext, { desc = "Next Quickfix" })
 
 -- Diagnostics navigation
 local diagnostic_goto = function(next, severity)
-	local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
-	severity = severity and vim.diagnostic.severity[severity] or nil
-	return function()
-		go({ severity = severity })
-	end
+  local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
+  severity = severity and vim.diagnostic.severity[severity] or nil
+  return function()
+    go({ severity = severity })
+  end
 end
-vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
 vim.keymap.set("n", "]d", diagnostic_goto(true), { desc = "Next Diagnostic" })
 vim.keymap.set("n", "[d", diagnostic_goto(false), { desc = "Prev Diagnostic" })
 vim.keymap.set("n", "]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
