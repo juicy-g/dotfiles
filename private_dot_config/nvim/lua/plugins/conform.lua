@@ -1,7 +1,7 @@
 return {
   "stevearc/conform.nvim",
-  event = { "BufWritePre" },
-  cmd = { "ConformInfo" },
+  event = "BufWritePre",
+  cmd = "ConformInfo",
   keys = {
     {
       "<leader>lf",
@@ -15,12 +15,10 @@ return {
           end
         end)
       end,
-      mode = "",
-      desc = "Format buffer",
+      mode = {"n", "v"},
+      desc = "Format",
     },
   },
-  ---@module "conform"
-  ---@type conform.setupOpts
   opts = {
     formatters_by_ft = {
       lua = { "stylua" },
@@ -29,6 +27,5 @@ return {
     default_format_opts = {
       lsp_format = "fallback",
     },
-    format_on_save = { timeout_ms = 500 },
   },
 }

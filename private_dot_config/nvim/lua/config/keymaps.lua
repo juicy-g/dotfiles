@@ -25,19 +25,20 @@ vim.keymap.set("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move Down" })
 vim.keymap.set("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move Up" })
 
 -- Buffers
-vim.keymap.set("n", "<S-h>", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev Buffer" })
-vim.keymap.set("n", "<S-l>", "<cmd>BufferLineCycleNext<cr>", { desc = "Next Buffer" })
-vim.keymap.set("n", "[b", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev Buffer" })
-vim.keymap.set("n", "]b", "<cmd>BufferLineCycleNext<cr>", { desc = "Next Buffer" })
-vim.keymap.set("n", "<leader>1", "<cmd>lua require('bufferline').go_to(1, true)<cr>", { desc = "which_key_ignore" })
-vim.keymap.set("n", "<leader>2", "<cmd>lua require('bufferline').go_to(2, true)<cr>", { desc = "which_key_ignore" })
-vim.keymap.set("n", "<leader>3", "<cmd>lua require('bufferline').go_to(3, true)<cr>", { desc = "which_key_ignore" })
-vim.keymap.set("n", "<leader>4", "<cmd>lua require('bufferline').go_to(4, true)<cr>", { desc = "which_key_ignore" })
-vim.keymap.set("n", "<leader>5", "<cmd>lua require('bufferline').go_to(5, true)<cr>", { desc = "which_key_ignore" })
-vim.keymap.set("n", "<leader>6", "<cmd>lua require('bufferline').go_to(6, true)<cr>", { desc = "which_key_ignore" })
-vim.keymap.set("n", "<leader>7", "<cmd>lua require('bufferline').go_to(7, true)<cr>", { desc = "which_key_ignore" })
-vim.keymap.set("n", "<leader>8", "<cmd>lua require('bufferline').go_to(8, true)<cr>", { desc = "which_key_ignore" })
-vim.keymap.set("n", "<leader>9", "<cmd>lua require('bufferline').go_to(9, true)<cr>", { desc = "which_key_ignore" })
+vim.keymap.set("n", "<S-h>", "<cmd>BufferPrevious<cr>", { desc = "Prev Buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<S-l>", "<cmd>BufferNext<cr>", { desc = "Next Buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>bc", "<cmd>BufferClose<cr>", { desc = "Close Buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>bl", "<cmd>BufferLast<cr>", { desc = "Last Buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>bp", "<cmd>BufferPin<cr>", { desc = "Pin/Unpin Buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>1", "<cmd>BufferGoto 1<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>2", "<cmd>BufferGoto 2<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>3", "<cmd>BufferGoto 3<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>4", "<cmd>BufferGoto 4<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>5", "<cmd>BufferGoto 5<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>6", "<cmd>BufferGoto 6<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>7", "<cmd>BufferGoto 7<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>8", "<cmd>BufferGoto 8<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>9", "<cmd>BufferGoto 9<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
 
 -- Clear search with <esc>
 vim.keymap.set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and Clear hlsearch" })
@@ -63,7 +64,7 @@ vim.keymap.set("i", ".", ".<c-g>u")
 vim.keymap.set("i", ";", ";<c-g>u")
 
 -- Save file
-vim.keymap.set({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
+vim.keymap.set({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file" })
 
 -- Quit
 vim.keymap.set({ "i", "x", "n", "s" }, "<C-q>", "<cmd>q<cr>", { desc = "Quit" })
@@ -72,9 +73,7 @@ vim.keymap.set({ "i", "x", "n", "s" }, "<C-q>", "<cmd>q<cr>", { desc = "Quit" })
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
 
--- Quickfix and loclist
-vim.keymap.set("n", "<leader>xl", "<cmd>lopen<cr>", { desc = "Location List" })
-vim.keymap.set("n", "<leader>xq", "<cmd>copen<cr>", { desc = "Quickfix List" })
+-- Quickfix
 vim.keymap.set("n", "[q", vim.cmd.cprev, { desc = "Previous Quickfix" })
 vim.keymap.set("n", "]q", vim.cmd.cnext, { desc = "Next Quickfix" })
 

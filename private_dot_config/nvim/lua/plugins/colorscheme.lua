@@ -6,7 +6,8 @@ return {
     opts = {
       style = "storm",
       styles = {
-        floats = "normal"
+        floats = "normal",
+        sidebars = "normal"
       },
       on_colors = function(colors)
         colors.bg_statusline = colors.bg
@@ -14,7 +15,7 @@ return {
       on_highlights = function(hl, c)
         hl.CmpDocumentation       = { fg = c.fg, bg = "#24283b" }
         hl.CmpDocumentationBorder = { fg = c.fg, bg = "#24283b" }
-        hl.WhichKeyNormal         = hl.NormalFloat
+        hl.TelescopePromptBorder  = hl.FloatBorder
       end,
     },
     init = function()
