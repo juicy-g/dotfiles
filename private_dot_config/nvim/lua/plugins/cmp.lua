@@ -11,8 +11,10 @@ return {
         event = "InsertEnter",
         dependencies = {
           "rafamadriz/friendly-snippets",
-        }
+        },
+        build = "make install_jsregexp"
       },
+      "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-nvim-lua",
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-cmdline",
@@ -41,6 +43,7 @@ return {
           { name = "luasnip" },
           { name = "buffer" },
           { name = "path" },
+          { name = "codeium"}
         },
         formatting = {
           format = lspkind.cmp_format({
