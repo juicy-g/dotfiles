@@ -1,5 +1,5 @@
 vim.api.nvim_create_autocmd("FileType", {
-  desc="Press q to quit",
+  desc = "Press q to quit",
   pattern = {
     "qf",
     "help",
@@ -39,6 +39,18 @@ vim.api.nvim_create_autocmd("BufEnter", {
   end,
 })
 
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  desc = "Treat all files in chezmoi source directory as chezmoi files",
+  pattern = { os.getenv("HOME") .. "/.local/share/chezmoi/*" },
+  callback = function(args)
+    local bufnr = args.buf
+    local edit_watch = function()
+      require("chezmoi.commands.__edit").watch(bufnr)
+    end
+    vim.schedule(edit_watch)
+  end,
+})
+
 local Format = vim.api.nvim_create_augroup("Format", { clear = true })
 local api = require("typescript-tools.api")
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -47,6 +59,15 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = { "*.ts", "*.tsx", "*.jsx", "*.js" },
   callback = function(args)
     api.organize_imports(true)
-    require("conform").format ({ bufnr = args.buf })
+    require("conform").format({ bufnr = args.buf })
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+  desc = "Format on save",
+  group = Format,
+  pattern = { "*.lua" },
+  callback = function(args)
+    require("conform").format({ async=true, bufnr = args.buf })
   end,
 })

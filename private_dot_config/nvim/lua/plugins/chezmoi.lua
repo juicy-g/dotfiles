@@ -1,8 +1,7 @@
 return {
   {
     "xvzc/chezmoi.nvim",
-    cmd = "ChezmoiList",
-    -- event = "VeryLazy",
+    cmd = { "ChezmoiList", "ChezmoiEdit" },
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {},
   },
