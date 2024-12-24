@@ -7,6 +7,17 @@ return {
     { "williamboman/mason.nvim" },
     { "williamboman/mason-lspconfig.nvim" },
     { "j-hui/fidget.nvim",                opts = {} },
+    {
+      "VidocqH/lsp-lens.nvim",
+      opts = {
+        sections = {
+          definition = false,
+          references = true,
+          implements = true,
+          git_authors = false,
+        },
+      }
+    },
   },
   config = function()
     vim.api.nvim_create_autocmd("LspAttach", {
@@ -28,6 +39,7 @@ return {
           { desc = "Signature help", buffer = event.buf })
         vim.keymap.set("n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>",
           { desc = "Diagnostics open float", buffer = event.buf })
+        vim.keymap.set("n", "<leader>ll", "<cmd>LspLensToggle<cr>", { desc = "Toggle lens" })
         vim.keymap.set("n", "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<cr>", { desc = "Rename", buffer = event.buf })
         vim.keymap.set({ "n", "v" }, "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = "Code Action" })
 
@@ -118,6 +130,8 @@ return {
             }
           })
         end,
+
+        rust_analyzer = function() end
       }
     })
   end
