@@ -1,9 +1,9 @@
 return {
   "goolord/alpha-nvim",
+  lazy = false,
   config = function()
     local alpha = require("alpha")
     local dashboard = require("alpha.themes.dashboard")
-
 
     dashboard.section.header.val = {
       "                                                     ",
@@ -39,6 +39,23 @@ return {
       }
     }
     alpha.setup(dashboard.opts)
+
+    vim.api.nvim_create_autocmd("User", {
+      once = true,
+      pattern = "LazyVimStarted",
+      callback = function()
+        local stats = require("lazy").stats()
+        local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
+        dashboard.section.footer.val = "⚡ Neovim loaded "
+            .. stats.loaded
+            .. "/"
+            .. stats.count
+            .. " plugins in "
+            .. ms
+            .. "ms"
+        pcall(vim.cmd.AlphaRedraw)
+      end,
+    })
 
     -- Disable folding on alpha buffer
     vim.cmd([[ autocmd FileType alpha setlocal nofoldenable ]])
