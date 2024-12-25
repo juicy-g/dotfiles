@@ -15,7 +15,6 @@ return {
       { "<leader>f",     group = "Find" },
       { "<leader>l",     group = "LSP" },
       { "<leader>ld",    vim.diagnostic.open_float,                                    desc = "Open diagnostics" },
-      -- { "<leader>h",     "<cmd>nohlsearch<CR>",                                        desc = "Clear Search HL" },
       { "<leader>t",     group = "Trouble" },
       { "<leader>tD",    "<cmd>Trouble diagnostics toggle<cr>",                        desc = "Workspace diagnostics" },
       { "<leader>td",    "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",           desc = "Buffer diagnostics" },
