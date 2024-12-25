@@ -52,22 +52,11 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 })
 
 local Format = vim.api.nvim_create_augroup("Format", { clear = true })
-local api = require("typescript-tools.api")
-vim.api.nvim_create_autocmd("BufWritePre", {
-  desc = "Format on save",
-  group = Format,
-  pattern = { "*.ts", "*.tsx", "*.jsx", "*.js" },
-  callback = function(args)
-    api.organize_imports(true)
-    require("conform").format({ bufnr = args.buf })
-  end,
-})
-
 vim.api.nvim_create_autocmd("BufWritePre", {
   desc = "Format on save",
   group = Format,
   pattern = { "*.lua" },
   callback = function(args)
-    require("conform").format({ async=true, bufnr = args.buf })
+    require("conform").format({ bufnr = args.buf })
   end,
 })

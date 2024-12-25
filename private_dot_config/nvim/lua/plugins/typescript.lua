@@ -1,8 +1,18 @@
 return {
   "pmizio/typescript-tools.nvim",
   dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+  ft = { "javascript", "javascriptreact", "typescript", "typescriptreact", "typescript.tsx" },
   config = function()
     local api = require("typescript-tools.api")
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      desc = "Format on save",
+      group = Format,
+      pattern = { "*.ts", "*.tsx", "*.jsx", "*.js" },
+      callback = function(args)
+        api.organize_imports(true)
+        require("conform").format({ bufnr = args.buf })
+      end,
+    })
     require("typescript-tools").setup({
       on_attach = function()
         vim.keymap.set("n", "<leader>lR", "<cmd>TSToolsRenameFile<cr>", { desc = "Rename file" })
