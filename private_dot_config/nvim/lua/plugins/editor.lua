@@ -90,7 +90,7 @@ return {
     config = true,
     event = "VeryLazy",
   },
-  { "sitiom/nvim-numbertoggle", event = "BufRead" },
+  { "sitiom/nvim-numbertoggle", event = "InsertEnter" },
   {
     "abecodes/tabout.nvim",
     opts = {},
