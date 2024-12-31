@@ -1,0 +1,4 @@
+[[session]]
+name = "nvim config"
+path = "~/.local/share/chezmoi/private_dot_config/nvim/"
+startup_command = "nvim"
