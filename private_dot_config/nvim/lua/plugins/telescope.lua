@@ -55,10 +55,9 @@ return {
     vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "Find diagnostics" })
     vim.keymap.set("n", "<leader>fl", builtin.resume, { desc = "Find last" })
     vim.keymap.set("n", "<leader>fr", builtin.registers, { desc = "Find registers" })
-    vim.keymap.set("n", "<leader>fy", "<cmd>Telescope neoclip<cr>", { desc = "Find last yanks"})
+    vim.keymap.set("n", "<leader>fy", "<cmd>Telescope neoclip<cr>", { desc = "Find last yanks" })
     vim.keymap.set("n", "<leader>f.", builtin.oldfiles, { desc = "Find recent files" })
-    vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "Find existing buffers" })
-
+    vim.keymap.set("n", "<leader>bb", builtin.buffers, { desc = "Buffers" })
     vim.keymap.set("n", "<leader>f/", function()
       builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown {
         previewer = true,
