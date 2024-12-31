@@ -1,21 +1,21 @@
 vim.opt.backup = false            -- do not create a backup file
 vim.opt.clipboard = "unnamedplus" -- allows neovim to access the system clipboard
-{{ if eq .chezmoi.os "linux" }}
-{{ 	if .chezmoi.kernel.osrelease | lower | contains "microsoft" }}
-vim.g.clipboard = {
-    name = "win32yank-wsl",
-    copy = {
-        ["+"] = "win32yank.exe -i --crlf",
-        ["*"] = "win32yank.exe -i --crlf",
-    },
-    paste = {
-        ["+"] = "win32yank.exe -o --lf",
-        ["*"] = "win32yank.exe -o --lf",
-    },
-    cache_enabled = true,
-}
-{{ 	end }}
-{{ end }}
+-- {{ if eq .chezmoi.os "linux" }}
+-- {{ 	if .chezmoi.kernel.osrelease | lower | contains "microsoft" }}
+-- vim.g.clipboard = {
+--     name = "win32yank-wsl",
+--     copy = {
+--         ["+"] = "win32yank.exe -i --crlf",
+--         ["*"] = "win32yank.exe -i --crlf",
+--     },
+--     paste = {
+--         ["+"] = "win32yank.exe -o --lf",
+--         ["*"] = "win32yank.exe -o --lf",
+--     },
+--     cache_enabled = true,
+-- }
+-- {{ 	end }}
+-- {{ end }}
 vim.opt.cmdheight = 1             -- more space in the neovim command line for displaying messages
 vim.opt.conceallevel = 0          -- so that `` is visible in markdown files
 -- vim.opt.fileencoding = "utf-8" -- the encoding written to a file
