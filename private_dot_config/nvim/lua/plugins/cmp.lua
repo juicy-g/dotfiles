@@ -1,6 +1,6 @@
 return {
 	"hrsh7th/nvim-cmp",
-	event = "InsertEnter",
+	event = { "InsertEnter", "CmdlineEnter" },
 	dependencies = {
 		{
 			"L3MON4D3/LuaSnip",
@@ -121,14 +121,36 @@ return {
 		})
 
 		cmp.setup.cmdline({ "/", "?" }, {
-			mapping = cmp.mapping.preset.cmdline(),
+			mapping = cmp.mapping.preset.cmdline({
+				["<CR>"] = {
+					c = function()
+						if cmp.visible() then
+							cmp.confirm({ select = false })
+						end
+
+						local cr = vim.api.nvim_replace_termcodes("<CR>", true, true, true)
+						vim.api.nvim_feedkeys(cr, "n", true)
+					end,
+				},
+			}),
 			sources = {
 				{ name = "buffer" },
 			},
 		})
 
 		cmp.setup.cmdline(":", {
-			mapping = cmp.mapping.preset.cmdline(),
+			mapping = cmp.mapping.preset.cmdline({
+				["<CR>"] = {
+					c = function()
+						if cmp.visible() then
+							cmp.confirm({ select = false })
+						end
+
+						local cr = vim.api.nvim_replace_termcodes("<CR>", true, true, true)
+						vim.api.nvim_feedkeys(cr, "n", true)
+					end,
+				},
+			}),
 			sources = cmp.config.sources({
 				{ name = "path" },
 				{ name = "cmdline" },
