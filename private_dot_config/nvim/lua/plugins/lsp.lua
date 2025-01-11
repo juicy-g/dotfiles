@@ -24,12 +24,7 @@ return {
 			},
 		},
 	},
-	config = function()
-		local lsp_defaults = require("lspconfig").util.default_config
-
-		lsp_defaults.capabilities =
-			vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
-
+	config = function(_, opts)
 		vim.api.nvim_create_autocmd("LspAttach", {
 			desc = "LSP actions",
 			group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
@@ -49,13 +44,13 @@ return {
 				)
 				vim.keymap.set(
 					"n",
-					"gI",
+					"gi",
 					"<cmd>lua vim.lsp.buf.implementation()<cr>",
 					{ desc = "Go to implementation", buffer = event.buf }
 				)
 				vim.keymap.set(
 					"n",
-					"<leader>lO",
+					"<leader>gy",
 					"<cmd>lua vim.lsp.buf.type_definition()<cr>",
 					{ desc = "Go to type definition", buffer = event.buf }
 				)
@@ -67,7 +62,7 @@ return {
 				)
 				vim.keymap.set(
 					"n",
-					"gs",
+					"<leader>ls",
 					"<cmd>lua vim.lsp.buf.signature_help()<cr>",
 					{ desc = "Signature help", buffer = event.buf }
 				)
@@ -77,7 +72,7 @@ return {
 					"<cmd>lua vim.diagnostic.open_float()<cr>",
 					{ desc = "Diagnostics open float", buffer = event.buf }
 				)
-				vim.keymap.set("n", "<leader>ll", "<cmd>LspLensToggle<cr>", { desc = "Toggle lens" })
+				vim.keymap.set("n", "<leader>tl", "<cmd>LspLensToggle<cr>", { desc = "Toggle LSP lens" })
 				vim.keymap.set(
 					"n",
 					"<leader>lr",
@@ -116,30 +111,48 @@ return {
 				end
 
 				if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-					vim.keymap.set("n", "<leader>lh", function()
+					vim.keymap.set("n", "<leader>th", function()
 						vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 					end, { desc = "Toggle Inlay Hints", buffer = event.buf })
 				end
 			end,
 		})
 
+		-- Diagnostics config
 		local signs = { ERROR = "", WARN = "", INFO = "", HINT = "" }
 		local diagnostic_signs = {}
 		for type, icon in pairs(signs) do
 			diagnostic_signs[vim.diagnostic.severity[type]] = icon
 		end
-		vim.diagnostic.config({ signs = { text = diagnostic_signs } })
+		vim.diagnostic.config({
+			signs = { text = diagnostic_signs },
+			float = {
+				focusable = true,
+				style = "minimal",
+				border = "rounded",
+				source = "if_many",
+				header = "",
+				prefix = "",
+			},
+		})
 
-		-- add borders around all popups and windows
+		-- Add borders around all popups and windows
 		vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 		vim.lsp.handlers["textDocument/signatureHelp"] =
 			vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 		require("lspconfig.ui.windows").default_options.border = "rounded"
 
+		local capabilities = vim.lsp.protocol.make_client_capabilities()
+		capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+
+		local servers = opts.servers or {}
+
 		require("mason-lspconfig").setup({
 			ensure_installed = { "lua_ls", "pylsp", "rust_analyzer" },
 			handlers = {
 				function(server_name)
+					local server = servers[server_name] or {}
+					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
 					require("lspconfig")[server_name].setup({})
 				end,
 
@@ -158,6 +171,9 @@ return {
 								},
 								diagnostics = {
 									disable = { "undefined-global", "missing-fields" },
+								},
+								workspace = {
+									checkThirdParty = false,
 								},
 								completion = {
 									callSnippet = "Replace",
