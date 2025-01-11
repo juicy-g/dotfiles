@@ -22,7 +22,10 @@ return {
 	opts = {
 		formatters_by_ft = {
 			lua = { "stylua" },
-			javascript = { "prettierd", "prettier", stop_after_first = true },
+			javascript = { "prettierd" },
+			typescript = { "prettierd" },
+			javascriptreact = { "prettierd" },
+			typescriptreact = { "prettierd" },
 			python = { "ruff_format", "ruff_organize_imports" },
 		},
 		default_format_opts = {
