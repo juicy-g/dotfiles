@@ -45,23 +45,30 @@ return {
 		pcall(require("telescope").load_extension, "chezmoi")
 
 		local builtin = require("telescope.builtin")
-		vim.keymap.set("n", "<leader>sc", "<cmd>Telescope chezmoi find_files<cr>", { desc = "Search dotfiles" })
-		vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "Search help" })
-		vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "Search keymaps" })
-		vim.keymap.set("n", "<leader>f", builtin.find_files, { desc = "Find files" })
-		vim.keymap.set("n", "<leader>sb", builtin.builtin, { desc = "Search telescope builtins" })
-		vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "Search current word" })
-		vim.keymap.set("n", "<leader>st", builtin.live_grep, { desc = "Search text" })
-		vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "Search diagnostics" })
-		vim.keymap.set("n", "<leader>r", builtin.resume, { desc = "Resume search" })
-		vim.keymap.set("n", "<leader>sr", builtin.registers, { desc = "Search registers" })
-		vim.keymap.set("n", "<leader>sy", "<cmd>Telescope neoclip<cr>", { desc = "Search last yanks" })
-		vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = "Search recent files" })
-		vim.keymap.set("n", "<leader>bb", builtin.buffers, { desc = "Buffers" })
-		vim.keymap.set("n", "<leader>?", function()
-			builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-				previewer = true,
-			}))
-		end, { desc = "Find in buffer" })
+		local themes = require("telescope.themes")
+		local wk = require("which-key")
+		wk.add({
+			{ "<leader>sc", "<cmd>Telescope chezmoi find_files<cr>", desc = "Search dotfiles" },
+			{ "<leader>sh", builtin.help_tags, desc = "Search help" },
+			{ "<leader>sk", builtin.keymaps, desc = "Search keymaps" },
+			{ "<leader>f", builtin.find_files, desc = "Find files", icon = "󰱽" },
+			{ "<leader>sb", builtin.builtin, desc = "Search telescope builtins" },
+			{ "<leader>sw", builtin.grep_string, desc = "Search current word" },
+			{ "<leader>st", builtin.live_grep, desc = "Search text" },
+			{ "<leader>sd", builtin.diagnostics, desc = "Search diagnostics" },
+			{ "<leader>r", builtin.resume, desc = "Resume search", icon = "" },
+			{ "<leader>sr", builtin.registers, desc = "Search registers" },
+			{ "<leader>sy", "<cmd>Telescope neoclip<cr>", desc = "Search last yanks" },
+			{ "<leader>s.", builtin.oldfiles, desc = "Search recent files" },
+			{ "<leader>bb", builtin.buffers, desc = "Buffers" },
+			{
+				"<leader>?",
+				function()
+					builtin.current_buffer_fuzzy_find(themes.get_dropdown({ previewer = true }))
+				end,
+				desc = "Find in buffer",
+				icon = "",
+			},
+		})
 	end,
 }
