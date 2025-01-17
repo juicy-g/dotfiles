@@ -18,12 +18,16 @@ return {
 		})
 		require("typescript-tools").setup({
 			on_attach = function()
-				vim.keymap.set(
-					"n",
-					"<leader>Tr",
-					"<cmd>TSToolsRenameFile<cr>",
-					{ desc = "Rename file", group = "Typescript" }
-				)
+				local wk = require("which-key")
+				wk.add({
+					{ "<leader>T", group = "Typescript", icon = "" },
+					{ "<leader>Ta", "<cmd>TSToolsAddMissingImports<cr>", desc = "Add missing imports" },
+					{ "<leader>Tr", "<cmd>TSToolsRenameFile<cr>", desc = "Rename file" },
+					{ "<leader>To", "<cmd>TSToolsOrganizeImports<cr>", desc = "Organize imports" },
+					{ "<leader>Tu", "<cmd>TSToolsRemoveUnused<cr>", desc = "Remove unused" },
+					{ "<leader>Tf", "<cmd>TSToolsFileReferences<cr>", desc = "File references" },
+					{ "<leader>Ts", "<cmd>TSToolsGoToSourceDefinition<cr>", desc = "Go to source definition" },
+				})
 			end,
 			settings = {
 				expose_as_code_action = "all",
