@@ -1,0 +1,85 @@
+* {
+    background-image: none;
+    font-size: 16px;
+}
+
+@define-color main-bg #11111b;
+@define-color main-fg #cdd6f4;
+
+@define-color wb-act-bg #ffffff;
+@define-color wb-act-fg #313244;
+
+window {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+button {
+  background-color: @main-bg;
+  color: @main-fg;
+  outline-style: none;
+  border: none;
+  border-width: 0px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20%;
+  border-radius: 0px;
+  box-shadow: none;
+  text-shadow: none;
+  animation: gradient_f 20s ease-in infinite;
+}
+
+button:focus {
+  background-color: @wb-act-bg;
+  color: @wb-act-fg;
+  background-size: 30%;
+}
+
+#lock {
+  background-image: image(url("/usr/share/wlogout/icons/lock.png"));
+  border-radius: 40px 0px 0px 40px;
+  margin : 60px 0px 60px 60px;
+}
+
+#lock:focus {
+  background-image: url("/usr/share/wlogout/assets/lock.svg")
+}
+
+#logout {
+  background-image: image(url("/usr/share/wlogout/icons/logout.png"));
+  border-radius: 0px 0px 0px 0px;
+  margin : 60px 0px 60px 0px;
+}
+
+#logout:focus {
+  background-image: url("/usr/share/wlogout/assets/logout.svg")
+}
+
+#shutdown {
+  background-image: image(url("/usr/share/wlogout/icons/shutdown.png"));
+  border-radius: 0px 0px 0px 0px;
+  margin : 60px 0px 60px 0px;
+}
+
+#shutdown:focus {
+  background-image: url("/usr/share/wlogout/assets/shutdown.svg")
+}
+
+#suspend {
+  background-image: image(url("/usr/share/wlogout/icons/suspend.png"));
+  border-radius: 0px 0px 0px 0px;
+  margin : 60px 0px 60px 0px;
+}
+
+#suspend:focus {
+  background-image: url("/usr/share/wlogout/assets/suspend.svg")
+}
+
+#reboot {
+  background-image: image(url("/usr/share/wlogout/icons/reboot.png"));
+  border-radius: 0px 40px 40px 0px;
+  margin : 60px 0px 60px 0px;
+}
+
+#reboot:focus {
+  background-image: url("/usr/share/wlogout/assets/reboot.svg")
+}
