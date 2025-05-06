@@ -15,11 +15,8 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$PATH:$HOME/.local/bin"
 fi
 
-export GEM_HOME="$HOME/.gem/ruby/3.1.0"
-PATH="$PATH:$GEM_HOME/bin"
-export EDITOR="lvim"
+export EDITOR="nvim"
 export MANPAGER='nvim +Man!+"set nocul" +"set noshowcmd" +"set noruler" +"set noshowmode" +"set laststatus=0" +"set showtabline=0" +"set nonumber"'
 
 PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
-PATH="$PATH:$HOME/.npm-global/bin"
 PATH="$PATH:$HOME/.cargo/bin"
