@@ -21,6 +21,7 @@ return {
 	},
 	opts = {
 		formatters_by_ft = {
+			json = { lsp_format = "prefer" },
 			lua = { "stylua" },
 			javascript = { "prettierd" },
 			typescript = { "prettierd" },
