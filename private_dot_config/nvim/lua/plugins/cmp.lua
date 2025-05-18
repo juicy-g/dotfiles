@@ -83,12 +83,24 @@ return {
 					i = cmp.mapping.abort(),
 					c = cmp.mapping.close(),
 				}),
-				["<CR>"] = cmp.mapping.confirm({ select = true }),
+				["<CR>"] = cmp.mapping(function(fallback)
+					if cmp.visible() then
+						if luasnip.expandable() then
+							luasnip.expand({})
+						else
+							cmp.confirm({
+								select = true,
+							})
+						end
+					else
+						fallback()
+					end
+				end),
 				["<Tab>"] = cmp.mapping(function(fallback)
 					if cmp.visible() then
 						cmp.select_next_item()
 					elseif luasnip.expandable() then
-						luasnip.expand()
+						luasnip.expand({})
 					elseif luasnip.expand_or_jumpable() then
 						luasnip.expand_or_jump()
 					elseif check_backspace() then
