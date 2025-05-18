@@ -19,11 +19,11 @@ return {
     dashboard.section.buttons.val = {
       dashboard.button("e", "  > New file", ":ene <BAR> startinsert <CR>"),
       dashboard.button("d", "  > Dotfiles", "<cmd>Telescope chezmoi find_files<cr>"),
-      dashboard.button("f", "  > Find file", ":Telescope find_files<CR>"),
+      dashboard.button("f", "󰈞  > Find file", ":Telescope find_files<CR>"),
       dashboard.button("r", "  > Recent", ":Telescope oldfiles<CR>"),
       dashboard.button("s", "󱥬  > Session", "<cmd>lua require('persistence').load()<cr>"),
       dashboard.button("t", "  > Text", "<cmd>Telescope live_grep<cr>"),
-      dashboard.button("q", "  > Quit", ":qa<CR>"),
+      dashboard.button("q", "󰈆  > Quit", ":qa<CR>"),
     }
 
     dashboard.opts = {
