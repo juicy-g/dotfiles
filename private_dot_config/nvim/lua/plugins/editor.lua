@@ -109,8 +109,8 @@ return {
 		config = true,
 		event = "BufRead",
 	},
-	{
-		"sphamba/smear-cursor.nvim",
-		opts = {},
-	},
+	-- {
+	-- 	"sphamba/smear-cursor.nvim",
+	-- 	opts = {},
+	-- },
 }
