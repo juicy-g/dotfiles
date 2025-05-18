@@ -6,7 +6,17 @@ return {
 		{ "hrsh7th/cmp-nvim-lsp" },
 		{ "williamboman/mason.nvim" },
 		{ "williamboman/mason-lspconfig.nvim" },
-		{ "j-hui/fidget.nvim", opts = {} },
+		{
+			"j-hui/fidget.nvim",
+			opts = {
+				notification = {
+					window = {
+						winblend = 0,
+						border = "rounded"
+					}
+				}
+			}
+		},
 		{
 			"mawkler/refjump.nvim",
 			keys = { "]r", "[r" },
@@ -15,6 +25,7 @@ return {
 		{
 			"VidocqH/lsp-lens.nvim",
 			opts = {
+				enable = false,
 				sections = {
 					definition = false,
 					references = true,
@@ -24,7 +35,7 @@ return {
 			},
 		},
 	},
-	config = function(_, opts)
+	config = function()
 		vim.api.nvim_create_autocmd("LspAttach", {
 			desc = "LSP actions",
 			group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
@@ -87,7 +98,8 @@ return {
 				)
 
 				local client = vim.lsp.get_client_by_id(event.data.client_id)
-				if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+
+				if client and client:supports_method("textDocument/documentHighlight") then
 					local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 						buffer = event.buf,
@@ -110,7 +122,10 @@ return {
 					})
 				end
 
-				if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+				if client == nil or not client:supports_method("textDocument/inlayHint", event.buf) then
+					return
+				else
+					vim.lsp.inlay_hint.enable(false, { bufnr = event.buf })
 					vim.keymap.set("n", "<leader>th", function()
 						vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 					end, { desc = "Toggle Inlay Hints", buffer = event.buf })
@@ -125,6 +140,7 @@ return {
 			diagnostic_signs[vim.diagnostic.severity[type]] = icon
 		end
 		vim.diagnostic.config({
+			virtual_text = true,
 			signs = { text = diagnostic_signs },
 			float = {
 				focusable = true,
@@ -137,91 +153,82 @@ return {
 		})
 
 		-- Add borders around all popups and windows
-		vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-		vim.lsp.handlers["textDocument/signatureHelp"] =
-			vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
-		require("lspconfig.ui.windows").default_options.border = "rounded"
+		local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+		---@diagnostic disable-next-line: duplicate-set-field, redefined-local
+		function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+			opts = opts or {}
+			opts.border = "rounded"
+			return orig_util_open_floating_preview(contents, syntax, opts, ...)
+		end
 
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
 		capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-		local servers = opts.servers or {}
+		vim.lsp.config("lua_ls", {
+			capabilities = capabilities,
+			settings = {
+				Lua = {
+					telemetry = {
+						enable = false,
+					},
+					runtime = {
+						version = "LuaJIT",
+						special = {
+							reload = "require",
+						},
+					},
+					diagnostics = {
+						disable = { "undefined-global", "missing-fields" },
+					},
+					workspace = {
+						checkThirdParty = false,
+					},
+					completion = {
+						callSnippet = "Replace",
+					},
+					format = {
+						enable = true,
+						defaultConfig = {
+							indent_style = "space",
+							indent_size = "2",
+							quote_style = "double",
+						},
+					},
+				},
+			}
+		})
+
+		vim.lsp.config("pylsp", {
+			capabilities = capabilities,
+			settings = {
+				pylsp = {
+					plugins = {
+						autopep8 = {
+							enabled = false,
+						},
+						pycodestyle = {
+							enabled = false,
+						},
+						mccabe = {
+							enabled = false,
+						},
+						pyflakes = {
+							enabled = false,
+						},
+						yapf = {
+							enabled = false,
+						},
+						flake8 = {
+							enabled = false,
+						},
+					},
+				},
+			},
+		})
 
 		require("mason-lspconfig").setup({
 			ensure_installed = { "lua_ls", "pylsp", "rust_analyzer" },
-			handlers = {
-				function(server_name)
-					local server = servers[server_name] or {}
-					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-					require("lspconfig")[server_name].setup({})
-				end,
-
-				lua_ls = function()
-					require("lspconfig").lua_ls.setup({
-						settings = {
-							Lua = {
-								telemetry = {
-									enable = false,
-								},
-								runtime = {
-									version = "LuaJIT",
-									special = {
-										reload = "require",
-									},
-								},
-								diagnostics = {
-									disable = { "undefined-global", "missing-fields" },
-								},
-								workspace = {
-									checkThirdParty = false,
-								},
-								completion = {
-									callSnippet = "Replace",
-								},
-								format = {
-									enable = true,
-									defaultConfig = {
-										indent_style = "space",
-										indent_size = "2",
-										quote_style = "double",
-									},
-								},
-							},
-						},
-					})
-				end,
-
-				pylsp = function()
-					require("lspconfig").pylsp.setup({
-						settings = {
-							pylsp = {
-								plugins = {
-									autopep8 = {
-										enabled = false,
-									},
-									pycodestyle = {
-										enabled = false,
-									},
-									mccabe = {
-										enabled = false,
-									},
-									pyflakes = {
-										enabled = false,
-									},
-									yapf = {
-										enabled = false,
-									},
-									flake8 = {
-										enabled = false,
-									},
-								},
-							},
-						},
-					})
-				end,
-
-				rust_analyzer = function() end,
-			},
+			automatic_enable = { "lua_ls", "pylsp" },
 		})
 	end,
 }
