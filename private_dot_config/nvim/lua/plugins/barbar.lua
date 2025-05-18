@@ -13,6 +13,7 @@ return {
     },
     icons = {
       separator = { left = "", right = "" },
+      separator_at_end = false,
     },
   },
   version = "^1.0.0",
