@@ -25,8 +25,8 @@ vim.keymap.set("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move down" })
 vim.keymap.set("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move up" })
 
 -- Buffers
-vim.keymap.set("n", "<S-h>", "<cmd>BufferPrevious<cr>", { desc = "Prev buffer", noremap = true, silent = true })
-vim.keymap.set("n", "<S-l>", "<cmd>BufferNext<cr>", { desc = "Next buffer", noremap = true, silent = true })
+vim.keymap.set("n", "[[", "<cmd>BufferPrevious<cr>", { desc = "Prev buffer", noremap = true, silent = true })
+vim.keymap.set("n", "]]", "<cmd>BufferNext<cr>", { desc = "Next buffer", noremap = true, silent = true })
 vim.keymap.set("n", "<leader>bc", "<cmd>BufferClose<cr>", { desc = "Close buffer", noremap = true, silent = true })
 vim.keymap.set("n", "<leader>bf", "<cmd>BufferFirst<cr>", { desc = "First buffer", noremap = true, silent = true })
 vim.keymap.set("n", "<leader>bl", "<cmd>BufferLast<cr>", { desc = "Last buffer", noremap = true, silent = true })
@@ -76,9 +76,9 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 
 -- Add undo break-points
--- vim.keymap.set("i", ",", ",<c-g>u")
--- vim.keymap.set("i", ".", ".<c-g>u")
--- vim.keymap.set("i", ";", ";<c-g>u")
+vim.keymap.set("i", ",", ",<c-g>u")
+vim.keymap.set("i", ".", ".<c-g>u")
+vim.keymap.set("i", ";", ";<c-g>u")
 
 -- Save file
 vim.keymap.set({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file" })
@@ -119,3 +119,6 @@ vim.keymap.set("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous
 
 -- Paste without replace clipboard
 vim.keymap.set("x", "p", [["_dP]])
+
+-- Autoformat toggle
+vim.keymap.set("n", "<leader>tf", "<cmd>ToggleAutoformat<cr>", { desc = "Toggle format on save" })

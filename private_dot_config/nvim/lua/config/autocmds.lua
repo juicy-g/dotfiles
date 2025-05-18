@@ -55,7 +55,7 @@ local Format = vim.api.nvim_create_augroup("Format", { clear = true })
 vim.api.nvim_create_autocmd("BufWritePre", {
 	desc = "Format on save",
 	group = Format,
-	pattern = { "*.lua", "*.py" },
+	pattern = { "*.lua", "*.py", "*.json" },
 	callback = function(args)
 		if not vim.g.autoformat then
 			return
@@ -65,7 +65,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 vim.api.nvim_create_user_command("ToggleAutoformat", function()
-	vim.api.nvim_notify("Toggling autoformat", vim.log.levels.INFO, { title = "conform.nvim", timeout = 2000 })
+	vim.notify("Toggling autoformat", vim.log.levels.INFO, { title = "conform.nvim", timeout = 2000 })
 	vim.g.autoformat = vim.g.autoformat == false and true or false
 end, { desc = "Toggling autoformat" })
-vim.keymap.set("n", "<leader>tf", "<cmd>ToggleAutoformat<cr>", { desc = "Toggle format on save" })
