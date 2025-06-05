@@ -65,6 +65,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 vim.api.nvim_create_user_command("ToggleAutoformat", function()
-	vim.notify("Toggling autoformat", vim.log.levels.INFO, { title = "conform.nvim", timeout = 2000 })
 	vim.g.autoformat = vim.g.autoformat == false and true or false
+	vim.notify("Toggling autoformat to " .. tostring(vim.g.autoformat), vim.log.levels.INFO,
+		{ title = "conform.nvim", timeout = 2000 })
 end, { desc = "Toggling autoformat" })
