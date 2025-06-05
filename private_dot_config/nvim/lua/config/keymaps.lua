@@ -90,24 +90,9 @@ vim.keymap.set({ "i", "x", "n", "s" }, "<C-q>", "<cmd>q<cr>", { desc = "Quit" })
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
 
--- Quickfix
+-- Quickfix navigation
 vim.keymap.set("n", "[q", vim.cmd.cprev, { desc = "Previous quickfix" })
 vim.keymap.set("n", "]q", vim.cmd.cnext, { desc = "Next quickfix" })
-
--- Diagnostics navigation
--- local diagnostic_goto = function(next, severity)
---   local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
---   severity = severity and vim.diagnostic.severity[severity] or nil
---   return function()
---     go({ severity = severity })
---   end
--- end
--- vim.keymap.set("n", "]d", diagnostic_goto(true), { desc = "Next diagnostic" })
--- vim.keymap.set("n", "[d", diagnostic_goto(false), { desc = "Prev diagnostic" })
--- vim.keymap.set("n", "]e", diagnostic_goto(true, "ERROR"), { desc = "Next error" })
--- vim.keymap.set("n", "[e", diagnostic_goto(false, "ERROR"), { desc = "Prev error" })
--- vim.keymap.set("n", "]w", diagnostic_goto(true, "WARN"), { desc = "Next warning" })
--- vim.keymap.set("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev warning" })
 
 -- Tabs
 vim.keymap.set("n", "<leader><tab>l", "<cmd>tablast<cr>", { desc = "Last tab" })
@@ -122,3 +107,17 @@ vim.keymap.set("x", "p", [["_dP]])
 
 -- Autoformat toggle
 vim.keymap.set("n", "<leader>tf", "<cmd>ToggleAutoformat<cr>", { desc = "Toggle format on save" })
+
+-- Toggle ';' in current line
+vim.keymap.set("n", "<leader>t;", function()
+	local cursor = vim.api.nvim_win_get_cursor(0)
+	local line = vim.api.nvim_get_current_line()
+	local last_char = string.sub(line, -1, -1)
+	if last_char == ";" then
+		vim.cmd("s/;$//")
+		vim.cmd(":nohlsearch")
+	else
+		vim.cmd("norm A;")
+	end
+	vim.api.nvim_win_set_cursor(0, cursor)
+end, { desc = "Toggle semicolon on current line" })
