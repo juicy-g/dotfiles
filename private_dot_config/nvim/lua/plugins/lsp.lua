@@ -34,6 +34,11 @@ return {
 				},
 			},
 		},
+		{
+			"Sebastian-Nielsen/better-type-hover",
+			ft = { "typescript", "typescriptreact" },
+			opts = {}
+		}
 	},
 	config = function()
 		vim.api.nvim_create_autocmd("LspAttach", {
@@ -99,6 +104,7 @@ return {
 
 				local client = vim.lsp.get_client_by_id(event.data.client_id)
 
+				-- Highlight word under cursor
 				if client and client:supports_method("textDocument/documentHighlight") then
 					local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
@@ -122,13 +128,12 @@ return {
 					})
 				end
 
-				if client == nil or not client:supports_method("textDocument/inlayHint", event.buf) then
-					return
-				else
+				-- Setup inlay hints if supported
+				if client ~= nil and client:supports_method("textDocument/inlayHint", event.buf) then
 					vim.lsp.inlay_hint.enable(false, { bufnr = event.buf })
 					vim.keymap.set("n", "<leader>th", function()
 						vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
-					end, { desc = "Toggle Inlay Hints", buffer = event.buf })
+					end, { desc = "Toggle inlay hints", buffer = event.buf })
 				end
 			end,
 		})
@@ -140,6 +145,7 @@ return {
 			diagnostic_signs[vim.diagnostic.severity[type]] = icon
 		end
 		vim.diagnostic.config({
+			severity_sort = true,
 			virtual_text = true,
 			signs = { text = diagnostic_signs },
 			float = {
@@ -154,7 +160,7 @@ return {
 
 		-- Add borders around all popups and windows
 		local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-		---@diagnostic disable-next-line: duplicate-set-field, redefined-local
+		--- @diagnostic disable-next-line: duplicate-set-field, redefined-local
 		function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
 			opts = opts or {}
 			opts.border = "rounded"
