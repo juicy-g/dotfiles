@@ -16,7 +16,16 @@ return {
 	{
 		"yorickpeterse/nvim-tree-pairs",
 		event = { "BufReadPost", "BufNewFile" },
-		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		dependencies = "nvim-treesitter/nvim-treesitter",
 		config = true,
 	},
+	{
+		"mawkler/jsx-element.nvim",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-treesitter/nvim-treesitter-textobjects",
+		},
+		ft = { "typescriptreact", "javascriptreact", "javascript" },
+		opts = {},
+	}
 }
