@@ -27,5 +27,14 @@ return {
 		},
 		ft = { "typescriptreact", "javascriptreact", "javascript" },
 		opts = {},
-	}
+	},
+	{
+		"chrisgrieser/nvim-various-textobjs",
+		event = "VeryLazy",
+		opts = {
+			keymaps = {
+				useDefaults = true
+			}
+		},
+	},
 }

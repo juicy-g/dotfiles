@@ -17,7 +17,6 @@ return {
 		"hrsh7th/cmp-buffer",
 		"SergioRibera/cmp-dotenv",
 		"onsails/lspkind.nvim",
-		"xzbdmw/colorful-menu.nvim",
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -43,34 +42,22 @@ return {
 				{ name = "nvim_lsp" },
 				{ name = "nvim_lua" },
 				{ name = "luasnip" },
-				{ name = "buffer" },
 				{ name = "path" },
 				{ name = "codeium" },
 				{ name = "dotenv" },
+				{ name = "buffer" },
 			},
 			formatting = {
-				format = function(entry, vim_item)
-					local kind = lspkind.cmp_format({
-						mode = "symbol_text",
-						symbol_map = { Codeium = "" },
-					})(entry, vim.deepcopy(vim_item))
-					local highlights_info = require("colorful-menu").cmp_highlights(entry)
-
-					if highlights_info ~= nil then
-						vim_item.abbr_hl_group = highlights_info.highlights
-						vim_item.abbr = highlights_info.text
-					end
-					local strings = vim.split(kind.kind, "%s", { trimempty = true })
-					vim_item.kind = " " .. (strings[1] or "") .. " "
-					vim_item.menu = ""
-
-					return vim_item
-				end,
+				format = lspkind.cmp_format({
+					mode = "symbol_text",
+					symbol_map = { Codeium = "" },
+				}),
 				duplicates = {
 					buffer = 1,
 					path = 1,
 					nvim_lsp = 0,
 					luasnip = 1,
+					dotenv = 1,
 				},
 				duplicates_default = 0,
 				fields = { "abbr", "kind", "menu" },

@@ -4,11 +4,14 @@ vim.keymap.set({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { expr = tru
 vim.keymap.set({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 
--- Move to window using the <ctrl> hjkl keys
--- vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to left window", remap = true })
--- vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to lower window", remap = true })
--- vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to upper window", remap = true })
--- vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to right window", remap = true })
+-- Jumps to matching pair
+vim.keymap.set("n", "mm", "%")
+
+-- Selects until matching pair, ex: `vm` - select until matching pair
+vim.keymap.set("x", "m", "%")
+
+-- Use with operators, ex: `dm` - delete until matching pair
+vim.keymap.set("o", "m", "%")
 
 -- Resize window using <ctrl> arrow keys
 vim.keymap.set("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase window height" })
@@ -24,9 +27,13 @@ vim.keymap.set("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move up" })
 vim.keymap.set("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move down" })
 vim.keymap.set("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move up" })
 
+-- Easier access to beginning and end of lines
+vim.keymap.set("n", "<M-h>", "^", { desc = "Go to beginning of line" })
+vim.keymap.set("n", "<M-l>", "$", { desc = "Go to end of line" })
+
 -- Buffers
-vim.keymap.set("n", "[[", "<cmd>BufferPrevious<cr>", { desc = "Prev buffer", noremap = true, silent = true })
-vim.keymap.set("n", "]]", "<cmd>BufferNext<cr>", { desc = "Next buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<s-h>", "<cmd>BufferPrevious<cr>", { desc = "Prev buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<s-l>", "<cmd>BufferNext<cr>", { desc = "Next buffer", noremap = true, silent = true })
 vim.keymap.set("n", "<leader>bc", "<cmd>BufferClose<cr>", { desc = "Close buffer", noremap = true, silent = true })
 vim.keymap.set("n", "<leader>bf", "<cmd>BufferFirst<cr>", { desc = "First buffer", noremap = true, silent = true })
 vim.keymap.set("n", "<leader>bl", "<cmd>BufferLast<cr>", { desc = "Last buffer", noremap = true, silent = true })

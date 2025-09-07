@@ -74,6 +74,8 @@ return {
 		config = function()
 			-- bi-directional leap
 			vim.keymap.set({ "n", "x", "o" }, "s", "<plug>(leap)", { desc = "Leap" })
+			vim.keymap.set("n", "S", "<plug>(leap-from-window)", { desc = "Leap from window" })
+
 			-- incremental treesitter node selection
 			vim.keymap.set({ "n", "x", "o" }, "ga", function()
 				require("leap.treesitter").select()
@@ -91,6 +93,18 @@ return {
 			vim.keymap.set({ "n", "o" }, "gs", function()
 				require("leap.remote").action()
 			end, { desc = "Leap remote operation" })
+
+			-- preview filter to reduce visual noise and the blinking effect after the first keypress
+			require("leap").opts.preview_filter =
+					function(ch0, ch1, ch2)
+						return not (
+							ch1:match("%s") or
+							ch0:match("%a") and ch1:match("%a") and ch2:match("%a")
+						)
+					end
+
+			-- equivalence classes for brackets and quotes
+			require("leap").opts.equivalence_classes = { " \t\r\n", "([{", ")]}", '\'"`' }
 		end,
 	},
 	{
@@ -109,8 +123,9 @@ return {
 		config = true,
 		event = "BufRead",
 	},
-	-- {
-	-- 	"sphamba/smear-cursor.nvim",
-	-- 	opts = {},
-	-- },
+	{
+		"mawkler/refjump.nvim",
+		event = "LspAttach",
+		opts = {}
+	}
 }
