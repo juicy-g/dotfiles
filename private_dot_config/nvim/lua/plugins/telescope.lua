@@ -16,8 +16,12 @@ return {
 	},
 	config = function()
 		local _, actions = pcall(require, "telescope.actions")
+
 		require("telescope").setup({
 			pickers = {
+				find_files = {
+					find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+				},
 				buffers = {
 					initial_mode = "insert",
 					mappings = {
