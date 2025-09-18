@@ -94,6 +94,14 @@ return {
 				require("leap.remote").action()
 			end, { desc = "Leap remote operation" })
 
+			-- remote operations with search commands
+			vim.keymap.set({ "n", "o" }, "g/", function()
+				require("leap.remote").action { jumper = "/" }
+			end)
+			vim.keymap.set({ "n", "o" }, "g?", function()
+				require("leap.remote").action { jumper = "?" }
+			end)
+
 			-- preview filter to reduce visual noise and the blinking effect after the first keypress
 			require("leap").opts.preview_filter =
 					function(ch0, ch1, ch2)
