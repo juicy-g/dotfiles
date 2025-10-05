@@ -18,6 +18,16 @@ require("lazy").setup({
 	spec = {
 		{ import = "plugins" },
 	},
+	---@diagnostic disable-next-line: assign-type-mismatch
+	dev = {
+		-- Directory where you store your local plugin projects. If a function is used,
+		-- the plugin directory (e.g. `~/projects/plugin-name`) must be returned.
+		---@type string | fun(plugin: LazyPlugin): string
+		path = "~/repos",
+		---@type string[] plugins that match these patterns will use your local versions instead of being fetched from GitHub
+		patterns = {}, -- For example {"folke"}
+		fallback = true, -- Fallback to git when local plugin doesn't exist
+	},
 	install = {
 		colorscheme = { "tokyonight-storm" },
 	},
@@ -33,8 +43,6 @@ require("lazy").setup({
 		rtp = {
 			disabled_plugins = {
 				"gzip",
-				"matchit",
-				"matchparen",
 				"netrwPlugin",
 				"tarPlugin",
 				"tohtml",
