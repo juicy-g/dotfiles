@@ -20,8 +20,9 @@ return {
 				vim.diagnostic.open_float,
 				desc = "Open diagnostics",
 			},
-			{ "<leader>qq", "<cmd>qa<cr>", desc = "Quit all" },
-			{ "<leader>t", group = "Toggle" },
+			{ "<leader>qa", "<cmd>qa<cr>",   desc = "Quit all" },
+			{ "<leader>qq", "<cmd>q<cr>",    desc = "Quit" },
+			{ "<leader>t",  group = "Toggle" },
 			-- {
 			-- 	"<leader>tD",
 			-- 	"<cmd>Trouble diagnostics toggle<cr>",
@@ -32,9 +33,9 @@ return {
 				"<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
 				desc = "Toggle buffer diagnostics",
 			},
-			-- { "<leader>ts", "<cmd>Trouble symbols toggle focus=false<cr>", desc = "Symbols" },
+			{ "<leader>ts",    "<cmd>Trouble symbols toggle pinned=true win.relative=win win.position=right<cr>", desc = "Toggle symbols" },
 			-- { "<leader>tl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", desc = "LSP" },
-			{ "<leader>tq", "<cmd>Trouble qflist toggle<cr>", desc = "Toggle quickfix" },
+			{ "<leader>tq",    "<cmd>Trouble qflist toggle<cr>",                                                  desc = "Toggle quickfix" },
 			-- { "<leader>tt", "<cmd>Trouble todo filter = {tag = {TODO,FIX,FIXME}}<cr>", desc = "Todo" },
 			{ "<leader><tab>", group = "Tabs" },
 			{
