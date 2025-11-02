@@ -69,3 +69,13 @@ vim.api.nvim_create_user_command("ToggleAutoformat", function()
 	vim.notify("Toggling autoformat to " .. tostring(vim.g.autoformat), vim.log.levels.INFO,
 		{ title = "conform.nvim", timeout = 2000 })
 end, { desc = "Toggling autoformat" })
+
+vim.api.nvim_create_autocmd(
+	{ "BufWinLeave", "BufWritePost", "WinLeave", "TabLeave" },
+	{
+		group = vim.api.nvim_create_augroup("PersistenceAutoSave", { clear = true }),
+		callback = function()
+			require("persistence").save()
+		end,
+	}
+)
