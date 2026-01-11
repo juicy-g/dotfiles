@@ -17,12 +17,15 @@ return {
       trouble = {
         text = "Trouble",
         align = "center"
+      },
+      ["codediff-explorer"] = {
+        text = "Code Diff",
+        align = "center"
       }
     },
     icons = {
       buffer_index = true,
       buffer_number = false,
-      filetype = { enabled = false },
       inactive = { button = "", separator = { left = "", right = "" } },
     },
   },
