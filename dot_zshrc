@@ -1,0 +1,51 @@
+# press tab twice to accept suggestion
+bindkey '^I^I' autosuggest-accept 
+
+# history file for zsh
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+
+# share history in every terminal session
+setopt SHARE_HISTORY
+
+# starship
+eval "$(starship init zsh)"
+
+# fzf
+source <(fzf --zsh)
+
+# zoxide
+eval "$(zoxide init bash)"
+
+# start tmux automatically
+if command -v tmux &>/dev/null && [ -z "$TMUX" ]; then
+	tmux new-session -A -s home
+fi
+
+# asdf
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+# append completions to fpath
+fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
+# initialise completions with ZSH's compinit
+autoload -Uz compinit && compinit
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# cargo
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# pipx
+export PATH="$PATH:/home/juicy/.local/bin"
+
+# other environment variables
+export EDITOR="nvim"
+export MANPAGER='nvim +Man!+"set nocul" +"set noshowcmd" +"set noruler" +"set noshowmode" +"set laststatus=0" +"set showtabline=0" +"set nonumber"'
+export HSA_OVERRIDE_GFX_VERSION=10.3.0
+export PROTON_ENABLE_WAYLAND=1
+export PROTON_NO_WM_DECORATION=1
+
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
