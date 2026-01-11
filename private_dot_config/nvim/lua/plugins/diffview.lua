@@ -1,6 +1,5 @@
 return {
-	"sindrets/diffview.nvim",
-	lazy = true,
-	cmd = "DiffviewOpen",
-	keys = { "<leader>gd", "<cmd>DiffviewOpen<cr>", desc = "Open Git diff" },
+	"esmuellert/codediff.nvim",
+	dependencies = { "MunifTanjim/nui.nvim" },
+	cmd = "CodeDiff",
 }
