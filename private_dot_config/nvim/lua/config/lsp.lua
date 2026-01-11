@@ -26,7 +26,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     --   "<cmd>lua vim.lsp.buf.type_definition()<cr>",
     --   { desc = "Go to type definition", buffer = event.buf }
     -- )
-    vim.keymap.set("n", "gO", require("telescope.builtin").lsp_document_symbols, { desc = "Open Document Symbols" })
+    -- vim.keymap.set("n", "gO", require("telescope.builtin").lsp_document_symbols, { desc = "Open Document Symbols" })
     vim.keymap.set(
       "n",
       "grr",
@@ -47,6 +47,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
       function() vim.diagnostic.open_float() end,
       { desc = "Diagnostics open float", buffer = event.buf }
     )
+    vim.keymap.set("n", "<leader>ld", function() vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end,
+      { desc = "Enable/disable diagnostics" })
     vim.keymap.set("n", "<leader>tl", "<cmd>LspLensToggle<cr>", { desc = "Toggle LSP lens" })
     vim.keymap.set(
       "n",
@@ -108,7 +110,6 @@ vim.diagnostic.config({
   virtual_text = true,
   signs = { text = diagnostic_signs },
   float = {
-    focusable = true,
     style = "minimal",
     border = "rounded",
     source = "if_many",
