@@ -1,6 +1,6 @@
 return {
 	"folke/which-key.nvim",
-	event = "VimEnter",
+	event = "VeryLazy",
 	opts = {
 		win = {
 			border = "rounded",
@@ -15,14 +15,9 @@ return {
 			{ "<leader>g", group = "Git" },
 			{ "<leader>s", group = "Search" },
 			{ "<leader>l", group = "LSP", icon = "" },
-			{
-				"<leader>ld",
-				vim.diagnostic.open_float,
-				desc = "Open diagnostics",
-			},
-			{ "<leader>qa", "<cmd>qa<cr>",   desc = "Quit all" },
-			{ "<leader>qq", "<cmd>q<cr>",    desc = "Quit" },
-			{ "<leader>t",  group = "Toggle" },
+			{ "<leader>qa", "<cmd>qa<cr>", desc = "Quit all" },
+			{ "<leader>qq", "<cmd>q<cr>", desc = "Quit" },
+			{ "<leader>t", group = "Toggle" },
 			-- {
 			-- 	"<leader>tD",
 			-- 	"<cmd>Trouble diagnostics toggle<cr>",
