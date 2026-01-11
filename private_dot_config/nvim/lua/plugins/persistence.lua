@@ -7,12 +7,4 @@ return {
       vim.api.nvim_exec_autocmds("User", { pattern = "SessionSavePre" })
     end,
   },
-  init = function()
-    vim.schedule(function()
-      if vim.bo.ft == "lazy" then
-        vim.cmd.quit()
-      end
-      require("persistence").load()
-    end)
-  end
 }
