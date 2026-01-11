@@ -112,6 +112,23 @@ vim.keymap.set("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous
 -- Paste without replace clipboard
 vim.keymap.set("x", "p", [["_dP]])
 
+local function InsertModeWithIndent(key)
+	local current_line = vim.api.nvim_get_current_line()
+	-- %g represents all printable characters except whitespace
+	if string.len(current_line) == 0 or string.match(current_line, "%g") == nil then
+		return [["_cc]]
+	else
+		return key
+	end
+end
+-- Auto indent on empty line with 'i' or 'I'
+vim.keymap.set("n", "i", function() return InsertModeWithIndent("i") end, { noremap = true, expr = true })
+vim.keymap.set("n", "I", function() return InsertModeWithIndent("I") end, { noremap = true, expr = true })
+
+-- Add empty lines before and after cursor line
+vim.keymap.set("n", "gO", "<Cmd>call append(line('.') - 1, repeat([''], v:count1))<CR>")
+vim.keymap.set("n", "go", "<Cmd>call append(line('.'),     repeat([''], v:count1))<CR>")
+
 -- Autoformat toggle
 vim.keymap.set("n", "<leader>tf", "<cmd>ToggleAutoformat<cr>", { desc = "Toggle format on save" })
 
