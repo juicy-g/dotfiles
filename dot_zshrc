@@ -5,6 +5,7 @@ bindkey '^I^I' autosuggest-accept
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
+HISTCONTROL=ignorespace
 
 # share history in every terminal session
 setopt SHARE_HISTORY
@@ -49,3 +50,7 @@ export PROTON_NO_WM_DECORATION=1
 
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/pnpm-shell-completion/pnpm-shell-completion.zsh
+
+# bun completions
+[ -s "/home/juicy/.bun/_bun" ] && source "/home/juicy/.bun/_bun"
