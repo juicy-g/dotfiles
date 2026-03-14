@@ -1,5 +1,5 @@
 return {
-	"esmuellert/codediff.nvim",
-	dependencies = { "MunifTanjim/nui.nvim" },
-	cmd = "CodeDiff",
+  "esmuellert/codediff.nvim",
+  dependencies = { "MunifTanjim/nui.nvim" },
+  cmd = "CodeDiff",
 }
