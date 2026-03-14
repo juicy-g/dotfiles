@@ -15,6 +15,7 @@ return {
 			{ "<leader>g", group = "Git" },
 			{ "<leader>s", group = "Search" },
 			{ "<leader>l", group = "LSP", icon = "" },
+			{ "<leader>o", group = "Opencode", icon = "󰚩" },
 			{ "<leader>qa", "<cmd>qa<cr>", desc = "Quit all" },
 			{ "<leader>qq", "<cmd>q<cr>", desc = "Quit" },
 			{ "<leader>t", group = "Toggle" },

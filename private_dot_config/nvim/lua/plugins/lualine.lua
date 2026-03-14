@@ -28,7 +28,7 @@ return {
           "branch"
         },
         lualine_c = { "filename", "lsp-status", "diagnostics" },
-        lualine_x = { "encoding", "fileformat", "filetype" },
+        lualine_x = { { require("opencode").statusline }, "encoding", "fileformat", "filetype" },
         lualine_y = { "progress" },
         lualine_z = { { "location", separator = { left = "", right = "" }, left_padding = 2 } },
       },
