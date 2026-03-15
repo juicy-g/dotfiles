@@ -32,31 +32,44 @@ vim.keymap.set("n", "<M-h>", "^", { desc = "Go to beginning of line" })
 vim.keymap.set("n", "<M-l>", "$", { desc = "Go to end of line" })
 
 -- Buffers
-vim.keymap.set("n", "<s-h>", "<cmd>BufferPrevious<cr>", { desc = "Prev buffer", noremap = true, silent = true })
-vim.keymap.set("n", "<s-l>", "<cmd>BufferNext<cr>", { desc = "Next buffer", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>bc", "<cmd>BufferClose<cr>", { desc = "Close buffer", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>bf", "<cmd>BufferFirst<cr>", { desc = "First buffer", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>bl", "<cmd>BufferLast<cr>", { desc = "Last buffer", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>bp", "<cmd>BufferPin<cr>", { desc = "Pin/Unpin buffer", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>br", "<cmd>BufferRestore<cr>", { desc = "Restore buffer", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>bs", "<cmd>BufferPick<cr>", { desc = "Select buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<s-h>", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<s-l>", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>bc", "<cmd>BufDel<cr>", { desc = "Close buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>bC", "<cmd>BufDelOthers<cr>",
+	{ desc = "Close other buffers", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>bf", "<cmd>BufferLineGoToBuffer 1<cr>",
+	{ desc = "First buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>bl", "<cmd>BufferLineGoToBuffer -1<cr>",
+	{ desc = "Last buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>bp", "<cmd>BufferLineTogglePin<cr>",
+	{ desc = "Pin/Unpin buffer", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>bs", "<cmd>BufferLinePick<cr>", { desc = "Select buffer", noremap = true, silent = true })
 vim.keymap.set("n", "<leader><space>", "<cmd>e #<cr>", { desc = "Other buffer", noremap = true, silent = true })
 vim.keymap.set(
 	"n",
 	"<A-<>",
-	"<cmd>BufferMovePrevious<cr>",
+	"<cmd>BufferLineMovePrevious<cr>",
 	{ desc = "Move buffer left", noremap = true, silent = true }
 )
-vim.keymap.set("n", "<A->>", "<cmd>BufferMoveNext<cr>", { desc = "Move buffer right", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>1", "<cmd>BufferGoto 1<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>2", "<cmd>BufferGoto 2<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>3", "<cmd>BufferGoto 3<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>4", "<cmd>BufferGoto 4<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>5", "<cmd>BufferGoto 5<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>6", "<cmd>BufferGoto 6<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>7", "<cmd>BufferGoto 7<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>8", "<cmd>BufferGoto 8<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
-vim.keymap.set("n", "<leader>9", "<cmd>BufferGoto 9<cr>", { desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<A->>", "<cmd>BufferLineMoveNext<cr>", { desc = "Move buffer right", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>1", "<cmd>BufferLineGoToBuffer 1<cr>",
+	{ desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>2", "<cmd>BufferLineGoToBuffer 2<cr>",
+	{ desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>3", "<cmd>BufferLineGoToBuffer 3<cr>",
+	{ desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>4", "<cmd>BufferLineGoToBuffer 4<cr>",
+	{ desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>5", "<cmd>BufferLineGoToBuffer 5<cr>",
+	{ desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>6", "<cmd>BufferLineGoToBuffer 6<cr>",
+	{ desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>7", "<cmd>BufferLineGoToBuffer 7<cr>",
+	{ desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>8", "<cmd>BufferLineGoToBuffer 8<cr>",
+	{ desc = "which_key_ignore", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>9", "<cmd>BufferLineGoToBuffer 9<cr>",
+	{ desc = "which_key_ignore", noremap = true, silent = true })
 
 -- Clear search and stop snippet on escape
 vim.keymap.set({ "i", "n", "s" }, "<esc>", function()

@@ -17,9 +17,9 @@ return {
       hl.CmpDocumentationBorder = { fg = colors.fg, bg = colors.bg }
       hl.TelescopePromptBorder = hl.FloatBorder
       hl.NvimTreeWinSeparator = hl.WinSeparator
-      hl.BufferTabpageFill = { bg = colors.bg_statusline }
-      hl.BufferTabpagesSep = { bg = colors.bg }
-      hl.BufferCurrentIndex = { fg = colors.fg, bg = colors.bg }
+      hl.BufferLineOffsetSeparator = { fg = hl.WinSeparator.fg, bg = colors.bg }
+      hl.BufferLineIndicatorSelected = { bg = colors.bg }
+      hl.BufferLineFill = { bg = colors.bg }
     end,
   },
   init = function()
