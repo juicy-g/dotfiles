@@ -29,7 +29,7 @@ return {
 		},
 	},
 	{
-		dir = "~/repos/surround-ui.nvim",
+		"juicy-g/surround-ui.nvim",
 		dependencies = {
 			"kylechui/nvim-surround",
 			"folke/which-key.nvim",
