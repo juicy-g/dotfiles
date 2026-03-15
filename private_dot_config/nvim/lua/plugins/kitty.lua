@@ -4,7 +4,7 @@ return {
     lazy = true,
     cmd = { "KittyScrollbackGenerateKittens", "KittyScrollbackCheckHealth", "KittyScrollbackGenerateCommandLineEditing" },
     event = { "User KittyScrollbackLaunch" },
-    version = "^6.0.0",
+    version = "^8.0.0",
     opts = {}
   },
   {
