@@ -71,7 +71,7 @@ return {
     end,
   },
   {
-    "ggandor/leap.nvim",
+    url = "https://codeberg.org/andyg/leap.nvim",
     config = function()
       -- bi-directional leap
       vim.keymap.set({ "n", "x", "o" }, "s", "<plug>(leap)", { desc = "Leap" })
