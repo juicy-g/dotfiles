@@ -35,10 +35,6 @@ return {
 				completeopt = "menu,menuone,select,preview",
 			},
 			sources = {
-				{
-					name = "lazydev",
-					group_index = 0,
-				},
 				{ name = "nvim_lsp" },
 				{ name = "nvim_lua" },
 				{ name = "luasnip" },
@@ -52,13 +48,13 @@ return {
 					mode = "symbol_text",
 					symbol_map = { Codeium = "" },
 				}),
-				duplicates = {
-					buffer = 1,
-					path = 1,
-					nvim_lsp = 0,
-					luasnip = 1,
-					dotenv = 1,
-				},
+				-- duplicates = {
+				-- 	buffer = 1,
+				-- 	path = 1,
+				-- 	nvim_lsp = 0,
+				-- 	luasnip = 1,
+				-- 	dotenv = 1,
+				-- },
 				duplicates_default = 0,
 				fields = { "abbr", "kind", "menu" },
 			},
