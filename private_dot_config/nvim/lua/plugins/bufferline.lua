@@ -32,6 +32,8 @@ return {
           style = "icon",
         },
         diagnostics = "nvim_lsp",
+        close_command = "BufDel! %d",
+        right_mouse_command = "BufDel! %d",
       }
     }
   } }
