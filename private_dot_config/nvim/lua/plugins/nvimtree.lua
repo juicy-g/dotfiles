@@ -69,10 +69,6 @@ return {
 		},
 		config = function()
 			require("lsp-file-operations").setup()
-			local api = require("nvim-tree.api")
-			api.events.subscribe(api.events.Event.FileCreated, function(file)
-				vim.cmd("edit " .. vim.fn.fnameescape(file.fname))
-			end)
 		end,
 	},
 }

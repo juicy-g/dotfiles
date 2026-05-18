@@ -1,7 +1,10 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
-		event = { "BufReadPost", "BufNewFile" },
+		lazy = false,
+		branch = "main",
+		commit = vim.fn.has("nvim-0.12") == 0 and "7caec274fd19c12b55902a5b795100d21531391f" or nil,
+		version = false,
 		build = ":TSUpdate",
 		opts = {
 			ensure_installed = { "lua", "javascript", "typescript", "markdown", "markdown_inline", "bash", "python" },
@@ -11,9 +14,20 @@ return {
 				disable = { "tmux" }
 			},
 			indent = { enable = true },
+			folds = { enable = true },
 		},
 		config = function(_, opts)
-			require("nvim-treesitter.configs").setup(opts)
+			require("nvim-treesitter").setup(opts)
+
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = { "<filetype>" },
+				callback = function()
+					vim.treesitter.start()
+					vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+					vim.wo[0][0].foldmethod = "expr"
+					vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end,
+			})
 		end,
 	},
 	{
