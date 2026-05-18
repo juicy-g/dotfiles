@@ -56,7 +56,7 @@ local Format = vim.api.nvim_create_augroup("Format", { clear = true })
 vim.api.nvim_create_autocmd("BufWritePre", {
 	desc = "Format on save",
 	group = Format,
-	pattern = { "*.lua", "*.py", "*.json" },
+	pattern = { "*.lua", "*.py", "*.json", "*.ts", "*.js", "*.tsx" },
 	callback = function(args)
 		if not vim.g.autoformat then
 			return
