@@ -8,6 +8,16 @@ return {
 				"rafamadriz/friendly-snippets",
 			},
 			build = "make install_jsregexp",
+			init = function()
+				local g = vim.api.nvim_create_augroup("personal-luasnip", { clear = true })
+				vim.api.nvim_create_autocmd("User", {
+					group = g,
+					pattern = "LuasnipPreExpand",
+					callback = function()
+						vim.go.undolevels = vim.go.undolevels
+					end,
+				})
+			end
 		},
 		"saadparwaiz1/cmp_luasnip",
 		"hrsh7th/cmp-nvim-lsp",
