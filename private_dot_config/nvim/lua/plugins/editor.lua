@@ -25,9 +25,9 @@ return {
     config = function()
       require("cutlass").setup({
         cut_key = "x",
+        override_del = true,
         exclude = { "ns", "nS" },
       })
-      vim.keymap.set("n", "x", "<Del>")
     end,
   },
   {
@@ -122,11 +122,6 @@ return {
     event = { "BufReadPost", "BufNewFile" },
   },
   { "sitiom/nvim-numbertoggle", event = "InsertEnter" },
-  {
-    "abecodes/tabout.nvim",
-    opts = {},
-    event = "InsertEnter",
-  },
   {
     "nmac427/guess-indent.nvim",
     config = true,
