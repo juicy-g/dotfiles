@@ -6,33 +6,22 @@ vim.api.nvim_create_autocmd("LspAttach", {
       "n",
       "grd",
       function() vim.lsp.buf.declaration() end,
-      { desc = "Go to declaration", buffer = event.buf }
+      { desc = "Go to declaration" }
     )
     vim.keymap.set(
       "n",
       "grD",
       function() vim.lsp.buf.definition() end,
-      { desc = "Go to definition", buffer = event.buf }
+      { desc = "Go to definition" }
     )
-    -- vim.keymap.set(
-    --   "n",
-    --   "gri",
-    --   function() vim.lsp.buf.implementation() end,
-    --   { desc = "Go to implementation", buffer = event.buf }
-    -- )
-    -- vim.keymap.set(
-    --   "n",
-    --   "grt",
-    --   "<cmd>lua vim.lsp.buf.type_definition()<cr>",
-    --   { desc = "Go to type definition", buffer = event.buf }
-    -- )
-    -- vim.keymap.set("n", "gO", require("telescope.builtin").lsp_document_symbols, { desc = "Open Document Symbols" })
-    vim.keymap.set(
-      "n",
-      "grr",
-      require("telescope.builtin").lsp_references,
-      { desc = "Find references", buffer = event.buf }
-    )
+    vim.keymap.set("n", "grn", function() vim.lsp.buf.rename() end, { desc = "Rename" })
+    vim.keymap.set({ "n", "x" }, "gra", function() vim.lsp.buf.code_action() end, { desc = "Code action" })
+    vim.keymap.set("n", "grx", function() vim.lsp.codelens.run() end, { desc = "Run codelens" })
+    vim.keymap.set("n", "gri", function() vim.lsp.buf.implementation() end, { desc = "Go to implementation" })
+    vim.keymap.set("n", "grt", function() vim.lsp.buf.type_definition() end, { desc = "Go to type definition" })
+    vim.keymap.set("n", "gro", require("telescope.builtin").lsp_document_symbols, { desc = "Open document symbols" })
+    vim.keymap.set("n", "grr", require("telescope.builtin").lsp_references,
+      { desc = "Find references", buffer = event.buf })
     vim.keymap.set("n", "gW", require("telescope.builtin").lsp_dynamic_workspace_symbols,
       { desc = "Open Workspace Symbols" })
     vim.keymap.set(
@@ -45,7 +34,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
       "n",
       "gl",
       function() vim.diagnostic.open_float() end,
-      { desc = "Diagnostics open float", buffer = event.buf }
+      { desc = "Diagnostics open float" }
     )
     vim.keymap.set("n", "<leader>ld", function() vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end,
       { desc = "Enable/disable diagnostics" })
@@ -54,7 +43,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
       "n",
       "<leader>lr",
       function() vim.lsp.buf.rename() end,
-      { desc = "Rename", buffer = event.buf }
+      { desc = "Rename" }
     )
     vim.keymap.set(
       { "n", "v" },

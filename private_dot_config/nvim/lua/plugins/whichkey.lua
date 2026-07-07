@@ -50,7 +50,7 @@ return {
 				icon = "󰊀",
 				expr = true
 			},
-			{ "<leader>/", function() return require("vim._comment").operator() end, desc = "Comment Line", mode = { "n", "x" }, icon = "󰊀", expr = true },
+			{ "<leader>/", function() return require("vim._comment").operator() end, desc = "Comment Line", mode = "v", icon = "󰊀", expr = true },
 		})
 		wk.setup(opts)
 	end,
