@@ -41,6 +41,16 @@ return {
 				end,
 				desc = "Buffer local keymaps",
 			},
+			{
+				"<leader>/",
+				function()
+					return require("vim._comment").operator() .. "_"
+				end,
+				desc = "Comment Line",
+				icon = "󰊀",
+				expr = true
+			},
+			{ "<leader>/", function() return require("vim._comment").operator() end, desc = "Comment Line", mode = { "n", "x" }, icon = "󰊀", expr = true },
 		})
 		wk.setup(opts)
 	end,
