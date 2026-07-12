@@ -1,6 +1,11 @@
 # press tab twice to accept suggestion
 bindkey '^I^I' autosuggest-accept 
 
+alias l='eza --color=always --color-scale=all --color-scale-mode=gradient --icons=always --group-directories-first'
+alias ll='eza --color=always --color-scale=all --color-scale-mode=gradient --icons=always --group-directories-first -l --git -h'
+alias la='eza --color=always --color-scale=all --color-scale-mode=gradient --icons=always --group-directories-first -a'
+alias lla='eza --color=always --color-scale=all --color-scale-mode=gradient --icons=always --group-directories-first -a -l --git -h'
+
 # history file for zsh
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
@@ -17,12 +22,12 @@ eval "$(starship init zsh)"
 source <(fzf --zsh)
 
 # zoxide
-eval "$(zoxide init bash)"
+eval "$(zoxide init zsh)"
 
 # start tmux automatically
-if command -v tmux &>/dev/null && [ -z "$TMUX" ]; then
-	tmux new-session -A -s home
-fi
+#if command -v tmux &>/dev/null && [ -z "$TMUX" ]; then
+#	tmux new-session -A -s home
+#fi
 
 # initialise completions with ZSH's compinit
 autoload -Uz compinit && compinit
@@ -37,18 +42,21 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # pipx
 export PATH="$PATH:/home/juicy/.local/bin"
 
+# rubygems
+export PATH="$PATH:/home/juicy/.local/share/gem/ruby/3.4.0/bin"
+
 # other environment variables
 export EDITOR="nvim"
 export MANPAGER='nvim +Man!+"set nocul" +"set noshowcmd" +"set noruler" +"set noshowmode" +"set laststatus=0" +"set showtabline=0" +"set nonumber"'
 export HSA_OVERRIDE_GFX_VERSION=10.3.0
 export PROTON_ENABLE_WAYLAND=1
 export PROTON_NO_WM_DECORATION=1
-
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+export FPATH="/home/juicy/repos/eza/completions/zsh:$FPATH"
+export ZSH_AUTOSUGGEST_STRATEGY=(match_prev_cmd history completion)
 
 # bun completions
 [ -s "/home/juicy/.bun/_bun" ] && source "/home/juicy/.bun/_bun"
+#
 #compdef opencode
 ###-begin-opencode-completions-###
 #
@@ -78,3 +86,6 @@ fi
 ###-end-opencode-completions-###
 
 eval "$(mise activate zsh)"
+
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
