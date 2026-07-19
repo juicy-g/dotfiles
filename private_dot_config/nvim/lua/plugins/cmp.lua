@@ -52,6 +52,7 @@ return {
 				{ name = "codeium" },
 				{ name = "dotenv" },
 				{ name = "buffer" },
+				{ name = "minuet" },
 			},
 			formatting = {
 				format = lspkind.cmp_format({
