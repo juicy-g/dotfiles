@@ -3,8 +3,8 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		lazy = false,
 		branch = "main",
-		commit = vim.fn.has("nvim-0.12") == 0 and "7caec274fd19c12b55902a5b795100d21531391f" or nil,
-		version = false,
+		-- commit = vim.fn.has("nvim-0.12") == 0 and "7caec274fd19c12b55902a5b795100d21531391f" or nil,
+		-- version = false,
 		build = ":TSUpdate",
 		opts = {
 			ensure_installed = { "lua", "javascript", "typescript", "markdown", "markdown_inline", "bash", "python" },
