@@ -2,7 +2,6 @@ return {
 	{
 		"kylechui/nvim-surround",
 		version = "*",
-		event = "VeryLazy",
 		opts = {
 			move_cursor = "sticky",
 			indent_lines = function(start, stop)
