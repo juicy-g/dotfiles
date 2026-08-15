@@ -3,6 +3,9 @@ return {
     "milanglacier/minuet-ai.nvim",
     event = "VeryLazy",
     opts = {
+      cmp = {
+        enable_auto_complete = false,
+      },
       provider = "openai_fim_compatible",
       n_completions = 1, -- recommend for local model for resource saving
       -- I recommend beginning with a small context window size and incrementally
@@ -11,6 +14,7 @@ return {
       -- power. Once you have a reliable estimate of your local computing power,
       -- you should adjust the context window to a larger value.
       context_window = 6144,
+      add_single_line_entry = false,
       provider_options = {
         openai_fim_compatible = {
           -- For Windows users, TERM may not be present in environment variables.
