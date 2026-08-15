@@ -34,7 +34,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
       "n",
       "gl",
       function() vim.diagnostic.open_float() end,
-      { desc = "Diagnostics open float" }
+      { desc = "Diagnostics open float", buffer = event.buf }
     )
     vim.keymap.set("n", "<leader>ld", function() vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end,
       { desc = "Enable/disable diagnostics" })
@@ -95,6 +95,7 @@ for type, icon in pairs(signs) do
   diagnostic_signs[vim.diagnostic.severity[type]] = icon
 end
 vim.diagnostic.config({
+  update_in_insert = false,
   severity_sort = true,
   virtual_text = true,
   signs = { text = diagnostic_signs },
@@ -106,6 +107,7 @@ vim.diagnostic.config({
     prefix = "",
   },
 })
+vim.keymap.set("n", "<leader>lq", vim.diagnostic.setloclist, { desc = "Open diagnostics quickfix list" })
 
 -- Add borders around all popups and windows
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
