@@ -80,9 +80,6 @@ vim.keymap.set({ "i", "n", "s" }, "<esc>", function()
 	return "<esc>"
 end, { expr = true, desc = "Escape and clear hlsearch" })
 
--- Select all
-vim.keymap.set("n", "<C-a>", "ggVG<cr>", { desc = "Select all" })
-
 -- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
 vim.keymap.set("n", "n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next search result" })
 vim.keymap.set("x", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
@@ -125,6 +122,7 @@ vim.keymap.set("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous
 -- Paste without replace clipboard
 vim.keymap.set("x", "p", [["_dP]])
 
+-- Auto indent on empty line with 'i' or 'I'
 local function InsertModeWithIndent(key)
 	local current_line = vim.api.nvim_get_current_line()
 	-- %g represents all printable characters except whitespace
@@ -134,7 +132,6 @@ local function InsertModeWithIndent(key)
 		return key
 	end
 end
--- Auto indent on empty line with 'i' or 'I'
 vim.keymap.set("n", "i", function() return InsertModeWithIndent("i") end, { noremap = true, expr = true })
 vim.keymap.set("n", "I", function() return InsertModeWithIndent("I") end, { noremap = true, expr = true })
 
