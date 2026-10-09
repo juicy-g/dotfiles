@@ -1,3 +1,5 @@
+#:schema https://github.com/joshmedeski/sesh/raw/main/sesh.schema.json
+
 [[session]]
 name = "nvim config"
 path = "~/.local/share/chezmoi/private_dot_config/nvim/"
